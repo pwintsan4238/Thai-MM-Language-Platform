@@ -975,6 +975,16 @@ export default function App() {
   // Current sub-tab inside eBook resource editor
   const [resourceSubTab, setResourceSubTab] = useState<'vocab' | 'sentence' | 'dialogue' | 'conversation'>('vocab');
 
+  // Consolidated eBook database search & overview toggle states
+  const [builderSearchQuery, setBuilderSearchQuery] = useState<string>('');
+  const [expandedOverviewSections, setExpandedOverviewSections] = useState<Record<string, boolean>>({
+    vocab: true,
+    sentence: true,
+    grammar: true,
+    dialogue: true,
+    conversation: true,
+  });
+
   // Input states for single eBook items
   const [vocabEntryWord, setVocabEntryWord] = useState<string>('');
   const [vocabEntryPron, setVocabEntryPron] = useState<string>('');
@@ -9702,6 +9712,509 @@ startxref
                                             )}
                                           </div>
                                         )}
+
+                                        {/* Consolidated eBook Database Overview (All Categories) */}
+                                        <div className="mt-5 pt-4 border-t border-gray-250/60 space-y-3.5" id="consolidated-ebook-db-overview">
+                                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-violet-50/50 p-2.5 rounded-xl border border-violet-150/40">
+                                            <div className="space-y-0.5">
+                                              <span className="text-[10px] font-sans font-black text-[#583092] uppercase tracking-wider flex items-center gap-1.5">
+                                                📊 Consolidated eBook Database Content Overview
+                                              </span>
+                                              <p className="text-[8px] text-slate-500 font-medium font-sans">
+                                                Below is the complete database of existing contents for this eBook. You can quickly view, search, and edit items from all 4 subtabs here.
+                                              </p>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                              <div className="relative shrink-0 w-full sm:w-[180px]">
+                                                <input
+                                                  type="text"
+                                                  placeholder="🔍 Search all 4 tables..."
+                                                  value={builderSearchQuery}
+                                                  onChange={(e) => setBuilderSearchQuery(e.target.value)}
+                                                  className="w-full pl-6 pr-2 py-1 bg-white border border-gray-200 rounded text-[9.5px] font-medium focus:outline-none focus:border-brand-purple"
+                                                />
+                                              </div>
+                                              {builderSearchQuery && (
+                                                <button
+                                                  type="button"
+                                                  onClick={() => setBuilderSearchQuery('')}
+                                                  className="text-[9px] text-slate-450 hover:text-slate-650 bg-none border-none cursor-pointer font-sans font-bold"
+                                                >
+                                                  Clear
+                                                </button>
+                                              )}
+                                            </div>
+                                          </div>
+
+                                          <div className="grid grid-cols-1 gap-4">
+                                            {/* Category 1: Vocabulary List */}
+                                            <div className="bg-white border border-gray-200/80 rounded-xl overflow-hidden shadow-3xs">
+                                              <div 
+                                                onClick={() => setExpandedOverviewSections(prev => ({ ...prev, vocab: !prev.vocab }))}
+                                                className="px-3 py-2 bg-slate-50 border-b border-gray-150 flex items-center justify-between cursor-pointer select-none hover:bg-slate-100/70"
+                                              >
+                                                <div className="flex items-center gap-1.5">
+                                                  <span className="text-[10.5px]">📝</span>
+                                                  <span className="text-[9.5px] font-sans font-black text-slate-700 uppercase tracking-wide">
+                                                    Vocabulary Cards
+                                                  </span>
+                                                  <span className="text-[8px] font-black font-sans px-1.5 py-0.2 bg-violet-100 text-brand-purple rounded">
+                                                    {resourceVocabEntries.length} items
+                                                  </span>
+                                                </div>
+                                                <span className="text-[10px] text-slate-400 font-black">
+                                                  {expandedOverviewSections.vocab ? '▼' : '▶'}
+                                                </span>
+                                              </div>
+
+                                              {expandedOverviewSections.vocab && (
+                                                <div className="p-2.5 max-h-[180px] overflow-y-auto divide-y divide-slate-100 text-[9px] animate-fade-in text-left">
+                                                  {(() => {
+                                                    const query = builderSearchQuery.toLowerCase().trim();
+                                                    const filtered = resourceVocabEntries.filter(item => 
+                                                      item.word.toLowerCase().includes(query) ||
+                                                      (item.pronunciation || '').toLowerCase().includes(query) ||
+                                                      item.translation.toLowerCase().includes(query) ||
+                                                      (item.meaning || '').toLowerCase().includes(query)
+                                                    );
+
+                                                    if (filtered.length === 0) {
+                                                      return (
+                                                        <div className="text-center py-4 text-slate-455 font-medium">
+                                                          {builderSearchQuery ? 'No matching vocab entries' : 'No vocabulary entries added yet'}
+                                                        </div>
+                                                      );
+                                                    }
+
+                                                    return filtered.map((item, idx) => {
+                                                      const actualIdx = resourceVocabEntries.indexOf(item);
+                                                      return (
+                                                        <div key={idx} className="py-2 flex items-center justify-between gap-2 group hover:bg-slate-50/50 px-1">
+                                                          <div>
+                                                            <span className="font-bold text-slate-800 text-[10px]">{item.word}</span>{' '}
+                                                            <span className="text-slate-400 font-mono">({item.pronunciation})</span>{' '}
+                                                            <span className="text-brand-purple font-bold">→ {item.translation}</span>{' '}
+                                                            {item.meaning && <span className="text-slate-500 italic block mt-0.5">{item.meaning}</span>}
+                                                          </div>
+                                                          <div className="flex items-center gap-1.5">
+                                                            <button
+                                                              type="button"
+                                                              onClick={() => {
+                                                                setResourceSubTab('vocab');
+                                                                setEditingVocabIdx(actualIdx);
+                                                                setVocabEntryWord(item.word);
+                                                                setVocabEntryPron(item.pronunciation);
+                                                                setVocabEntryTrans(item.translation);
+                                                                setVocabEntryMeaning(item.meaning || '');
+                                                                document.getElementById("admin-resource-form-section")?.scrollIntoView({ behavior: 'smooth' });
+                                                              }}
+                                                              className="px-1.5 py-0.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded text-[8px] font-black uppercase cursor-pointer border-none"
+                                                            >
+                                                              Edit
+                                                            </button>
+                                                            <button
+                                                              type="button"
+                                                              onClick={() => {
+                                                                setResourceVocabEntries(resourceVocabEntries.filter((_, i) => i !== actualIdx));
+                                                                if (editingVocabIdx === actualIdx) {
+                                                                  setEditingVocabIdx(null);
+                                                                  setVocabEntryWord('');
+                                                                  setVocabEntryPron('');
+                                                                  setVocabEntryTrans('');
+                                                                  setVocabEntryMeaning('');
+                                                                }
+                                                              }}
+                                                              className="px-1.5 py-0.5 bg-red-50 hover:bg-red-100 text-red-500 rounded text-[8px] font-black uppercase cursor-pointer border-none"
+                                                            >
+                                                              Delete
+                                                            </button>
+                                                          </div>
+                                                        </div>
+                                                      );
+                                                    });
+                                                  })()}
+                                                </div>
+                                              )}
+                                            </div>
+
+                                            {/* Category 2: Complete Sentence List */}
+                                            <div className="bg-white border border-gray-200/80 rounded-xl overflow-hidden shadow-3xs">
+                                              <div 
+                                                onClick={() => setExpandedOverviewSections(prev => ({ ...prev, sentence: !prev.sentence }))}
+                                                className="px-3 py-2 bg-slate-50 border-b border-gray-150 flex items-center justify-between cursor-pointer select-none hover:bg-slate-100/70"
+                                              >
+                                                <div className="flex items-center gap-1.5">
+                                                  <span className="text-[10.5px]">💬</span>
+                                                  <span className="text-[9.5px] font-sans font-black text-slate-700 uppercase tracking-wide">
+                                                    Complete Sentences
+                                                  </span>
+                                                  <span className="text-[8px] font-black font-sans px-1.5 py-0.2 bg-violet-100 text-brand-purple rounded">
+                                                    {resourceSentenceEntries.filter(item => !(item.prefix || item.middle || item.suffix)).length} items
+                                                  </span>
+                                                </div>
+                                                <span className="text-[10px] text-slate-400 font-black">
+                                                  {expandedOverviewSections.sentence ? '▼' : '▶'}
+                                                </span>
+                                              </div>
+
+                                              {expandedOverviewSections.sentence && (
+                                                <div className="p-2.5 max-h-[180px] overflow-y-auto divide-y divide-slate-100 text-[9px] animate-fade-in text-left">
+                                                  {(() => {
+                                                    const query = builderSearchQuery.toLowerCase().trim();
+                                                    const filtered = resourceSentenceEntries
+                                                      .filter(item => !(item.prefix || item.middle || item.suffix))
+                                                      .filter(item => 
+                                                        item.sentence.toLowerCase().includes(query) ||
+                                                        (item.transcription || '').toLowerCase().includes(query) ||
+                                                        item.translation.toLowerCase().includes(query)
+                                                      );
+
+                                                    if (filtered.length === 0) {
+                                                      return (
+                                                        <div className="text-center py-4 text-slate-455 font-medium">
+                                                          {builderSearchQuery ? 'No matching sentences' : 'No complete sentences added yet'}
+                                                        </div>
+                                                      );
+                                                    }
+
+                                                    return filtered.map((item, idx) => {
+                                                      const actualIdx = resourceSentenceEntries.indexOf(item);
+                                                      return (
+                                                        <div key={idx} className="py-2 flex items-center justify-between gap-2 group hover:bg-slate-50/50 px-1">
+                                                          <div>
+                                                            <span className="font-bold text-slate-800 text-[10px]">{item.sentence}</span>{' '}
+                                                            <span className="text-slate-450 font-mono">({item.transcription})</span>{' '}
+                                                            <span className="text-brand-purple font-bold">→ {item.translation}</span>
+                                                          </div>
+                                                          <div className="flex items-center gap-1.5">
+                                                            <button
+                                                              type="button"
+                                                              onClick={() => {
+                                                                setResourceSubTab('sentence');
+                                                                setEditingSentenceIdx(actualIdx);
+                                                                setSentenceEntryText(item.sentence);
+                                                                setSentenceEntryPrefix('');
+                                                                setSentenceEntryMiddle('');
+                                                                setSentenceEntrySuffix('');
+                                                                setSentenceEntryPron(item.transcription || '');
+                                                                setSentenceEntryTrans(item.translation);
+                                                                document.getElementById("admin-resource-form-section")?.scrollIntoView({ behavior: 'smooth' });
+                                                              }}
+                                                              className="px-1.5 py-0.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded text-[8px] font-black uppercase cursor-pointer border-none"
+                                                            >
+                                                              Edit
+                                                            </button>
+                                                            <button
+                                                              type="button"
+                                                              onClick={() => {
+                                                                setResourceSentenceEntries(resourceSentenceEntries.filter((_, i) => i !== actualIdx));
+                                                                if (editingSentenceIdx === actualIdx) {
+                                                                  setEditingSentenceIdx(null);
+                                                                  setSentenceEntryText('');
+                                                                  setSentenceEntryPrefix('');
+                                                                  setSentenceEntryMiddle('');
+                                                                  setSentenceEntrySuffix('');
+                                                                  setSentenceEntryPron('');
+                                                                  setSentenceEntryTrans('');
+                                                                }
+                                                              }}
+                                                              className="px-1.5 py-0.5 bg-red-50 hover:bg-red-100 text-red-500 rounded text-[8px] font-black uppercase cursor-pointer border-none"
+                                                            >
+                                                              Delete
+                                                            </button>
+                                                          </div>
+                                                        </div>
+                                                      );
+                                                    });
+                                                  })()}
+                                                </div>
+                                              )}
+                                            </div>
+
+                                            {/* Category 2.5: Grammar Structures & Diagrams List */}
+                                            <div className="bg-white border border-gray-200/80 rounded-xl overflow-hidden shadow-3xs">
+                                              <div 
+                                                onClick={() => setExpandedOverviewSections(prev => ({ ...prev, grammar: !prev.grammar }))}
+                                                className="px-3 py-2 bg-slate-50 border-b border-gray-150 flex items-center justify-between cursor-pointer select-none hover:bg-slate-100/70"
+                                              >
+                                                <div className="flex items-center gap-1.5">
+                                                  <span className="text-[10.5px]">🧩</span>
+                                                  <span className="text-[9.5px] font-sans font-black text-slate-700 uppercase tracking-wide">
+                                                    Grammar Structures & Diagrams
+                                                  </span>
+                                                  <span className="text-[8px] font-black font-sans px-1.5 py-0.2 bg-violet-100 text-brand-purple rounded">
+                                                    {resourceSentenceEntries.filter(item => !!(item.prefix || item.middle || item.suffix)).length} items
+                                                  </span>
+                                                </div>
+                                                <span className="text-[10px] text-slate-400 font-black">
+                                                  {expandedOverviewSections.grammar ? '▼' : '▶'}
+                                                </span>
+                                              </div>
+
+                                              {expandedOverviewSections.grammar && (
+                                                <div className="p-2.5 max-h-[180px] overflow-y-auto divide-y divide-slate-100 text-[9px] animate-fade-in text-left">
+                                                  {(() => {
+                                                    const query = builderSearchQuery.toLowerCase().trim();
+                                                    const filtered = resourceSentenceEntries
+                                                      .filter(item => !!(item.prefix || item.middle || item.suffix))
+                                                      .filter(item => 
+                                                        item.sentence.toLowerCase().includes(query) ||
+                                                        (item.prefix || '').toLowerCase().includes(query) ||
+                                                        (item.middle || '').toLowerCase().includes(query) ||
+                                                        (item.suffix || '').toLowerCase().includes(query) ||
+                                                        (item.transcription || '').toLowerCase().includes(query) ||
+                                                        item.translation.toLowerCase().includes(query)
+                                                      );
+
+                                                    if (filtered.length === 0) {
+                                                      return (
+                                                        <div className="text-center py-4 text-slate-455 font-medium">
+                                                          {builderSearchQuery ? 'No matching grammar structures' : 'No grammar structures added yet'}
+                                                        </div>
+                                                      );
+                                                    }
+
+                                                    return filtered.map((item, idx) => {
+                                                      const actualIdx = resourceSentenceEntries.indexOf(item);
+                                                      return (
+                                                        <div key={idx} className="py-2 flex items-center justify-between gap-2 group hover:bg-slate-50/50 px-1">
+                                                          <div>
+                                                            <span className="font-sans font-bold text-slate-800 text-[10px]">
+                                                              {item.prefix && <span className="text-slate-400 font-normal mr-0.5">{item.prefix}</span>}
+                                                              {item.middle && <span className="text-pink-600 bg-pink-50 border border-pink-100 px-1.5 py-0.5 rounded font-black">{item.middle}</span>}
+                                                              {item.suffix && <span className="text-slate-400 font-normal ml-0.5">{item.suffix}</span>}
+                                                            </span>{' '}
+                                                            <span className="text-slate-450 font-mono">({item.transcription})</span>{' '}
+                                                            <span className="text-brand-purple font-bold">→ {item.translation}</span>
+                                                          </div>
+                                                          <div className="flex items-center gap-1.5">
+                                                            <button
+                                                              type="button"
+                                                              onClick={() => {
+                                                                setResourceSubTab('sentence');
+                                                                setEditingSentenceIdx(actualIdx);
+                                                                setSentenceEntryText(item.sentence);
+                                                                setSentenceEntryPrefix(item.prefix || '');
+                                                                setSentenceEntryMiddle(item.middle || '');
+                                                                setSentenceEntrySuffix(item.suffix || '');
+                                                                setSentenceEntryPron(item.transcription || '');
+                                                                setSentenceEntryTrans(item.translation);
+                                                                document.getElementById("admin-resource-form-section")?.scrollIntoView({ behavior: 'smooth' });
+                                                              }}
+                                                              className="px-1.5 py-0.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded text-[8px] font-black uppercase cursor-pointer border-none"
+                                                            >
+                                                              Edit
+                                                            </button>
+                                                            <button
+                                                              type="button"
+                                                              onClick={() => {
+                                                                setResourceSentenceEntries(resourceSentenceEntries.filter((_, i) => i !== actualIdx));
+                                                                if (editingSentenceIdx === actualIdx) {
+                                                                  setEditingSentenceIdx(null);
+                                                                  setSentenceEntryText('');
+                                                                  setSentenceEntryPrefix('');
+                                                                  setSentenceEntryMiddle('');
+                                                                  setSentenceEntrySuffix('');
+                                                                  setSentenceEntryPron('');
+                                                                  setSentenceEntryTrans('');
+                                                                }
+                                                              }}
+                                                              className="px-1.5 py-0.5 bg-red-50 hover:bg-red-100 text-red-500 rounded text-[8px] font-black uppercase cursor-pointer border-none"
+                                                            >
+                                                              Delete
+                                                            </button>
+                                                          </div>
+                                                        </div>
+                                                      );
+                                                    });
+                                                  })()}
+                                                </div>
+                                              )}
+                                            </div>
+
+                                            {/* Category 3: Dialogue List */}
+                                            <div className="bg-white border border-gray-200/80 rounded-xl overflow-hidden shadow-3xs">
+                                              <div 
+                                                onClick={() => setExpandedOverviewSections(prev => ({ ...prev, dialogue: !prev.dialogue }))}
+                                                className="px-3 py-2 bg-slate-50 border-b border-gray-150 flex items-center justify-between cursor-pointer select-none hover:bg-slate-100/70"
+                                              >
+                                                <div className="flex items-center gap-1.5">
+                                                  <span className="text-[10.5px]">👥</span>
+                                                  <span className="text-[9.5px] font-sans font-black text-slate-700 uppercase tracking-wide">
+                                                    Conversational Dialogues
+                                                  </span>
+                                                  <span className="text-[8px] font-black font-sans px-1.5 py-0.2 bg-violet-100 text-brand-purple rounded">
+                                                    {resourceDialogueEntries.length} items
+                                                  </span>
+                                                </div>
+                                                <span className="text-[10px] text-slate-400 font-black">
+                                                  {expandedOverviewSections.dialogue ? '▼' : '▶'}
+                                                </span>
+                                              </div>
+
+                                              {expandedOverviewSections.dialogue && (
+                                                <div className="p-2.5 max-h-[180px] overflow-y-auto divide-y divide-slate-100 text-[9px] animate-fade-in text-left">
+                                                  {(() => {
+                                                    const query = builderSearchQuery.toLowerCase().trim();
+                                                    const filtered = resourceDialogueEntries.filter(item => 
+                                                      item.speaker.toLowerCase().includes(query) ||
+                                                      item.text.toLowerCase().includes(query) ||
+                                                      (item.transcription || '').toLowerCase().includes(query) ||
+                                                      item.translation.toLowerCase().includes(query)
+                                                    );
+
+                                                    if (filtered.length === 0) {
+                                                      return (
+                                                        <div className="text-center py-4 text-slate-455 font-medium">
+                                                          {builderSearchQuery ? 'No matching dialogue lines' : 'No dialogue lines added yet'}
+                                                        </div>
+                                                      );
+                                                    }
+
+                                                    return filtered.map((item, idx) => {
+                                                      const actualIdx = resourceDialogueEntries.indexOf(item);
+                                                      return (
+                                                        <div key={idx} className="py-2 flex items-center justify-between gap-2 group hover:bg-slate-50/50 px-1">
+                                                          <div>
+                                                            <span className="font-extrabold text-slate-800 text-[10px]">{item.speaker}:</span>{' '}
+                                                            <span className="font-semibold text-slate-700">{item.text}</span>{' '}
+                                                            <span className="text-slate-400 font-mono">({item.transcription})</span>{' '}
+                                                            <span className="text-brand-purple font-bold">→ {item.translation}</span>
+                                                          </div>
+                                                          <div className="flex items-center gap-1.5">
+                                                            <button
+                                                              type="button"
+                                                              onClick={() => {
+                                                                setResourceSubTab('dialogue');
+                                                                setEditingDialogueIdx(actualIdx);
+                                                                setDialogueEntrySpeaker(item.speaker);
+                                                                setDialogueEntryText(item.text);
+                                                                setDialogueEntryPron(item.transcription || '');
+                                                                setDialogueEntryTrans(item.translation);
+                                                                document.getElementById("admin-resource-form-section")?.scrollIntoView({ behavior: 'smooth' });
+                                                              }}
+                                                              className="px-1.5 py-0.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded text-[8px] font-black uppercase cursor-pointer border-none"
+                                                            >
+                                                              Edit
+                                                            </button>
+                                                            <button
+                                                              type="button"
+                                                              onClick={() => {
+                                                                setResourceDialogueEntries(resourceDialogueEntries.filter((_, i) => i !== actualIdx));
+                                                                if (editingDialogueIdx === actualIdx) {
+                                                                  setEditingDialogueIdx(null);
+                                                                  setDialogueEntrySpeaker('');
+                                                                  setDialogueEntryText('');
+                                                                  setDialogueEntryPron('');
+                                                                  setDialogueEntryTrans('');
+                                                                }
+                                                              }}
+                                                              className="px-1.5 py-0.5 bg-red-50 hover:bg-red-100 text-red-500 rounded text-[8px] font-black uppercase cursor-pointer border-none"
+                                                            >
+                                                              Delete
+                                                            </button>
+                                                          </div>
+                                                        </div>
+                                                      );
+                                                    });
+                                                  })()}
+                                                </div>
+                                              )}
+                                            </div>
+
+                                            {/* Category 4: Conversation Block List */}
+                                            <div className="bg-white border border-gray-200/80 rounded-xl overflow-hidden shadow-3xs">
+                                              <div 
+                                                onClick={() => setExpandedOverviewSections(prev => ({ ...prev, conversation: !prev.conversation }))}
+                                                className="px-3 py-2 bg-slate-50 border-b border-gray-150 flex items-center justify-between cursor-pointer select-none hover:bg-slate-100/70"
+                                              >
+                                                <div className="flex items-center gap-1.5">
+                                                  <span className="text-[10.5px]">📖</span>
+                                                  <span className="text-[9.5px] font-sans font-black text-slate-700 uppercase tracking-wide">
+                                                    Reading Stories & Paragraphs (Conv)
+                                                  </span>
+                                                  <span className="text-[8px] font-black font-sans px-1.5 py-0.2 bg-violet-100 text-brand-purple rounded">
+                                                    {resourceConversationEntries.length} items
+                                                  </span>
+                                                </div>
+                                                <span className="text-[10px] text-slate-400 font-black">
+                                                  {expandedOverviewSections.conversation ? '▼' : '▶'}
+                                                </span>
+                                              </div>
+
+                                              {expandedOverviewSections.conversation && (
+                                                <div className="p-2.5 max-h-[180px] overflow-y-auto divide-y divide-slate-100 text-[9px] animate-fade-in text-left">
+                                                  {(() => {
+                                                    const query = builderSearchQuery.toLowerCase().trim();
+                                                    const filtered = resourceConversationEntries.filter(item => 
+                                                      item.title.toLowerCase().includes(query) ||
+                                                      item.content.toLowerCase().includes(query) ||
+                                                      (item.transcription || '').toLowerCase().includes(query) ||
+                                                      item.translation.toLowerCase().includes(query)
+                                                    );
+
+                                                    if (filtered.length === 0) {
+                                                      return (
+                                                        <div className="text-center py-4 text-slate-455 font-medium">
+                                                          {builderSearchQuery ? 'No matching conversation blocks' : 'No conversation blocks added yet'}
+                                                        </div>
+                                                      );
+                                                    }
+
+                                                    return filtered.map((item, idx) => {
+                                                      const actualIdx = resourceConversationEntries.indexOf(item);
+                                                      return (
+                                                        <div key={idx} className="py-2.5 flex flex-col gap-1 hover:bg-slate-50/50 px-1">
+                                                          <div className="flex items-center justify-between">
+                                                            <span className="font-extrabold text-brand-purple uppercase text-[8px]">Title: {item.title}</span>
+                                                            <div className="flex items-center gap-1.5">
+                                                              <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                  setResourceSubTab('conversation');
+                                                                  setEditingConversationIdx(actualIdx);
+                                                                  setConversationEntryTitle(item.title);
+                                                                  setConversationEntryContent(item.content);
+                                                                  setConversationEntryPron(item.transcription || '');
+                                                                  setConversationEntryTrans(item.translation);
+                                                                  document.getElementById("admin-resource-form-section")?.scrollIntoView({ behavior: 'smooth' });
+                                                                }}
+                                                                className="px-1.5 py-0.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded text-[8px] font-black uppercase cursor-pointer border-none"
+                                                              >
+                                                                Edit
+                                                              </button>
+                                                              <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                  setResourceConversationEntries(resourceConversationEntries.filter((_, i) => i !== actualIdx));
+                                                                  if (editingConversationIdx === actualIdx) {
+                                                                    setEditingConversationIdx(null);
+                                                                    setConversationEntryTitle('');
+                                                                    setConversationEntryContent('');
+                                                                    setConversationEntryPron('');
+                                                                    setConversationEntryTrans('');
+                                                                  }
+                                                                }}
+                                                                className="px-1.5 py-0.5 bg-red-50 hover:bg-red-100 text-red-500 rounded text-[8px] font-black uppercase cursor-pointer border-none"
+                                                              >
+                                                                Delete
+                                                              </button>
+                                                            </div>
+                                                          </div>
+                                                          <div>
+                                                            <p className="font-semibold text-slate-850 text-[10px] leading-snug">{item.content}</p>
+                                                            {item.transcription && <p className="text-slate-400 mt-0.5 font-mono text-[8px]">({item.transcription})</p>}
+                                                            <p className="text-[#5a3194] mt-0.5 font-semibold">→ {item.translation}</p>
+                                                          </div>
+                                                        </div>
+                                                      );
+                                                    });
+                                                  })()}
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
                                       </div>
 
                                       
@@ -11183,10 +11696,10 @@ startxref
                     <div>
                       <h4 className="font-sans font-black text-brand-dark text-sm uppercase tracking-wide flex items-center gap-1.5 text-brand-purple">
                         <BookOpen className="w-4 h-4 shrink-0 text-brand-purple" />
-                        📚 Curriculum & Lesson Database Manager • သင်ရိုးညွှန်းတမ်း တည်းဖြတ်ခြင်း
+                        📚 Resource & eBook Lesson Database Manager • အရင်းအမြစ်နှင့် အီးဘုခ် သင်ခန်းစာများ ပြင်ဆင်ရန်
                       </h4>
                       <p className="text-[10px] font-sans font-bold text-brand-muted mt-1">
-                        Add, delete or modify metadata, vocabularies, sentences, grammars, and quizzes for all lessons. All edits persist instantly.
+                        Add, delete or modify metadata, vocabularies, sentences, grammars, and quizzes for eBooks and Resource lists. All edits persist instantly.
                       </p>
                     </div>
 
@@ -11196,7 +11709,7 @@ startxref
                           const nextId = lessons.length > 0 ? Math.max(...lessons.map(l => l.id)) + 1 : 1;
                           const newLesson: Lesson = {
                             id: nextId,
-                            courseId: adminCurriculumCourseFilter !== 'all' ? adminCurriculumCourseFilter : 'course-basic',
+                            courseId: adminCurriculumCourseFilter !== 'all' ? adminCurriculumCourseFilter : 'course-workspace',
                             titleThai: "บทเรียนใหม่",
                             titlePhonetic: "Bot-riian mai",
                             titleEnglish: "New Custom Lesson " + nextId,
@@ -11552,7 +12065,7 @@ startxref
                   <div className="p-3 bg-brand-purple/[0.03] rounded-xl border border-brand-purple/15 flex flex-col sm:flex-row items-center gap-3">
                     <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                       <label className="text-[10px] font-sans font-black text-brand-purple uppercase tracking-wider shrink-0 flex items-center gap-1">
-                        Filter Lessons by Course:
+                        Filter Lessons by Resources & eBooks:
                       </label>
                       <select
                         value={adminCurriculumCourseFilter}
@@ -11563,18 +12076,26 @@ startxref
                         }}
                         className="bg-white border-2 border-brand-purple/20 px-3 py-1.5 rounded-lg text-xs font-black font-sans text-brand-purple focus:border-brand-purple focus:outline-none cursor-pointer"
                       >
-                        <option value="all">⚡ ALL COURSES (သင်တန်းအားလုံး)</option>
+                        <option value="all">⚡ ALL RESOURCES & EBOOKS (အရင်းအမြစ်နှင့် အီးဘုခ်အားလုံး)</option>
                         {courses
-                          .filter(c => c.id !== 'course-workspace' && c.id !== 'course-somchai-grammar')
-                          .map(c => (
-                          <option key={c.id} value={c.id}>
-                            🎓 {c.name}
-                          </option>
-                        ))}
+                          .filter(c => c.id === 'course-workspace' || c.id === 'course-somchai-grammar')
+                          .map(c => {
+                            let displayName = c.name;
+                            if (c.id === 'course-workspace') {
+                              displayName = '📚 Resources & Workspaces (အရင်းအမြစ်များ)';
+                            } else if (c.id === 'course-somchai-grammar') {
+                              displayName = '📕 eBooks & Grammar (အီးဘုခ်များ)';
+                            }
+                            return (
+                              <option key={c.id} value={c.id}>
+                                {displayName}
+                              </option>
+                            );
+                          })}
                       </select>
                     </div>
                     <div className="text-[9.5px] font-sans font-semibold text-brand-muted sm:ml-auto">
-                      Only displays lessons matching the selected course filter above.
+                      Only displays lessons matching the selected resource/eBook filter above.
                     </div>
                   </div>
 
@@ -11602,11 +12123,13 @@ startxref
                         className="bg-white border-2 border-gray-200 px-3 py-1.5 rounded-lg text-xs font-bold font-sans text-brand-dark focus:border-brand-purple focus:outline-none cursor-pointer"
                       >
                         <option value="">-- Choose a Lesson --</option>
-                        <optgroup label="📖 SYLLABUS LESSONS (သင်ခန်းစာများ)">
+                        <optgroup label="📖 EBOOK & RESOURCE LESSONS (အီးဘုခ်နှင့် အရင်းအမြစ် သင်ခန်းစာများ)">
                           {lessons
                             .filter(l => {
-                              if (adminCurriculumCourseFilter === 'all') return true;
                               const lessonCourseId = l.courseId || 'course-basic';
+                              if (adminCurriculumCourseFilter === 'all') {
+                                return lessonCourseId === 'course-workspace' || lessonCourseId === 'course-somchai-grammar';
+                              }
                               return lessonCourseId === adminCurriculumCourseFilter;
                             })
                             .map(l => (
@@ -12215,19 +12738,27 @@ startxref
                                   />
                                 </div>
                                 <div className="space-y-1.5 md:col-span-2">
-                                  <label className="block text-[10px] font-sans font-black text-brand-purple uppercase tracking-wider">Assigned Language Course</label>
+                                  <label className="block text-[10px] font-sans font-black text-brand-purple uppercase tracking-wider">Assigned Resource / eBook Track</label>
                                   <select
-                                    value={selectedLesson.courseId || 'course-basic'}
+                                    value={selectedLesson.courseId || 'course-workspace'}
                                     onChange={(e) => updateLessonField(selectedLesson.id, 'courseId', e.target.value)}
                                     className="w-full px-3 py-2 border-2 border-brand-purple/20 rounded-lg text-xs font-black font-sans text-brand-purple focus:border-brand-purple focus:outline-none cursor-pointer bg-white"
                                   >
                                     {courses
-                                      .filter(c => c.id !== 'course-workspace' && c.id !== 'course-somchai-grammar')
-                                      .map(c => (
-                                      <option key={c.id} value={c.id}>
-                                        🎓 {c.name} ({c.id})
-                                      </option>
-                                    ))}
+                                      .filter(c => c.id === 'course-workspace' || c.id === 'course-somchai-grammar')
+                                      .map(c => {
+                                        let displayName = c.name;
+                                        if (c.id === 'course-workspace') {
+                                          displayName = '📚 Resources & Workspaces (အရင်းအမြစ်များ)';
+                                        } else if (c.id === 'course-somchai-grammar') {
+                                          displayName = '📕 eBooks & Grammar (အီးဘုခ်များ)';
+                                        }
+                                        return (
+                                          <option key={c.id} value={c.id}>
+                                            🎓 {displayName} ({c.id})
+                                          </option>
+                                        );
+                                      })}
                                   </select>
                                 </div>
                               </div>
