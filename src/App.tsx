@@ -736,7 +736,33 @@ export default function App() {
                 prefix: "ภาษาไทย",
                 middle: "มีโครงสร้างประโยค",
                 suffix: "คล้ายภาษาพม่า"
-              }
+              },
+              { sentence: "จะกิน", transcription: "ca' kin (ကျကင်း-န်)", translation: "စားမယ်။", prefix: "จะ", middle: "กิน", suffix: "" },
+              { sentence: "จะทำ", transcription: "ca' tham (ကျသမ်)", translation: "လုပ်မယ်။", prefix: "จะ", middle: "ทำ", suffix: "" },
+              { sentence: "จะไป", transcription: "ca' bpai (ကျပိုင်း)", translation: "သွားမယ်။", prefix: "จะ", middle: "ไป", suffix: "" },
+              { sentence: "จะมา", transcription: "ca' maa (ကျဟား)", translation: "လာမယ်။", prefix: "จะ", middle: "มา", suffix: "" },
+              { sentence: "จะนอน", transcription: "ca' nɔɔn (ကျနော-န်)", translation: "အိပ်မယ်။", prefix: "จะ", middle: "นอน", suffix: "" },
+              { sentence: "จะเดิน", transcription: "ca' dəən (ကျဒေး-န်)", translation: "လမ်းလျှောက်မယ်။", prefix: "จะ", middle: "เดิน", suffix: "" },
+              { sentence: "จะเห็น", transcription: "ca' hěn (ကျဟင်-န်)", translation: "မြင်မယ်။", prefix: "จะ", middle: "เห็น", suffix: "" },
+              { sentence: "จะชอบ", transcription: "ca' chɔ̂ɔp (ကျချော့-ပ်)", translation: "ကြိုက်မယ်။", prefix: "จะ", middle: "ชอบ", suffix: "" },
+              { sentence: "จะให้", transcription: "ca' hâi (ကျဟိုက်)", translation: "ပေးမယ်။", prefix: "จะ", middle: "ให้", suffix: "" },
+              { sentence: "จะเอา", transcription: "ca' ao (ကျအောင်း-ပ်)", translation: "ယူမယ်။", prefix: "จะ", middle: "เอา", suffix: "" },
+              { sentence: "จะรัก", transcription: "ca' rák (ကျရတ်-က်)", translation: "ချစ်မယ်။", prefix: "จะ", middle: "รัก", suffix: "" },
+              { sentence: "จะซื้อ", transcription: "ca' sʉ́ʉ (ကျစုး)", translation: "ဝယ်မယ်။", prefix: "จะ", middle: "ซื้อ", suffix: "" },
+              { sentence: "จะขาย", transcription: "ca' khǎaj (ကျခိုင်း)", translation: "ရောင်းမယ်။", prefix: "จะ", middle: "ขาย", suffix: "" },
+              { sentence: "จะใช้", transcription: "ca' cháaj (ကျချိုင်း)", translation: "သုံးမယ်။", prefix: "จะ", middle: "ใช้", suffix: "" },
+              { sentence: "จะทำงาน", transcription: "ca' tham-ngaan (ကျထမ်းငါး-န်)", translation: "အလုပ်လုပ်မယ်။", prefix: "จะ", middle: "ทำงาน", suffix: "" },
+              { sentence: "จะทำ", transcription: "cà' tham (ကျသမ်)", translation: "လုပ်မည်", prefix: "จะ", middle: "ทำ", suffix: "" },
+              { sentence: "อาจจะทำก็", transcription: "àat cà' tham kɔ̂ (อာတ်ကျသမ်ကော)", translation: "လုပ်ကောင်းလုပ်မည်", prefix: "อาจจะ", middle: "ทำ", suffix: "ก็" },
+              { sentence: "กำลังจะทำอยู่", transcription: "kam-laŋ cà' tham jùu (ကမ်လန်းကျသမ်ယူ)", translation: "လုပ်တော့မည်", prefix: "กำลังจะ", middle: "ทำ", suffix: "อยู่" },
+              { sentence: "ควรจะทำก็", transcription: "khuuan cà' tham kɔ̂ (ခူဝမ်ကျသမ်ကော)", translation: "လုပ်သင့်သည်", prefix: "ควรจะ", middle: "ทำ", suffix: "ก็" },
+              { sentence: "ต้องทำก็", transcription: "dtɔ̂ŋ tham kɔ̂ (တောင်သမ်ကော)", translation: "လုပ်ရမည်", prefix: "ต้อง", middle: "ทำ", suffix: "ก็" },
+              { sentence: "อยากทำก็", transcription: "jàak tham kɔ̂ (ယာတ်သမ်ကော)", translation: "လုပ်ချင်သည်", prefix: "อยาก", middle: "ทำ", suffix: "ก็" },
+              { sentence: "อย่าทำ", transcription: "jàa tham (ယာသမ်)", translation: "မလုပ်နှင့်", prefix: "อย่า", middle: "ทำ", suffix: "" },
+              { sentence: "ไม่ต้องทำ", transcription: "mâj dtɔ̂ŋ tham (မိုင်တောင်သမ်)", translation: "မလုပ်ရ", prefix: "ไม่ต้อง", middle: "ทำ", suffix: "" },
+              { sentence: "ไม่ควรทำก็", transcription: "mâj khuuan tham kɔ̂ (မိုင်ခူဝမ်သမ်ကော)", translation: "မလုပ်သင့်", prefix: "ไม่ควร", middle: "ทำ", suffix: "ก็" },
+              { sentence: "ไม่ต้องทำก็", transcription: "mâj dtɔ̂ŋ tham kɔ̂ (မိုင်တောင်သမ်ကော)", translation: "မလုပ်ရ", prefix: "ไม่ต้อง", middle: "ทำ", suffix: "ก็" },
+              { sentence: "ไม่เอาทำก็", transcription: "mâj aw tham kɔ̂ (မိုင်အောင်းသမ်ကော)", translation: "မလုပ်ချင်", prefix: "ไม่เอา", middle: "ทำ", suffix: "ก็" }
             ],
             dialogueEntries: [
               {
@@ -856,6 +882,63 @@ export default function App() {
         return { ...res, sentenceEntries: updatedSentences };
       });
       return { ...course, resources: updatedResources };
+    });
+
+    // Ensure Som Chai resource has all two pages of grammar items
+    loadedCourses = loadedCourses.map((course: any) => {
+      if (course.id === 'course-somchai-grammar' && course.resources) {
+        const updatedResources = course.resources.map((res: any) => {
+          if (res.id === 'res-somchai-grammar-book') {
+            const hasPage13 = (res.sentenceEntries || []).some((sent: any) => sent.sentence === 'จะกิน');
+            if (!hasPage13) {
+              migrationRequired = true;
+              const somChaiPage13Entries = [
+                // 15 Will + Verb items
+                { sentence: "จะกิน", transcription: "ca' kin (ကျကင်း-န်)", translation: "စားမယ်။", prefix: "จะ", middle: "กิน", suffix: "" },
+                { sentence: "จะทำ", transcription: "ca' tham (ကျသမ်)", translation: "လုပ်မယ်။", prefix: "จะ", middle: "ทำ", suffix: "" },
+                { sentence: "จะไป", transcription: "ca' bpai (ကျပိုင်း)", translation: "သွားမယ်။", prefix: "จะ", middle: "ไป", suffix: "" },
+                { sentence: "จะมา", transcription: "ca' maa (ကျဟား)", translation: "လာမယ်။", prefix: "จะ", middle: "มา", suffix: "" },
+                { sentence: "จะนอน", transcription: "ca' nɔɔn (ကျနော-န်)", translation: "အိပ်မယ်။", prefix: "จะ", middle: "นอน", suffix: "" },
+                { sentence: "จะเดิน", transcription: "ca' dəən (ကျဒေး-န်)", translation: "လမ်းလျှောက်မယ်။", prefix: "จะ", middle: "เดิน", suffix: "" },
+                { sentence: "จะเห็น", transcription: "ca' hěn (ကျဟင်-န်)", translation: "မြင်မယ်။", prefix: "จะ", middle: "เห็น", suffix: "" },
+                { sentence: "จะชอบ", transcription: "ca' chɔ̂ɔp (ကျချော့-ပ်)", translation: "ကြိုက်မယ်။", prefix: "จะ", middle: "ชอบ", suffix: "" },
+                { sentence: "จะให้", transcription: "ca' hâi (ကျဟိုက်)", translation: "ပေးမယ်။", prefix: "จะ", middle: "ให้", suffix: "" },
+                { sentence: "จะเอา", transcription: "ca' ao (ကျအောင်း-ပ်)", translation: "ယူမယ်။", prefix: "จะ", middle: "เอา", suffix: "" },
+                { sentence: "จะรัก", transcription: "ca' rák (ကျရတ်-က်)", translation: "ချစ်မယ်။", prefix: "จะ", middle: "รัก", suffix: "" },
+                { sentence: "จะซื้อ", transcription: "ca' sʉ́ʉ (ကျစုး)", translation: "ဝယ်မယ်။", prefix: "จะ", middle: "ซื้อ", suffix: "" },
+                { sentence: "จะขาย", transcription: "ca' khǎaj (ကျခိုင်း)", translation: "ရောင်းမယ်။", prefix: "จะ", middle: "ขาย", suffix: "" },
+                { sentence: "จะใช้", transcription: "ca' cháaj (ကျချိုင်း)", translation: "သုံးမယ်။", prefix: "จะ", middle: "ใช้", suffix: "" },
+                { sentence: "จะทำงาน", transcription: "ca' tham-ngaan (ကျထမ်းငါး-န်)", translation: "အလုပ်လုပ်မယ်။", prefix: "จะ", middle: "ทำงาน", suffix: "" },
+
+                // 11 modifiers ending with ทำ
+                { sentence: "จะทำ", transcription: "cà' tham (ကျသမ်)", translation: "လုပ်မည်", prefix: "จะ", middle: "ทำ", suffix: "" },
+                { sentence: "อาจจะทำก็", transcription: "àat cà' tham kɔ̂ (အာတ်ကျသမ်ကော)", translation: "လုပ်ကောင်းလုပ်မည်", prefix: "อาจจะ", middle: "ทำ", suffix: "ก็" },
+                { sentence: "กำลังจะทำอยู่", transcription: "kam-laŋ cà' tham jùu (ကမ်လန်းကျသမ်ယူ)", translation: "လုပ်တော့မည်", prefix: "กำลังจะ", middle: "ทำ", suffix: "อยู่" },
+                { sentence: "ควรจะทำก็", transcription: "khuuan cà' tham kɔ̂ (ခူဝမ်ကျသမ်ကော)", translation: "လုပ်သင့်သည်", prefix: "ควรจะ", middle: "ทำ", suffix: "ก็" },
+                { sentence: "ต้องทำก็", transcription: "dtɔ̂ŋ tham kɔ̂ (တောင်သမ်ကော)", translation: "လုပ်ရမည်", prefix: "ต้อง", middle: "ทำ", suffix: "ก็" },
+                { sentence: "อยากทำก็", transcription: "jàak tham kɔ̂ (ယာတ်သမ်ကော)", translation: "လုပ်ချင်သည်", prefix: "อยาก", middle: "ทำ", suffix: "ก็" },
+                { sentence: "อย่าทำ", transcription: "jàa tham (ယာသမ်)", translation: "မလုပ်နှင့်", prefix: "อย่า", middle: "ทำ", suffix: "" },
+                { sentence: "ไม่ต้องทำ", transcription: "mâj dtɔ̂ŋ tham (မိုင်တောင်သမ်)", translation: "မလုပ်ရ", prefix: "ไม่ต้อง", middle: "ทำ", suffix: "" },
+                { sentence: "ไม่ควรทำก็", transcription: "mâj khuuan tham kɔ̂ (မိုင်ခူဝမ်သမ်ကော)", translation: "မလုပ်သင့်", prefix: "ไม่ควร", middle: "ทำ", suffix: "ก็" },
+                { sentence: "ไม่ต้องทำก็", transcription: "mâj dtɔ̂ŋ tham kɔ̂ (မိုင်တောင်သမ်ကော)", translation: "မလုပ်ရ", prefix: "ไม่ต้อง", middle: "ทำ", suffix: "ก็" },
+                { sentence: "ไม่เอาทำก็", transcription: "mâj aw tham kɔ̂ (မိုင်အောင်းသမ်ကော)", translation: "မလုပ်ချင်", prefix: "ไม่เอา", middle: "ทำ", suffix: "ก็" }
+              ];
+              
+              const currentSentences = res.sentenceEntries || [];
+              const newSentences = [...currentSentences];
+              somChaiPage13Entries.forEach(item => {
+                if (!newSentences.some(s => s.sentence === item.sentence && s.prefix === item.prefix && s.middle === item.middle && s.suffix === item.suffix)) {
+                  newSentences.push(item);
+                }
+              });
+              return { ...res, sentenceEntries: newSentences };
+            }
+          }
+          return res;
+        });
+        return { ...course, resources: updatedResources };
+      }
+      return course;
     });
 
     if (migrationRequired && saved) {
