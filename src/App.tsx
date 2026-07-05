@@ -207,9 +207,9 @@ const getCompanionBookStyles = (id: string, nameStr: string) => {
     emoji: "📘",
     emojiLabel: "EBOOK REFERENCE",
     author: "COMPANION EBOOK",
-    status: "PREMIUM STUDY"
+    status: "PREMIUM EBOOK"
   };
-};
+}
 
 const DEFAULT_STORE_ITEMS: StoreItem[] = [
   {
@@ -218,24 +218,12 @@ const DEFAULT_STORE_ITEMS: StoreItem[] = [
     nameMm: "ဆရာဆွန်လွင် စိတ်ကြိုက် အခြေခံထိုင်းစာအုပ်ပြာ (အသံဖိုင်ပါဝင်သည်)",
     type: "e-book" as const,
     description: "Contains 40 plain-text textbook lessons with audio files. Study Myanmar to Thai translation tables with Myanmar phonetic guidelines.",
-    descriptionMm: "သင်ခန်းစာပေါင်း ၄၀ ပါဝင်သော ဆရာ ဆွန်လွင် ၏ အခြေခံဖတ်စာအုပ်ပြာ (အသံပြည့်စုံစွာပါဝင်သည်)။",
-    price: 18000,
+    descriptionMm: "သင်ခန်းစာ ၄၀ ပါဝင်သော အခြေခံထိုင်းစာအုပ်ဖြစ်ပြီး အသံဖိုင်များလည်း ပါရှိသည်။ မြန်မာဘာသာပြန်နှင့် ဖတ်ရလွယ်ကူသော အသံထွက်လမ်းညွှန်ချက်များ ပါရှိသည်။",
+    price: 25000,
     currency: "MMK" as const,
     popular: true,
-    pdfFileName: "Sayar_Son_Jai_Basic_Thai_BlueBook.pdf"
-  },
-  {
-    id: "premium-book",
-    name: "Advanced Thai-Myanmar Grammar Manual (Printed E-Book)",
-    nameMm: "အဆင့်မြင့် ထိုင်း-မြန်မာ သဒ္ဒါလက်စွဲ စာအုပ် (အီးဘုခ်)",
-    type: "e-book" as const,
-    description: "Deep dive into 45 complex Sentence structures, silent consonants rules, and tone system markers with local audio tracks link.",
-    descriptionMm: "ရှုပ်ထွေးသော ဝါကျတည်ဆောက်ပုံ ၄၅ မျိုး၊ အသံထွက် ခြွင်းချက်ပုံစံများနှင့် အသံနိမ့်မြင့်များ အသေးစိတ်ရှင်းလင်းချက်။",
-    price: 15000,
-    currency: "MMK" as const,
-    popular: true,
-    pdfFileName: "Advanced_Grammar_Manual.pdf",
-    pdfDownloadUrl: "https://drive.google.com/open?id=demo_advanced_grammar"
+    pdfFileName: "Sayar_Son_Jai_Basic_Thai_BlueBook.pdf",
+    pdfDownloadUrl: "https://drive.google.com/open?id=demo_blue_book"
   },
   {
     id: "free-phrases",
@@ -292,44 +280,7 @@ const DEFAULT_STORE_ITEMS: StoreItem[] = [
   }
 ];
 
-export const PREMIUM_COURSES = [
-  {
-    id: "course-basic",
-    name: "Complete Thai Foundational Mastery Course",
-    nameMm: "ထိုင်းစကားပြောနှင့် စာရေးစာဖတ် အခြေခံအထူးတန်းသင်တန်း",
-    priceAmount: 35000,
-    currency: "MMK" as const,
-    duration: "6 Weeks (Self-paced Interactive Training)",
-    description: "Perfect for complete beginners. Cover Thai phonetic consonants, low/mid/high class letters, compound vowels, and tone rules with native audio worksheets and direct conversational practices.",
-    descriptionMm: "ထိုင်းအက္ခရာ လုံးချင်းအသံထွက်များ၊ သရတွဲများနှင့် အသံနိမ့်မြင့်သင်္ကေတစည်းမျဉ်းများကို တစ်သက်တာ ဗီဒီယို သင်ခန်းစာများ စနစ်တကျ သင်ယူလေ့လာနိုင်မည့် အခြေခံအထူးတန်း။",
-    instructor: "Kru Jane (Experienced Native Tutor)",
-    includes: ["20 HD Video Lessons", "Downloadable Exercise Workbook", "Private QA Forum Access"]
-  },
-  {
-    id: "course-business",
-    name: "Advanced Business Thai Speaking & Letters Course",
-    nameMm: "အလုပ်အကိုင်နှင့် စီးပွားရေးသုံး အဆင့်မြင့် ထိုင်းစကားပြောသင်တန်း",
-    priceAmount: 65000,
-    currency: "MMK" as const,
-    duration: "8 Weeks (Structured Learning Tracks)",
-    description: "Best for career professionals, translators, and cross-border business seekers. Master professional business email drafts, complex negotiation terms, formal speech patterns, and custom terminology.",
-    descriptionMm: "စီးပွားရေးညှိနှိုင်းမှုများ၊ ရုံးသုံးစာပေးစာယူများ၊ အင်တာဗျူးပုံစံများနှင့် လုပ်ငန်းခွင်သုံး စကားပြောအဆင့်မြင့်စကားလုံးများကို ကျွမ်းကျင်စွာ ပြောဆိုရေးသားနိုင်ရန် အထူးသင်ရိုး။",
-    instructor: "Kru Jane & Sayar Thura",
-    includes: ["35 Advanced Masterclass Videos", "Professional Letter Templates", "Certificate of Completion"]
-  },
-  {
-    id: "course-consonants-quick",
-    name: "Intensive Thai Consonants & Tones Quick-Crash Course",
-    nameMm: "ထိုင်းဗျည်း ၄၄ လုံးနှင့် အသံတန်ဖိုး အမြန်လေ့လာရေးသင်တန်း",
-    priceAmount: 15000,
-    currency: "MMK" as const,
-    duration: "2 Weeks (High-Intensity Crash Practice)",
-    description: "An intensive training track designed exclusively to master the 44 consonants, 32 vowels, and their complex tone combinations within days using active audio visual memory techniques.",
-    descriptionMm: "ဉာဏ်ရည်မြှင့်နည်းစနစ်များ သုံးစွဲ၍ အသံထွက် အခက်အခဲအရှိဆုံး ထိုင်းဗျည်းစု၊ သရစုများနှင့် အသံဖလှယ်နည်းစနစ်များကို အချိန်တိုအတွင်း ပိုင်နိုင်စေမည့် အမြန်လေ့လာရေးတန်း။",
-    instructor: "Sayar Thura (Senior Thai Linguist)",
-    includes: ["10 Interactive Sprint Videos", "Consonant Tone Memory Map", "Consonants Audio Quizzes"]
-  }
-];
+export const PREMIUM_COURSES: Course[] = [];
 
 const INITIAL_PROGRESS: ProgressState = {
   completedLessons: [],
@@ -342,280 +293,70 @@ const INITIAL_PROGRESS: ProgressState = {
 
 export default function App() {
   const [lessons, setLessons] = useState<Lesson[]>(() => {
-    const saved = localStorage.getItem('thai_lessons_curriculum');
-    let baseLessons = lessonsData;
-    
-    // Process base lessons to distribute across courses and inject premium dialogue learning videos
-    const mappedInitialLessons = baseLessons.map((lesson) => {
-      let courseId = 'course-basic';
-      if (lesson.id >= 11 && lesson.id <= 20) {
-        courseId = 'course-business';
-      } else if (lesson.id >= 21) {
-        courseId = 'course-workspace';
+    const saved = localStorage.getItem('thai_lessons_curriculum_list');
+    const defaultLessons: Lesson[] = lessonsData.map(b => {
+      let courseId = "course-basic";
+      if (b.id >= 11 && b.id <= 20) {
+        courseId = "course-business";
+      } else if (b.id >= 21) {
+        courseId = "course-workspace";
       }
-
       let wholeDialogueVideoUrl: string | undefined = undefined;
-      let dialogue = lesson.dialogue;
-
-      if (courseId === 'course-business') {
-        if (lesson.id <= 15) {
-          // Case: One full video for the whole dialogue practice in this lesson
-          const ytUrls = [
+      let dialogue = b.dialogue;
+      if (courseId === "course-business") {
+        if (b.id <= 15) {
+          const playlist = [
             "https://www.youtube.com/embed/nU2U3B4X2S0",
             "https://www.youtube.com/embed/H7c2n-M8-3E",
             "https://www.youtube.com/embed/SOf-hVsc_yU",
             "https://www.youtube.com/embed/mK9k2tY6SVE",
             "https://www.youtube.com/embed/T6WkCOx4-R8"
           ];
-          wholeDialogueVideoUrl = ytUrls[(lesson.id - 11) % ytUrls.length];
+          wholeDialogueVideoUrl = playlist[(b.id - 11) % playlist.length];
         } else {
-          // Case: Speaker A video and Speaker B video for each dialogue line
-          dialogue = lesson.dialogue.map((line, lineIdx) => {
-            const isSpeakerA = line.speaker.includes('A');
-            // Premium mixkit stock video clips depicting clear close-up speaking loops for native practice
-            const speakerAVideo = "https://assets.mixkit.co/videos/preview/mixkit-woman-explaining-something-during-a-video-call-40030-large.mp4";
-            const speakerBVideo = "https://assets.mixkit.co/videos/preview/mixkit-young-man-having-a-web-conference-40031-large.mp4";
+          dialogue = b.dialogue.map((S, idx) => {
+            const isFemale = S.speaker.includes("A");
             return {
-              ...line,
-              videoUrl: isSpeakerA ? speakerAVideo : speakerBVideo
+              ...S,
+              videoUrl: isFemale 
+                ? "https://assets.mixkit.co/videos/preview/mixkit-woman-explaining-something-during-a-video-call-40030-large.mp4" 
+                : "https://assets.mixkit.co/videos/preview/mixkit-young-man-having-a-web-conference-40031-large.mp4"
             };
           });
         }
-      } else if (courseId === 'course-workspace') {
-        // Also inject a full video for some workplace lessons
-        const ytUrls = [
+      } else if (courseId === "course-workspace") {
+        const playlist = [
           "https://www.youtube.com/embed/sRLO4p_rDss",
           "https://www.youtube.com/embed/YnIdVscH_cE"
         ];
-        wholeDialogueVideoUrl = ytUrls[(lesson.id - 21) % ytUrls.length];
+        wholeDialogueVideoUrl = playlist[(b.id - 21) % playlist.length];
       }
-
-      return {
-        ...lesson,
-        courseId,
-        dialogue,
-        wholeDialogueVideoUrl
-      };
+      return { ...b, courseId, dialogue, wholeDialogueVideoUrl };
     });
-
-    const somChaiLesson: Lesson = {
-      id: 101,
-      courseId: "course-somchai-grammar",
-      titleThai: "ตำราไวยากรณ์ไทยโดยสมชาย",
-      titlePhonetic: "Tam-ra Wai-ya-korn Thai doi Som Chai",
-      titleEnglish: "Som Chai's Grammar Manual & Dialogue Guide",
-      titleMyanmar: "ဆုမ်းချိုင်း၏ သဒ္ဒါနှင့် စကားပြောသင်ခန်းစာ (၁)",
-      descriptionEnglish: "Comprehensive Thai-Myanmar grammar rules, key sentence constructions, vocabulary lists, and polite interactions designed by Som Chai.",
-      descriptionMyanmar: "ဆုမ်းချိုင်း ရေးသားပြုစုထားသော ထိုင်း-မြန်မာ သဒ္ဒါစည်းမျဉ်းများ၊ ဝါကျတည်ဆောက်ပုံများ၊ ဝေါဟာရအသစ်များနှင့် လက်တွေ့ပြောဆိုနိုင်မည့် စကားပြောခန်းများ။",
-      dialogue: [
-        {
-          speaker: "มารวย (Ma Ruay)",
-          thai: "สวัสดีค่ะคุณ สมชาย ยินดีที่ได้รู้จักเช่นกันค่ะ",
-          phonetic: "sa-wat-dee kha khun som-chai yin-dee thee dai ru-jak chen-kan kha",
-          english: "Hello, Mr. Som Chai. Glad to meet you too.",
-          myanmar: "မင်္ဂလာပါ ကိုစုံချိုင်း။ တွေ့ရတာ ဝမ်းသာပါတယ်ရှင်။",
-          words: [
-            { thai: "สวัสดี", phonetic: "sa-wat-dee", english: "Hello", myanmar: "မင်္ဂလာပါ", partOfSpeech: "interjection" },
-            { thai: "ค่ะ", phonetic: "kha", english: "Polite particle (female statement)", myanmar: "ပါ (အမျိုးသမီးသုံး)", partOfSpeech: "particle" },
-            { thai: "คุณ", phonetic: "khun", english: "You / Mr.", myanmar: "လူကြီးမင်း / ကို", partOfSpeech: "pronoun" },
-            { thai: "สมชาย", phonetic: "som-chai", english: "Som Chai (name)", myanmar: "စုံချိုင်း (အမည်)", partOfSpeech: "proper noun" },
-            { thai: "ยินดีที่ได้รู้จัก", phonetic: "yin-dee thee dai ru-jak", english: "Pleased to meet you", myanmar: "တွေ့ရတာဝမ်းသာပါတယ်", partOfSpeech: "phrase" },
-            { thai: "เช่นกัน", phonetic: "chen-kan", english: "Same here / too", myanmar: "လည်းตူตူပါပဲ", partOfSpeech: "adverb" }
-          ]
-        },
-        {
-          speaker: "สมชาย (Som Chai)",
-          thai: "คุณเรียนไวยากรณ์ภาษาไทยมานานหรือยังครับ",
-          phonetic: "khun rian wai-ya-korn pha-sa-thai maa naan rue yang khráp",
-          english: "Have you been studying Thai grammar for a long time?",
-          myanmar: "ထိုင်းဘာသာစကား သဒ္ဒါကို လေ့လာနေတာ ကြာပြီလားခင်ဗျา။",
-          words: [
-            { thai: "คุณ", phonetic: "khun", english: "You", myanmar: "မင်း / သင်", partOfSpeech: "pronoun" },
-            { thai: "เรียน", phonetic: "rian", english: "To study / learn", myanmar: "လေ့လာသည်", partOfSpeech: "verb" },
-            { thai: "ไวยากรณ์", phonetic: "wai-ya-korn", english: "Grammar", myanmar: "သဒ္ဒါ", partOfSpeech: "noun" },
-            { thai: "ภาษาไทย", phonetic: "pha-sa-thai", english: "Thai language", myanmar: "ထိုင်းဘာသာစကား", partOfSpeech: "noun" },
-            { thai: "มานาน", phonetic: "maa naan", english: "For a long time", myanmar: "အကြာကြီး", partOfSpeech: "adverb" },
-            { thai: "หรือยัง", phonetic: "rue yang", english: "Yet? / Or not yet?", myanmar: "ပြီးပြီလား / သေးဘူးလား", partOfSpeech: "particle" },
-            { thai: "ครับ", phonetic: "khráp", english: "Polite particle (male)", myanmar: "ပါခင်ဗျา", partOfSpeech: "particle" }
-          ]
-        },
-        {
-          speaker: "มารวย (Ma Ruay)",
-          thai: "เรียนมาได้สามเดือนแล้วค่ะ แต่ยังมีบางส่วนที่ยังสับสนอยู่ค่ะ",
-          phonetic: "rian maa dai saam duean laew kha, tae yang mee bang suan thee yang sap-son yoo kha",
-          english: "I've been studying for three months, but there are still parts that I'm confused about.",
-          myanmar: "လေ့လာနေတာ ၃ ลရှိပါပြီရှင်။ ဒါပေမယ့် အချို့အပိုင်းတွေမှာတော့ ရောထွေးနေတုန်းပါပဲ။",
-          words: [
-            { thai: "เรียนมาได้", phonetic: "rian maa dai", english: "Have studied for", myanmar: "လေ့လာလာခဲ့တာ", partOfSpeech: "verb" },
-            { thai: "สาม", phonetic: "saam", english: "Three", myanmar: "သုံး", partOfSpeech: "number" },
-            { thai: "เดือน", phonetic: "duean", english: "Months", myanmar: "လ", partOfSpeech: "noun" },
-            { thai: "แล้ว", phonetic: "laew", english: "Already", myanmar: "ပြီးပြီ", partOfSpeech: "adverb" },
-            { thai: "แต่", phonetic: "tae", english: "But", myanmar: "ဒါပေမယ့်", partOfSpeech: "conjunction" },
-            { thai: "ยังมี", phonetic: "yang mee", english: "Still have", myanmar: "ရှိသေးတယ်", partOfSpeech: "verb" },
-            { thai: "บางส่วน", phonetic: "bang suan", english: "Some parts", myanmar: "အချို့အပိုင်း", partOfSpeech: "noun" },
-            { thai: "ที่", phonetic: "thee", english: "That / which", myanmar: "သော / သည့်", partOfSpeech: "pronoun" },
-            { thai: "สับสน", phonetic: "sap-son", english: "Confused", myanmar: "ရှုပ်ထွေးသည် / ရောထွေးသည်", partOfSpeech: "adjective" }
-          ]
-        },
-        {
-          speaker: "สมชาย (Som Chai)",
-          thai: "ไม่ต้องกังวลครับ คู่มือเล่มนี้จะช่วยให้คุณเข้าใจง่ายขึ้นแน่นอนครับ",
-          phonetic: "mai tong kang-won khráp, khoo-mue lem nee ja chuay hai khun khao-jai ngai khuen nae-non khráp",
-          english: "Don't worry. This manual will surely help you understand much easier.",
-          myanmar: "မစိုးရိမ်ပါနဲ့ခင်ဗျา။ ดีလက်สွဲစာအုပ်က သင့်ကို ปိုမိုလွယ်ကူစွာ นားလည်စေဖို့ သေชาပေါက် ကူညီပေးပါလိမ့်မယ်။",
-          words: [
-            { thai: "ไม่ต้อง", phonetic: "mai tong", english: "No need to / don't", myanmar: "မလိုပါဘူး / မ...ပါနဲ့", partOfSpeech: "verb" },
-            { thai: "กังวล", phonetic: "kang-won", english: "Worry", myanmar: "စိုးรိမ်သည်", partOfSpeech: "verb" },
-            { thai: "คู่มือ", phonetic: "khoo-mue", english: "Manual / handbook", myanmar: "လက်စွဲစာအုပ်", partOfSpeech: "noun" },
-            { thai: "เล่มนี้", phonetic: "lem nee", english: "This book", myanmar: "ဒီစာအုပ်", partOfSpeech: "noun" },
-            { thai: "จะ", phonetic: "ja", english: "Will", myanmar: "မည်", partOfSpeech: "particle" },
-            { thai: "ช่วย", phonetic: "chuay", english: "Help", myanmar: "ကူညီသည်", partOfSpeech: "verb" },
-            { thai: "ให้", phonetic: "hai", english: "Make / let", myanmar: "စေသည် / ပေးသည်", partOfSpeech: "verb" },
-            { thai: "เข้าใจ", phonetic: "khao-jai", english: "Understand", myanmar: "နားလည်သည်", partOfSpeech: "verb" },
-            { thai: "ง่ายขึ้น", phonetic: "ngai khuen", english: "Easier", myanmar: "ပိုမိုလွယ်ကူလာသည်", partOfSpeech: "adjective" },
-            { thai: "แน่นอน", phonetic: "nae-non", english: "Sure / absolutely", myanmar: "သေချာပေါက်", partOfSpeech: "adverb" }
-          ]
-        }
-      ],
-      grammarNotes: [
-        {
-          title: "Introduction to Thai Sentence Structure",
-          titleMyanmar: "ထိုင်းဝါကျ တည်ဆောက်ပုံ နိဒါန်း",
-          explanation: "The core sentence structure in Thai is Subject + Verb + Object (SVO), similar to English and Myanmar. E.g., 'I study Thai' where 'I' (ฉัน) is the Subject, 'study' (เรียน) is the Verb, and 'Thai language' (ภาษาไทย) is the Object. There is no verb conjugation for tense.",
-          explanationMyanmar: "အခြေခံဝါကျတည်ဆောက်ပုံမှာ 'ကတ္တား + ကြိယာ + ကံ' (ဥပမာ- 'ကျွန်တော် ထိုင်းစာလေ့လာသည်') ဖြစ်သည်။ ထိုင်းဘာသာစကားသည် အင်္ဂလိပ်စာကဲ့သို့ အချိန်ကာလအလိုက် ကြိယာပုံစံပြောင်းလဲခြင်း မရှိပါ။",
-          examples: [
-            {
-              thai: "ฉันเรียนภาษาไทย",
-              phonetic: "chan rian pha-sa-thai",
-              english: "I study Thai language.",
-              myanmar: "ကျွန်မ ထိုင်းစာ လေ့လာသည်။"
-            },
-            {
-              thai: "เขาเข้าใจภาษาไทย",
-              phonetic: "khao khao-jai pha-sa-thai",
-              english: "He understands the Thai language.",
-              myanmar: "သူ ထိုင်းဘာသာစကားကို နားလည်သည်။"
-            }
-          ]
-        },
-        {
-          title: "Politeness & Sentence Endings (ครับ / ค่ะ)",
-          titleMyanmar: "ယဉ်ကျေးပျူငှာမှုဆိုင်ရာ ဝါကျအဆုံးသတ်စကားလုံးများ",
-          explanation: "Using polite particles at the end of sentences is essential in Thai. Men use 'ครับ' (khráp) and women use 'ค่ะ' (khâ) for statements and 'คะ' (khá) for questions. Omitting these can make sentences sound blunt or informal.",
-          explanationMyanmar: "ထိုင်းဘာသာစကားတွင် ဝါကျနောက်ပိတ် စကားလုံးများမှာ လွန်စွာအရေးကြီးပါသည်။ အမျိုးသားများက 'ခရတ်' (ครับ) ကိုလည်းကောင်း၊ အမျိုးသမီးများက 'ခါး' (ค่ะ) ကိုလည်းကောင်း သုံးစွဲရပါမည်။ ဤစကားလုံးများ ထည့်မပြောပါက စကားပြောကြမ်းတမ်းစေသည်။",
-          examples: [
-            {
-              thai: "สวัสดีครับ",
-              phonetic: "sa-wat-dee khráp",
-              english: "Hello (said by a male).",
-              myanmar: "မင်္ဂလာပါခင်ဗျာ။"
-            },
-            {
-              thai: "สบายดีค่ะ",
-              phonetic: "sa-baai-dee khâ",
-              english: "I am fine (said by a female).",
-              myanmar: "နေကောင်းပါတယ်ရှင်။"
-            }
-          ]
-        },
-        {
-          title: "Using 'หรือยัง' (rue yang) for 'Yet?'",
-          titleMyanmar: "ယောသံ သို့မဟုတ် 'ပြီးပြီလား' မေးမြန်းခြင်း",
-          explanation: "The particle 'หรือยัง' (rue yang) is added at the end of a sentence to ask if an action has been completed yet (similar to 'yet?'). The answer can be 'แล้ว' (laew - already) or 'ยัง' (yang - not yet).",
-          explanationMyanmar: "ဝါကျတစ်ခု၏ အဆုံးတွင် 'သို့မဟုတ်သေးဘူးလား' (သို့မဟုတ် 'ပြီးပြီလား') ဟု မေးမြန်းရန် 'หรือยัง' (ရွေယန်း) ကို ထည့်သွင်းသုံးစွဲသည်။",
-          examples: [
-            {
-              thai: "คุณกินข้าวหรือยังครับ",
-              phonetic: "khun kin khaow rue yang khráp",
-              english: "Have you eaten rice yet?",
-              myanmar: "မင်း ထမင်းစားပြီးပြီလားခင်ဗျာ။"
-            },
-            {
-              thai: "เรียนภาษาไทยหรือยังคะ",
-              phonetic: "rian pha-sa-thai rue yang khâ",
-              english: "Have you studied Thai yet?",
-              myanmar: "ထိုင်းစာ လေ့လာပြီးပြီလားရှင်။"
-            }
-          ]
-        },
-        {
-          title: "Future Aux Verb: จะ (ca / ja) [ကျ]",
-          titleMyanmar: "အနာဂတ်ပြ စကားလုံး 'จะ' (ကျ) နှင့် တွဲဖက်သုံးခြင်း",
-          explanation: "In Thai, 'จะ' (ca / ja) is placed before verbs to indicate future action (will/shall). Unlike English or Myanmar, the main verb never changes its form. Below are combinations showing how 'จะ' merges with various verbs to form future expressions.",
-          explanationMyanmar: "ထိုင်းဘာသာစကားတွင် အနာဂတ်ကာလ (မည်/လိမ့်မည်) ကို ဖော်ပြရန် 'จะ' (ကျ) ကို ကြိယာ၏ ရှေ့တွင် ထားရသည်။ ဤစနစ်ကို လေ့လာရန် 'จะ (ကျ) + ကြိယာ' ပေါင်းစပ်ပုံများကို အောက်ပါအတိုင်း လေ့လာနိုင်ပါသည်။",
-          examples: [
-            { thai: "จะกิน", phonetic: "ca kin", english: "will eat", myanmar: "စားမယ်" },
-            { thai: "จะทำ", phonetic: "ca tham", english: "will do", myanmar: "လုပ်မယ်" },
-            { thai: "จะไป", phonetic: "ca bpai", english: "will go", myanmar: "သွားမယ်" },
-            { thai: "จะมา", phonetic: "ca maa", english: "will come", myanmar: "လာမယ်" },
-            { thai: "จะนอน", phonetic: "ca nɔɔn", english: "will sleep", myanmar: "အိပ်မယ်" },
-            { thai: "จะเดิน", phonetic: "ca dəən", english: "will walk", myanmar: "လမ်းလျှောက်မယ်" },
-            { thai: "จะเห็น", phonetic: "ca hěn", english: "will see", myanmar: "မြင်မယ်" },
-            { thai: "จะชอบ", phonetic: "ca chɔ̂ɔp", english: "will like", myanmar: "ကြိုက်မယ်" },
-            { thai: "จะให้", phonetic: "ca hâi", english: "will give", myanmar: "ပေးမယ်" },
-            { thai: "จะเอา", phonetic: "ca ao", english: "will take", myanmar: "ယူမယ်" },
-            { thai: "จะรัก", phonetic: "ca rák", english: "will love", myanmar: "ချစ်မယ်" },
-            { thai: "จะซื้อ", phonetic: "ca sʉ́ʉ", english: "will buy", myanmar: "ဝယ်မယ်" },
-            { thai: "จะขาย", phonetic: "ca khǎaj", english: "will sell", myanmar: "ရောင်းမယ်" },
-            { thai: "จะใช้", phonetic: "ca cháaj", english: "will use", myanmar: "သုံးမယ်" },
-            { thai: "จะทำงาน", phonetic: "ca tham-ngaan", english: "will work", myanmar: "အလုပ်လုပ်မယ်" }
-          ]
-        }
-      ],
-      quiz: [
-        {
-          id: "somchai-q1",
-          type: "translate-thai-to-mm",
-          prompt: "What does 'ภาษาไทย' (pha-sa-thai) mean?",
-          options: ["ထိုင်းဘာသာစကား", "မြန်မာဘာသာစကား", "စာအုပ်", "လေ့ကျင့်သည်"],
-          correctAnswer: "ထိုင်းဘာသာစကား",
-          explanation: "'ภาษา' (pha-sa) means language, and 'ไทย' (thai) means Thai.",
-          explanationMyanmar: "'ภาษา' (ဖာသာ) ဆိုသည်မှာ ဘာသာစကားဖြစ်ပြီး 'ไทย' (ထိုင်း) ဆိုသည်မှာ ထိုင်းဖြစ်သည်။"
-        },
-        {
-          id: "somchai-q2",
-          type: "translate-mm-to-thai",
-          prompt: "How do you say 'နားလည်သည်' (To understand) in Thai?",
-          options: ["เข้าใจ", "เรียน", "พูด", "เขียน"],
-          correctAnswer: "เข้าใจ",
-          explanation: "'เข้าใจ' (khao-jai) means to understand.",
-          explanationMyanmar: "'เข้าใจ' (ခေါင်ကျိုင်) ဆိုသည်မှာ နားလည်သည် ဟု အဓိပ္ပာယ်ရသည်။"
-        }
-      ]
-    };
 
     if (saved) {
       try {
-        const parsed = JSON.parse(saved);
-        // Merge mapped properties if saved lines lack courseId or video fields
-        const merged = parsed.map((savedL: any) => {
-          const matched = mappedInitialLessons.find(m => m.id === savedL.id);
-          if (matched) {
-            return {
-              ...matched,
-              ...savedL,
-              // Keep matched video fields & courseId if they aren't configured in saved
-              courseId: savedL.courseId || matched.courseId,
-              dialogue: savedL.dialogue && savedL.dialogue.length > 0
-                ? savedL.dialogue.map((line: any, idx: number) => ({
-                    ...(matched.dialogue && matched.dialogue[idx] ? matched.dialogue[idx] : {}),
-                    ...line,
-                    videoUrl: line.videoUrl || (matched.dialogue && matched.dialogue[idx]?.videoUrl)
-                  }))
-                : (matched.dialogue || []),
-              wholeDialogueVideoUrl: savedL.wholeDialogueVideoUrl || matched.wholeDialogueVideoUrl
-            };
-          }
-          return savedL;
-        });
-
-        // Filter out any leftover somchai lessons
-        return merged.filter((l: any) => l.courseId !== 'course-somchai-grammar' && l.id !== 101);
-      } catch (e) {
-        console.error("Error parsing saved lessons:", e);
+        return JSON.parse(saved).map((N: any) => {
+          const O = defaultLessons.find(S => S.id === N.id);
+          return O ? {
+            ...O,
+            ...N,
+            courseId: N.courseId || O.courseId,
+            dialogue: N.dialogue && N.dialogue.length > 0 ? N.dialogue.map((S: any, idx: number) => {
+              return {
+                ...(O.dialogue && O.dialogue[idx] ? O.dialogue[idx] : {}),
+                ...S,
+                videoUrl: S.videoUrl || (O.dialogue && O.dialogue[idx] ? O.dialogue[idx].videoUrl : undefined)
+              };
+            }) : O.dialogue || [],
+            wholeDialogueVideoUrl: N.wholeDialogueVideoUrl || O.wholeDialogueVideoUrl
+          } : N;
+        }).filter((N: any) => N.courseId !== "course-somchai-grammar" && N.id !== 101);
+      } catch (b) {
+        console.error("Error parsing saved lessons:", b);
       }
     }
-    return mappedInitialLessons;
+    return defaultLessons;
   });
 
   const [grammarChapters, setGrammarChapters] = useState<GrammarChapter[]>(() => {
@@ -624,7 +365,7 @@ export default function App() {
       try {
         return JSON.parse(saved);
       } catch (e) {
-        console.error("Error parsing saved grammar chapters:", e);
+        console.error('Error parsing saved grammar chapters:', e);
       }
     }
     return initialGrammarChapters;
@@ -636,11 +377,11 @@ export default function App() {
       try {
         return JSON.parse(saved);
       } catch (e) {
-        console.error("Error parsing saved orientation articles:", e);
+        console.error('Error parsing saved orientation articles:', e);
       }
     }
     return initialOrientationData;
-    });
+  });
 
   const [courses, setCourses] = useState<Course[]>(() => {
     const defaultCourses: Course[] = [
@@ -661,7 +402,7 @@ export default function App() {
             nameMm: "ထိုင်းအခြေခံဗျည်းအက္ခရာ ရေးသားလေ့ကျင့်ခန်းစာအုပ်",
             downloadUrl: "https://drive.google.com/open?id=demo_thai_tracing",
             priceAmount: 0,
-            currency: 'MMK',
+            currency: "MMK" as const,
             vocabEntries: [
               {
                 word: "ก ไก่",
@@ -699,24 +440,104 @@ export default function App() {
             nameMm: "ထိုင်းအသံမြှင့်စနစ်နှင့် အဓိကသဒ္ဒါစည်းမျဉ်း အိတ်ဆောင်လက်စွဲ",
             downloadUrl: "https://drive.google.com/open?id=demo_thai_tones",
             priceAmount: 4500,
-            currency: 'MMK',
+            currency: "MMK" as const,
             vocabEntries: [
-              { word: "จะ", pronunciation: "ကျ (cha)", translation: "လိမ့်မည် (ဖော်ပြချက်)", meaning: "will" },
-              { word: "จะกิน", pronunciation: "ကျ ကိန်း (cha-kin)", translation: "စားမယ်", meaning: "will eat" },
-              { word: "จะทำ", pronunciation: "ကျ ထမ်း (cha-tham)", translation: "လုပ်မယ်", meaning: "will do" },
-              { word: "จะไป", pronunciation: "ကျ ပိုင် (cha-pai)", translation: "သွားမယ်", meaning: "will go" },
-              { word: "จะมา", pronunciation: "ကျ မာ (cha-ma)", translation: "လာမယ်", meaning: "will come" },
-              { word: "จะนอน", pronunciation: "ကျ นျော်န်း (cha-non)", translation: "အိပ်မယ်", meaning: "will sleep" },
-              { word: "จะเดิน", pronunciation: "ကျ ดန်း (cha-doen)", translation: "လမ်းလျှောက်မယ်", meaning: "will walk" },
-              { word: "จะเห็น", pronunciation: "ကျ ဟัน (cha-hen)", translation: "မြင်မယ်", meaning: "will see" },
-              { word: "จะชอบ", pronunciation: "ကျ ချော့ဘ์ (cha-chop)", translation: "ကြိုက်မယ်", meaning: "will like" },
-              { word: "จะให้", pronunciation: "ကျ ဟိုက် (cha-hai)", translation: "ပေးမယ်", meaning: "will give" },
-              { word: "จะเอา", pronunciation: "ကျ အောင်း (cha-ao)", translation: "ယူမယ်", meaning: "will take" },
-              { word: "จะรัก", pronunciation: "ကျ ရတ်ခ် (cha-rak)", translation: "ချစ်မယ်", meaning: "will love" },
-              { word: "จะซื้อ", pronunciation: "ကျ စူး (cha-sue)", translation: "ဝယ်မယ်", meaning: "will buy" },
-              { word: "จะขาย", pronunciation: "ကျ ข้าร์ (cha-khai)", translation: "รောင်းမယ်", meaning: "will sell" },
-              { word: "จะใช้", pronunciation: "ကျ ချိုင်း (cha-chai)", translation: "သုံးမယ်", meaning: "will use" },
-              { word: "จะทำงาน", pronunciation: "ကျ ထမ်းငါန်း (cha-tham-ngan)", translation: "အလုပ်လုပ်မယ်", meaning: "will work" }
+              {
+                word: "จะ",
+                pronunciation: "ကျ (cha)",
+                translation: "လိမ့်မည် (ဖော်ပြချက်)",
+                meaning: "will"
+              },
+              {
+                word: "จะกิน",
+                pronunciation: "ကျ ကိန်း (cha-kin)",
+                translation: "စားမယ်",
+                meaning: "will eat"
+              },
+              {
+                word: "จะทำ",
+                pronunciation: "ကျ ထမ်း (cha-tham)",
+                translation: "လုပ်မယ်",
+                meaning: "will do"
+              },
+              {
+                word: "จะไป",
+                pronunciation: "ကျ ပိုင် (cha-pai)",
+                translation: "သွားမယ်",
+                meaning: "will go"
+              },
+              {
+                word: "จะมา",
+                pronunciation: "ကျ မာ (cha-ma)",
+                translation: "လာမယ်",
+                meaning: "will come"
+              },
+              {
+                word: "จะนอน",
+                pronunciation: "ကျ นျော်န်း (cha-non)",
+                translation: "အိပ်မယ်",
+                meaning: "will sleep"
+              },
+              {
+                word: "จะเดิน",
+                pronunciation: "ကျ ดန်း (cha-doen)",
+                translation: "လမ်းလျှောက်မယ်",
+                meaning: "will walk"
+              },
+              {
+                word: "จะเห็น",
+                pronunciation: "ကျ ဟัน (cha-hen)",
+                translation: "မြင်မယ်",
+                meaning: "will see"
+              },
+              {
+                word: "จะชอบ",
+                pronunciation: "ကျ ချော့ဘ์ (cha-chop)",
+                translation: "ကြိုက်မယ်",
+                meaning: "will like"
+              },
+              {
+                word: "จะให้",
+                pronunciation: "ကျ ဟိုက် (cha-hai)",
+                translation: "ပေးမယ်",
+                meaning: "will give"
+              },
+              {
+                word: "จะเอา",
+                pronunciation: "ကျ အောင်း (cha-ao)",
+                translation: "ယူမယ်",
+                meaning: "will take"
+              },
+              {
+                word: "จะรัก",
+                pronunciation: "ကျ ရတ်ခ် (cha-rak)",
+                translation: "ချစ်မယ်",
+                meaning: "will love"
+              },
+              {
+                word: "จะซื้อ",
+                pronunciation: "ကျ စူး (cha-sue)",
+                translation: "ဝယ်မယ်",
+                meaning: "will buy"
+              },
+              {
+                word: "จะขาย",
+                pronunciation: "ကျ ข้าร์ (cha-khai)",
+                translation: "รောင်းမယ်",
+                meaning: "will sell"
+              },
+              {
+                word: "จะใช้",
+                pronunciation: "ကျ ချိုင်း (cha-chai)",
+                translation: "သုံးမယ်",
+                meaning: "will use"
+              },
+              {
+                word: "จะทำงาน",
+                pronunciation: "ကျ ထမ်းငါန်း (cha-tham-ngan)",
+                translation: "အလုပ်လုပ်မယ်",
+                meaning: "will work"
+              }
             ],
             sentenceEntries: [
               {
@@ -756,11 +577,26 @@ export default function App() {
             nameMm: "ရုံးသုံးထိုင်းအီးမေးလ်ရေးသားနည်း ပုံစံတူလက်စွဲစနစ်",
             downloadUrl: "https://drive.google.com/open?id=demo_biz_email",
             priceAmount: 6000,
-            currency: 'MMK',
+            currency: "MMK" as const,
             vocabEntries: [
-              { word: "ติดต่อ", pronunciation: "ติดต่อ (Tit-to)", translation: "ဆက်သွယ်သည်", meaning: "To contact" },
-              { word: "ส่งเอกสาร", pronunciation: "ส่งเอกสาร (Song Ek-ka-san)", translation: "စာရွက်စာတမ်းပေးပို့သည်", meaning: "To send documents" },
-              { word: "ขอบคุณ", pronunciation: "ขอบคุณ (Khop-khun)", translation: "ကျေးဇူးတင်ပါသည်", meaning: "Thank you" }
+              {
+                word: "ติดต่อ",
+                pronunciation: "ติดต่อ (Tit-to)",
+                translation: "ဆက်သွယ်သည်",
+                meaning: "To contact"
+              },
+              {
+                word: "ส่งเอกสาร",
+                pronunciation: "ส่งเอกสาร (Song Ek-ka-san)",
+                translation: "စာရွက်စာတမ်းပေးပို့သည်",
+                meaning: "To send documents"
+              },
+              {
+                word: "ขอบคุณ",
+                pronunciation: "ขอบคุณ (Khop-khun)",
+                translation: "ကျေးဇူးတင်ပါသည်",
+                meaning: "Thank you"
+              }
             ],
             sentenceEntries: [
               {
@@ -792,11 +628,26 @@ export default function App() {
             nameMm: "လုပ်ငန်းခွင်သုံး စက်ရုံနှင့် HR စကားပြော အထူးလက်စွဲ",
             downloadUrl: "https://drive.google.com/open?id=demo_workplace_hr",
             priceAmount: 5000,
-            currency: 'MMK',
+            currency: "MMK" as const,
             vocabEntries: [
-              { word: "ฝ่ายบุคคล", pronunciation: "ฝ่ายบุคคล (Fai Buk-khon)", translation: "HR ဌာန", meaning: "Human Resources" },
-              { word: "เงินเดือน", pronunciation: "เงินเดือน (Ngoen-duean)", translation: "လစာ", meaning: "Salary" },
-              { word: "ทำงานล่วงเวลา", pronunciation: "ทำงานล่วงเวลา (Tham-ngan Luang-we-la)", translation: "အချိန်ပိုလုပ်သည် (OT)", meaning: "To work overtime" }
+              {
+                word: "ฝ่ายบุคคล",
+                pronunciation: "ฝ่ายบุคคล (Fai Buk-khon)",
+                translation: "HR ဌာန",
+                meaning: "Human Resources"
+              },
+              {
+                word: "เงินเดือน",
+                pronunciation: "เงินเดือน (Ngoen-duean)",
+                translation: "လစာ",
+                meaning: "Salary"
+              },
+              {
+                word: "ทำงานล่วงเวลา",
+                pronunciation: "ทำงานล่วงเวลา (Tham-ngan Luang-we-la)",
+                translation: "အချိန်ပိုလုပ်သည် (OT)",
+                meaning: "To work overtime"
+              }
             ],
             sentenceEntries: [
               {
@@ -828,41 +679,236 @@ export default function App() {
             nameMm: "ဆရာဆုမ်းချိုင်း၏ ထိုင်းသဒ္ဒါလက်စွဲနှင့် စာအုပ်",
             downloadUrl: "https://drive.google.com/open?id=demo_somchai_grammar",
             priceAmount: 4000,
-            currency: 'MMK',
+            currency: "MMK" as const,
             vocabEntries: [
-              { word: "ภาษา", pronunciation: "ภาษา (Pha-sa)", translation: "ဘာသာစကား", meaning: "Language" },
-              { word: "ไวยากรณ์", pronunciation: "ไวยากรณ์ (Wai-ya-khon)", translation: "သဒ္ဒါ", meaning: "Grammar" },
-              { word: "ประโยค", pronunciation: "ประโยค (Pra-yok)", translation: "ဝါကျ", meaning: "Sentence" }
+              {
+                word: "ภาษา",
+                pronunciation: "ภาษา (Pha-sa)",
+                translation: "ဘာသာစကား",
+                meaning: "Language"
+              },
+              {
+                word: "ไวยากรณ์",
+                pronunciation: "ไวยากรณ์ (Wai-ya-khon)",
+                translation: "သဒ္ဒါ",
+                meaning: "Grammar"
+              },
+              {
+                word: "ประโยค",
+                pronunciation: "ประโยค (Pra-yok)",
+                translation: "ဝါကျ",
+                meaning: "Sentence"
+              }
             ],
             sentenceEntries: [
-              { sentence: "จะกิน", transcription: "ca' kin (ကျကင်း-န်)", translation: "စားမယ်။", prefix: "จะ", middle: "กิน", suffix: "" },
-              { sentence: "จะทำ", transcription: "ca' tham (ကျသမ်)", translation: "လုပ်မယ်။", prefix: "จะ", middle: "ทำ", suffix: "" },
-              { sentence: "จะไป", transcription: "ca' bpai (ကျပိုင်း)", translation: "သွားမယ်။", prefix: "จะ", middle: "ไป", suffix: "" },
-              { sentence: "จะมา", transcription: "ca' maa (ကျဟား)", translation: "လာမယ်။", prefix: "จะ", middle: "มา", suffix: "" },
-              { sentence: "จะนอน", transcription: "ca' nɔɔn (ကျနော-န်)", translation: "အိပ်မယ်။", prefix: "จะ", middle: "นอน", suffix: "" },
-              { sentence: "จะเดิน", transcription: "ca' dəən (ကျดေး-န်)", translation: "လမ်းလျှောက်မယ်။", prefix: "จะ", middle: "เดิน", suffix: "" },
-              { sentence: "จะเห็น", transcription: "ca' hěn (ကျဟင်-န်)", translation: "မြင်မယ်။", prefix: "จะ", middle: "เห็น", suffix: "" },
-              { sentence: "จะชอบ", transcription: "ca' chɔ̂ɔp (ကျချော့-ပ်)", translation: "ကြိုက်မယ်။", prefix: "จะ", middle: "ชอบ", suffix: "" },
-              { sentence: "จะให้", transcription: "ca' hâi (ကျဟိုက်)", translation: "ပေးမယ်။", prefix: "จะ", middle: "ให้", suffix: "" },
-              { sentence: "จะเอา", transcription: "ca' ao (ကျအောင်း-ပ်)", translation: "ယူမယ်။", prefix: "จะ", middle: "เอา", suffix: "" },
-              { sentence: "จะรัก", transcription: "ca' rák (ကျရတ်-က်)", translation: "ချစ်မယ်။", prefix: "จะ", middle: "รัก", suffix: "" },
-              { sentence: "จะซื้อ", transcription: "ca' sʉ́ʉ (ကျစုး)", translation: "ဝယ်မယ်။", prefix: "จะ", middle: "ซื้อ", suffix: "" },
-              { sentence: "จะขาย", transcription: "ca' khǎaj (ကျခိုင်း)", translation: "ရောင်းမယ်။", prefix: "จะ", middle: "ขาย", suffix: "" },
-              { sentence: "จะใช้", transcription: "ca' cháaj (ကျချိုင်း)", translation: "သုံးမယ်။", prefix: "จะ", middle: "ใช้", suffix: "" },
-              { sentence: "จะทำงาน", transcription: "ca' tham-ngaan (ကျထမ်းငါး-န်)", translation: "အလုပ်လုပ်မယ်။", prefix: "จะ", middle: "ทำงาน", suffix: "" },
-
-              // 11 modifiers ending with ทำ
-              { sentence: "จะทำ", transcription: "cà' tham (ကျသမ်)", translation: "လုပ်မည်", prefix: "จะ", middle: "ทำ", suffix: "" },
-              { sentence: "อาจจะทำก็", transcription: "àat cà' tham kɔ̂ (အာတ်ကျသမ်ကော)", translation: "လုပ်ကောင်းလုပ်မည်", prefix: "อาจจะ", middle: "ทำ", suffix: "ก็" },
-              { sentence: "กำลังจะทำอยู่", transcription: "kam-laŋ cà' tham jùu (ကမ်လန်းကျသမ်ယူ)", translation: "လုပ်တော့မည်", prefix: "กำลังจะ", middle: "ทำ", suffix: "อยู่" },
-              { sentence: "ควรจะทำก็", transcription: "khuuan cà' tham kɔ̂ (ခူဝမ်ကျသမ်ကော)", translation: "လုပ်သင့်သည်", prefix: "ควรจะ", middle: "ทำ", suffix: "ก็" },
-              { sentence: "ต้องทำก็", transcription: "dtɔ̂ŋ tham kɔ̂ (ตောင်သမ်ကော)", translation: "လုပ်ရမည်", prefix: "ต้อง", middle: "ทำ", suffix: "ก็" },
-              { sentence: "อยากทำก็", transcription: "jàak tham kɔ̂ (ယာတ်သမ်ကော)", translation: "လုပ်ချင်သည်", prefix: "อยาก", middle: "ทำ", suffix: "ก็" },
-              { sentence: "อย่าทำ", transcription: "jàa tham (ယာသမ်)", translation: "မလုပ်နှင့်", prefix: "อย่า", middle: "ทำ", suffix: "" },
-              { sentence: "ไม่ต้องทำ", transcription: "mâj dtɔ̂ŋ tham (မိုင်တောင်သမ်)", translation: "မလုပ်ရ", prefix: "ไม่ต้อง", middle: "ทำ", suffix: "" },
-              { sentence: "ไม่ควรทำก็", transcription: "mâj khuuan tham kɔ̂ (မိုင်ခူဝမ်သမ်ကော)", translation: "မလုပ်သင့်", prefix: "ไม่ควร", middle: "ทำ", suffix: "ก็" },
-              { sentence: "ไม่ต้องทำก็", transcription: "mâj dtɔ̂ŋ tham kɔ̂ (မိုင်တောင်သမ်ကော)", translation: "မလုပ်ရ", prefix: "ไม่ต้อง", middle: "ทำ", suffix: "ก็" },
-              { sentence: "ไม่เอาทำก็", transcription: "mâj aw tham kɔ̂ (မိုင်အောင်းသမ်ကော)", translation: "မလုပ်ချင်", prefix: "ไม่เอา", middle: "ทำ", suffix: "ก็" }
+              {
+                sentence: "จะกิน",
+                transcription: "ca' kin (ကျကင်း-န်)",
+                translation: "စားမယ်။",
+                prefix: "จะ",
+                middle: "กิน",
+                suffix: ""
+              },
+              {
+                sentence: "จะทำ",
+                transcription: "ca' tham (ကျသမ်)",
+                translation: "လုပ်မယ်။",
+                prefix: "จะ",
+                middle: "ทำ",
+                suffix: ""
+              },
+              {
+                sentence: "จะไป",
+                transcription: "ca' bpai (ကျပိုင်း)",
+                translation: "သွားမယ်။",
+                prefix: "จะ",
+                middle: "ไป",
+                suffix: ""
+              },
+              {
+                sentence: "จะมา",
+                transcription: "ca' maa (ကျဟား)",
+                translation: "လာမယ်။",
+                prefix: "จะ",
+                middle: "มา",
+                suffix: ""
+              },
+              {
+                sentence: "จะนอน",
+                transcription: "ca' nɔɔn (ကျနော-န်)",
+                translation: "အိပ်မယ်။",
+                prefix: "จะ",
+                middle: "นอน",
+                suffix: ""
+              },
+              {
+                sentence: "จะเดิน",
+                transcription: "ca' dəən (ကျดေး-န်)",
+                translation: "လမ်းလျှောက်မယ်။",
+                prefix: "จะ",
+                middle: "เดิน",
+                suffix: ""
+              },
+              {
+                sentence: "จะเห็น",
+                transcription: "ca' hěn (ကျဟင်-န်)",
+                translation: "မြင်မယ်။",
+                prefix: "จะ",
+                middle: "เห็น",
+                suffix: ""
+              },
+              {
+                sentence: "จะชอบ",
+                transcription: "ca' chɔ̂ɔp (ကျချော့-ပ်)",
+                translation: "ကြိုက်မယ်။",
+                prefix: "จะ",
+                middle: "ชอบ",
+                suffix: ""
+              },
+              {
+                sentence: "จะให้",
+                transcription: "ca' hâi (ကျဟိုက်)",
+                translation: "ပေးမယ်။",
+                prefix: "จะ",
+                middle: "ให้",
+                suffix: ""
+              },
+              {
+                sentence: "จะเอา",
+                transcription: "ca' ao (ကျအောင်း-ပ်)",
+                translation: "ယူမယ်။",
+                prefix: "จะ",
+                middle: "เอา",
+                suffix: ""
+              },
+              {
+                sentence: "จะรัก",
+                transcription: "ca' rák (ကျရတ်-က်)",
+                translation: "ချစ်မယ်။",
+                prefix: "จะ",
+                middle: "รัก",
+                suffix: ""
+              },
+              {
+                sentence: "จะซื้อ",
+                transcription: "ca' sʉ́ʉ (ကျစုး)",
+                translation: "ဝယ်မယ်။",
+                prefix: "จะ",
+                middle: "ซื้อ",
+                suffix: ""
+              },
+              {
+                sentence: "จะขาย",
+                transcription: "ca' khǎaj (ကျခိုင်း)",
+                translation: "ရောင်းမယ်။",
+                prefix: "จะ",
+                middle: "ขาย",
+                suffix: ""
+              },
+              {
+                sentence: "จะใช้",
+                transcription: "ca' cháaj (ကျချိုင်း)",
+                translation: "သုံးမယ်။",
+                prefix: "จะ",
+                middle: "ใช้",
+                suffix: ""
+              },
+              {
+                sentence: "จะทำงาน",
+                transcription: "ca' tham-ngaan (ကျထမ်းငါး-န်)",
+                translation: "အလုပ်လုပ်မယ်။",
+                prefix: "จะ",
+                middle: "ทำงาน",
+                suffix: ""
+              },
+              {
+                sentence: "จะทำ",
+                transcription: "cà' tham (ကျသမ်)",
+                translation: "လုပ်မည်",
+                prefix: "จะ",
+                middle: "ทำ",
+                suffix: ""
+              },
+              {
+                sentence: "อาจจะทำก็",
+                transcription: "àat cà' tham kɔ̂ (အာတ်ကျသမ်ကော)",
+                translation: "လုပ်ကောင်းလုပ်မည်",
+                prefix: "อาจจะ",
+                middle: "ทำ",
+                suffix: "ก็"
+              },
+              {
+                sentence: "กำลังจะทำอยู่",
+                transcription: "kam-laŋ cà' tham jùu (ကမ်လန်းကျသမ်ယူ)",
+                translation: "လုပ်တော့မည်",
+                prefix: "กำลังจะ",
+                middle: "ทำ",
+                suffix: "อยู่"
+              },
+              {
+                sentence: "ควรจะทำก็",
+                transcription: "khuuan cà' tham kɔ̂ (ခူဝမ်ကျသမ်ကော)",
+                translation: "လုပ်သင့်သည်",
+                prefix: "ควรจะ",
+                middle: "ทำ",
+                suffix: "ก็"
+              },
+              {
+                sentence: "ต้องทำก็",
+                transcription: "dtɔ̂ŋ tham kɔ̂ (ตောင်သမ်ကော)",
+                translation: "လုပ်ရမည်",
+                prefix: "ต้อง",
+                middle: "ทำ",
+                suffix: "ก็"
+              },
+              {
+                sentence: "อยากทำก็",
+                transcription: "jàak tham kɔ̂ (ယာတ်သမ်ကော)",
+                translation: "လုပ်ချင်သည်",
+                prefix: "อยาก",
+                middle: "ทำ",
+                suffix: "ก็"
+              },
+              {
+                sentence: "อย่าทำ",
+                transcription: "jàa tham (ယာသမ်)",
+                translation: "မလုပ်နှင့်",
+                prefix: "อย่า",
+                middle: "ทำ",
+                suffix: ""
+              },
+              {
+                sentence: "ไม่ต้องทำ",
+                transcription: "mâj dtɔ̂ŋ tham (မိုင်တောင်သမ်)",
+                translation: "မလုပ်ရ",
+                prefix: "ไม่ต้อง",
+                middle: "ทำ",
+                suffix: ""
+              },
+              {
+                sentence: "ไม่ควรทำก็",
+                transcription: "mâj khuuan tham kɔ̂ (မိုင်ခူဝမ်သမ်ကော)",
+                translation: "မလုပ်သင့်",
+                prefix: "ไม่ควร",
+                middle: "ทำ",
+                suffix: "ก็"
+              },
+              {
+                sentence: "ไม่ต้องทำก็",
+                transcription: "mâj dtɔ̂ŋ tham kɔ̂ (မိုင်တောင်သမ်ကော)",
+                translation: "မလုပ်ရ",
+                prefix: "ไม่ต้อง",
+                middle: "ทำ",
+                suffix: "ก็"
+              },
+              {
+                sentence: "ไม่เอาทำก็",
+                transcription: "mâj aw tham kɔ̂ (မိုင်အောင်းသမ်ကော)",
+                translation: "မလုပ်ချင်",
+                prefix: "ไม่เอา",
+                middle: "ทำ",
+                suffix: "ก็"
+              }
             ],
             dialogueEntries: [
               {
@@ -1045,7 +1091,7 @@ export default function App() {
       localStorage.setItem('thai_courses_curriculum', JSON.stringify(loadedCourses));
     }
 
-    // Dynamic migration block: Ensure all 4 main eBooks are registered in the resources of loadedCourses
+    // Dynamic migration block: Ensure all 3 main eBooks are registered in the resources of loadedCourses
     const requiredEbooks = [
       {
         id: "sayar-son-jai-blue-book",
@@ -1055,15 +1101,6 @@ export default function App() {
         priceAmount: 18000,
         currency: 'MMK' as const,
         targetCourseId: "course-basic"
-      },
-      {
-        id: "premium-book",
-        name: "Advanced Thai-Myanmar Grammar Manual (Printed E-Book)",
-        nameMm: "အဆင့်မြင့် ထိုင်း-မြန်မာ သဒ္ဒါလက်စွဲ စာအုပ် (အီးဘုခ်)",
-        downloadUrl: "https://drive.google.com/open?id=demo_advanced_grammar",
-        priceAmount: 15000,
-        currency: 'MMK' as const,
-        targetCourseId: "course-somchai-grammar"
       },
       {
         id: "free-phrases",
@@ -2042,7 +2079,7 @@ export default function App() {
   }, [storeItems]);
 
   // Admin Store / E-Book editor states
-  const [adminSelectedStoreId, setAdminSelectedStoreId] = useState<string>('premium-book');
+  const [adminSelectedStoreId, setAdminSelectedStoreId] = useState<string>('sayar-son-jai-blue-book');
   const [storeFormName, setStoreFormName] = useState<string>('');
   const [storeFormNameMm, setStoreFormNameMm] = useState<string>('');
   const [storeFormType, setStoreFormType] = useState<'e-book' | 'tutoring' | 'certificate' | 'vip-package'>('e-book');

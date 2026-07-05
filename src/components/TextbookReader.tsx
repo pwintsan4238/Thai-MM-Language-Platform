@@ -1055,8 +1055,8 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
             </button>
           </div>
 
-          {/* Book Navigation Tabs for Sayar Son Jai and premium-book */}
-          {(bookId === 'sayar-son-jai-blue-book' || bookId === 'premium-book' || bookId === 'res-somchai-grammar-book') && (
+          {/* Book Navigation Tabs for Sayar Son Jai, premium-book, res-somchai, and custom dynamic eBooks */}
+          {(bookId === 'sayar-son-jai-blue-book' || bookId === 'premium-book' || bookId === 'res-somchai-grammar-book' || !!getCustomResourceData()) && (
             <div className="flex bg-slate-100/70 p-1 rounded-2xl mb-4 border border-slate-200/20 select-none gap-0.5">
               <button 
                 onClick={() => {
@@ -1115,7 +1115,7 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
           )}
 
           {activeTab === 'page13' ? (
-            (bookId === 'sayar-son-jai-blue-book' || bookId === 'res-somchai-grammar-book') ? (
+            (bookId === 'sayar-son-jai-blue-book' || bookId === 'res-somchai-grammar-book' || !!getCustomResourceData()) ? (
               /* ================= PAGE 13 INTERACTIVE GRAMMAR MINDMAP ================= */
               <div className="flex-1 flex flex-col justify-between animate-fade-in">
                 <div className="w-full relative bg-[#FDFCF7] border border-stone-200/80 rounded-[35px] p-4 font-sans select-none overflow-x-auto scrollbar-none shadow-inner text-stone-800 min-h-[440px]">
