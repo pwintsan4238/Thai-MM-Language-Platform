@@ -19,6 +19,7 @@ import { OrderDetailModal } from './components/OrderDetailModal';
 import { VOCAB_DATA, VocabCategory, VocabItem } from './data/vocab';
 import { VocabPage } from './components/VocabPage';
 import { TextbookReader } from './components/TextbookReader';
+import { EBookAudioPlayer } from './components/EBookAudioPlayer';
 import { 
   BookOpen, 
   Award, 
@@ -103,6 +104,111 @@ const adjustHexBrightness = (hex: string, percent: number): string => {
   const bHex = b.toString(16).padStart(2, "0");
 
   return `#${rHex}${gHex}${bHex}`;
+};
+
+const isInteractiveResource = (res: any): boolean => {
+  return !!(
+    (res.vocabEntries && res.vocabEntries.length > 0) ||
+    (res.sentenceEntries && res.sentenceEntries.length > 0) ||
+    (res.dialogueEntries && res.dialogueEntries.length > 0) ||
+    (res.conversationEntries && res.conversationEntries.length > 0)
+  );
+};
+
+const getCompanionBookStyles = (id: string, nameStr: string) => {
+  if (id === 'res-basic-alphabet') {
+    return {
+      gradient: "from-indigo-600 via-[#2d1b54] to-[#120a26]",
+      borderLeft: "border-indigo-900",
+      accentText: "text-indigo-200",
+      titleColor: "text-yellow-400",
+      topLabel: "COMPANION EBOOK",
+      titleText: "ALPHABET PRACTICE",
+      subText: "TRACING WORKBOOK",
+      emoji: "✍️",
+      emojiLabel: "INTERACTIVE STUDY",
+      author: "BASIC COURSE",
+      status: "FREE WORKBOOK"
+    };
+  }
+  if (id === 'res-basic-grammar') {
+    return {
+      gradient: "from-violet-700 via-brand-purple to-[#160a2c]",
+      borderLeft: "border-purple-900",
+      accentText: "text-purple-200",
+      titleColor: "text-yellow-400",
+      topLabel: "COMPANION EBOOK",
+      titleText: "TONES & GRAMMAR",
+      subText: "POCKET GUIDE",
+      emoji: "📕",
+      emojiLabel: "INTERACTIVE STUDY",
+      author: "BASIC COURSE",
+      status: "PREMIUM GUIDE"
+    };
+  }
+  if (id === 'res-biz-email') {
+    return {
+      gradient: "from-blue-700 via-indigo-900 to-[#0a1024]",
+      borderLeft: "border-blue-900",
+      accentText: "text-blue-200",
+      titleColor: "text-yellow-400",
+      topLabel: "COMPANION EBOOK",
+      titleText: "BUSINESS EMAILS",
+      subText: "TEMPLATES & SENTENCES",
+      emoji: "📧",
+      emojiLabel: "INTERACTIVE STUDY",
+      author: "BUSINESS COURSE",
+      status: "PREMIUM EBOOK"
+    };
+  }
+  if (id === 'res-workplace-hr') {
+    return {
+      gradient: "from-emerald-700 via-teal-900 to-[#031c12]",
+      borderLeft: "border-emerald-900",
+      accentText: "text-teal-200",
+      titleColor: "text-yellow-400",
+      topLabel: "COMPANION EBOOK",
+      titleText: "WORKPLACE HR",
+      subText: "SPEECH FORMULAS",
+      emoji: "🗣️",
+      emojiLabel: "INTERACTIVE STUDY",
+      author: "WORKSPACE COURSE",
+      status: "PREMIUM EBOOK"
+    };
+  }
+  if (id === 'res-somchai-grammar-book') {
+    return {
+      gradient: "from-rose-700 via-pink-900 to-[#22030d]",
+      borderLeft: "border-rose-900",
+      accentText: "text-rose-200",
+      titleColor: "text-yellow-400",
+      topLabel: "COMPANION EBOOK",
+      titleText: "SOM CHAI GRAMMAR",
+      subText: "REFERENCE MANUAL",
+      emoji: "📘",
+      emojiLabel: "INTERACTIVE STUDY",
+      author: "SOM CHAI COURSE",
+      status: "PREMIUM EBOOK"
+    };
+  }
+
+  // Fallback
+  const rawWords = nameStr.toUpperCase().replace(/[^A-Z0-9 ]/g, '').split(' ').filter(Boolean);
+  const word1 = rawWords[0] || "THAI";
+  const word2 = rawWords.slice(1, 3).join(' ') || "STUDY MANUAL";
+  return {
+    gradient: "from-violet-700 via-brand-purple to-indigo-950",
+    borderLeft: "border-purple-900",
+    accentText: "text-purple-200",
+    titleColor: "text-yellow-400",
+    topLabel: "COMPANION REFERENCE",
+    titleText: word1.substring(0, 15),
+    subText: word2.substring(0, 20),
+    emoji: "📘",
+    emojiLabel: "EBOOK REFERENCE",
+    author: "COMPANION EBOOK",
+    status: "PREMIUM STUDY"
+  };
 };
 
 const DEFAULT_STORE_ITEMS: StoreItem[] = [
@@ -596,7 +702,7 @@ export default function App() {
             currency: 'MMK',
             vocabEntries: [
               { word: "จะ", pronunciation: "ကျ (cha)", translation: "လိမ့်မည် (ဖော်ပြချက်)", meaning: "will" },
-              { word: "จะกิน", pronunciation: "ကျ ကิန်း (cha-kin)", translation: "စားမယ်", meaning: "will eat" },
+              { word: "จะกิน", pronunciation: "ကျ ကိန်း (cha-kin)", translation: "စားမယ်", meaning: "will eat" },
               { word: "จะทำ", pronunciation: "ကျ ထမ်း (cha-tham)", translation: "လုပ်မယ်", meaning: "will do" },
               { word: "จะไป", pronunciation: "ကျ ပိုင် (cha-pai)", translation: "သွားမယ်", meaning: "will go" },
               { word: "จะมา", pronunciation: "ကျ မာ (cha-ma)", translation: "လာမယ်", meaning: "will come" },
@@ -608,7 +714,7 @@ export default function App() {
               { word: "จะเอา", pronunciation: "ကျ အောင်း (cha-ao)", translation: "ယူမယ်", meaning: "will take" },
               { word: "จะรัก", pronunciation: "ကျ ရတ်ခ် (cha-rak)", translation: "ချစ်မယ်", meaning: "will love" },
               { word: "จะซื้อ", pronunciation: "ကျ စူး (cha-sue)", translation: "ဝယ်မယ်", meaning: "will buy" },
-              { word: "จะขาย", pronunciation: "ကျ ข้าရ์ (cha-khai)", translation: "รောင်းမယ်", meaning: "will sell" },
+              { word: "จะขาย", pronunciation: "ကျ ข้าร์ (cha-khai)", translation: "รောင်းမယ်", meaning: "will sell" },
               { word: "จะใช้", pronunciation: "ကျ ချိုင်း (cha-chai)", translation: "သုံးမယ်", meaning: "will use" },
               { word: "จะทำงาน", pronunciation: "ကျ ထမ်းငါန်း (cha-tham-ngan)", translation: "အလုပ်လုပ်မယ်", meaning: "will work" }
             ],
@@ -695,8 +801,8 @@ export default function App() {
             sentenceEntries: [
               {
                 sentence: "วันนี้ผมต้องทำงานล่วงเวลาสองชั่วโมง",
-                transcription: "ဝမ်နီး ဖုမ်း တောင်း ထမ်းငါန်း လွန်းဝေလာ ဆောင် ချိုးမောင်း",
-                translation: "ဒီနေ့ ကျွန်တော် ၂ နာရီ အချိန်ပို (OT) ဆင်းရပါမယ်။",
+                transcription: "ဝမ်နီး ဖုမ်း တောင်း ထမ်းငါန်း လွန်းဝေလာ ဆောင် ချောင်မုန်း",
+                translation: "ဒီနေ့ ကျွန်တော် အချိန်ပို ၂ နာရီ လုပ်ရပါမယ်။",
                 prefix: "วันนี้ผม",
                 middle: "ต้องทำงานล่วงเวลา",
                 suffix: "สองชั่วโมง"
@@ -707,42 +813,34 @@ export default function App() {
       },
       {
         id: "course-somchai-grammar",
-        name: "Som Chai Thai-Myanmar Grammar Manual (Printed E-Book)",
-        nameMm: "ဆုမ်းချိုင်း ထိုင်း-မြန်မာ သဒ္ဒါလက်စွဲ စာအုပ်",
-        priceAmount: 15000,
+        name: "Som Chai's Grammar Mastery & Dialogue Course",
+        nameMm: "ဆရာဆုမ်းချိုင်း၏ ထိုင်းသဒ္ဒါအထူးပြုနှင့် စကားပြောသင်တန်း",
+        priceAmount: 40000,
         currency: "MMK" as const,
-        duration: "Self-paced Grammar & Conversation Guide",
-        description: "Designed by Som Chai, this interactive companion covers extensive Thai-Myanmar grammar, key sentence constructions, vocab lists, and practical conversations.",
-        descriptionMm: "ဆုမ်းချိုင်း ရေးသားပြုစုထားသော ထိုင်း-မြန်မာသဒ္ဒါလက်စွဲ စာအုပ် ဖြစ်သည်။ လုပ်ငန်းခွင်သုံး၊ နေ့စဉ်သုံး၊ သဒ္ဒါ၊ စကားပြော စသည်တို့ကို တစ်နေရာတည်းတွင် လေ့လာနိုင်ပါသည်။",
-        instructor: "Som Chai",
+        duration: "4 Weeks (Comprehensive Grammar focus)",
+        description: "Master Thai grammar structures, key particles, modifiers, and daily conversational patterns compiled by expert tutor Sayar Som Chai.",
+        descriptionMm: "ဆရာဆုမ်းချိုင်းကိုယ်တိုင် စနစ်တကျ ပြุစုထားသော ထိုင်းစကားပြောသဒ္ဒါစည်းမျဉ်းများနှင့် လက်တွေ့သုံး စကားပြောဆိုနည်းများ။",
+        instructor: "Sayar Som Chai",
         resources: [
           {
             id: "res-somchai-grammar-book",
-            name: "Thai Grammar & Key Sentence Construction Masterclass Book",
-            nameMm: "ထိုင်းသဒ္ဒါနှင့် ဝါကျတည်ဆောက်ပုံ အထူးပြုလေ့လာရေးစာအုပ်",
+            name: "Som Chai's Thai Grammar Reference Manual",
+            nameMm: "ဆရာဆုမ်းချိုင်း၏ ထိုင်းသဒ္ဒါလက်စွဲနှင့် စာအုပ်",
             downloadUrl: "https://drive.google.com/open?id=demo_somchai_grammar",
             priceAmount: 4000,
             currency: 'MMK',
             vocabEntries: [
-              { word: "ไวยากรณ์", pronunciation: "ไวยากรณ์ (Wai-ya-korn)", translation: "သဒ္ဒါ", meaning: "Grammar" },
-              { word: "ประโยค", pronunciation: "ประโยค (Pra-yok)", translation: "ဝါကျ", meaning: "Sentence" },
-              { word: "โครงสร้าง", pronunciation: "โครงสร้าง (Khrong-sang)", translation: "တည်ဆောက်ပုံ", meaning: "Structure" }
+              { word: "ภาษา", pronunciation: "ภาษา (Pha-sa)", translation: "ဘာသာစကား", meaning: "Language" },
+              { word: "ไวยากรณ์", pronunciation: "ไวยากรณ์ (Wai-ya-khon)", translation: "သဒ္ဒါ", meaning: "Grammar" },
+              { word: "ประโยค", pronunciation: "ประโยค (Pra-yok)", translation: "ဝါကျ", meaning: "Sentence" }
             ],
             sentenceEntries: [
-              {
-                sentence: "ภาษาไทยมีโครงสร้างประโยคคล้ายภาษาพม่า",
-                transcription: "ဖาသာထိုင်း မိ ခရုန်းစန်း ပရာယုပ် ခလိုင်း ဖာသာဖမာ",
-                translation: "ထိုင်းဘာသာစကားသည် မြန်မာဘာသာစကားနှင့် ဝါကျတည်ဆောက်ပုံ ဆင်တူသည်။",
-                prefix: "ภาษาไทย",
-                middle: "มีโครงสร้างประโยค",
-                suffix: "คล้ายภาษาพม่า"
-              },
               { sentence: "จะกิน", transcription: "ca' kin (ကျကင်း-န်)", translation: "စားမယ်။", prefix: "จะ", middle: "กิน", suffix: "" },
               { sentence: "จะทำ", transcription: "ca' tham (ကျသမ်)", translation: "လုပ်မယ်။", prefix: "จะ", middle: "ทำ", suffix: "" },
               { sentence: "จะไป", transcription: "ca' bpai (ကျပိုင်း)", translation: "သွားမယ်။", prefix: "จะ", middle: "ไป", suffix: "" },
               { sentence: "จะมา", transcription: "ca' maa (ကျဟား)", translation: "လာမယ်။", prefix: "จะ", middle: "มา", suffix: "" },
               { sentence: "จะนอน", transcription: "ca' nɔɔn (ကျနော-န်)", translation: "အိပ်မယ်။", prefix: "จะ", middle: "นอน", suffix: "" },
-              { sentence: "จะเดิน", transcription: "ca' dəən (ကျဒေး-န်)", translation: "လမ်းလျှောက်မယ်။", prefix: "จะ", middle: "เดิน", suffix: "" },
+              { sentence: "จะเดิน", transcription: "ca' dəən (ကျดေး-န်)", translation: "လမ်းလျှောက်မယ်။", prefix: "จะ", middle: "เดิน", suffix: "" },
               { sentence: "จะเห็น", transcription: "ca' hěn (ကျဟင်-န်)", translation: "မြင်မယ်။", prefix: "จะ", middle: "เห็น", suffix: "" },
               { sentence: "จะชอบ", transcription: "ca' chɔ̂ɔp (ကျချော့-ပ်)", translation: "ကြိုက်မယ်။", prefix: "จะ", middle: "ชอบ", suffix: "" },
               { sentence: "จะให้", transcription: "ca' hâi (ကျဟိုက်)", translation: "ပေးမယ်။", prefix: "จะ", middle: "ให้", suffix: "" },
@@ -752,11 +850,13 @@ export default function App() {
               { sentence: "จะขาย", transcription: "ca' khǎaj (ကျခိုင်း)", translation: "ရောင်းမယ်။", prefix: "จะ", middle: "ขาย", suffix: "" },
               { sentence: "จะใช้", transcription: "ca' cháaj (ကျချိုင်း)", translation: "သုံးမယ်။", prefix: "จะ", middle: "ใช้", suffix: "" },
               { sentence: "จะทำงาน", transcription: "ca' tham-ngaan (ကျထမ်းငါး-န်)", translation: "အလုပ်လုပ်မယ်။", prefix: "จะ", middle: "ทำงาน", suffix: "" },
+
+              // 11 modifiers ending with ทำ
               { sentence: "จะทำ", transcription: "cà' tham (ကျသမ်)", translation: "လုပ်မည်", prefix: "จะ", middle: "ทำ", suffix: "" },
-              { sentence: "อาจจะทำก็", transcription: "àat cà' tham kɔ̂ (อာတ်ကျသမ်ကော)", translation: "လုပ်ကောင်းလုပ်မည်", prefix: "อาจจะ", middle: "ทำ", suffix: "ก็" },
+              { sentence: "อาจจะทำก็", transcription: "àat cà' tham kɔ̂ (အာတ်ကျသမ်ကော)", translation: "လုပ်ကောင်းလုပ်မည်", prefix: "อาจจะ", middle: "ทำ", suffix: "ก็" },
               { sentence: "กำลังจะทำอยู่", transcription: "kam-laŋ cà' tham jùu (ကမ်လန်းကျသမ်ယူ)", translation: "လုပ်တော့မည်", prefix: "กำลังจะ", middle: "ทำ", suffix: "อยู่" },
               { sentence: "ควรจะทำก็", transcription: "khuuan cà' tham kɔ̂ (ခူဝမ်ကျသမ်ကော)", translation: "လုပ်သင့်သည်", prefix: "ควรจะ", middle: "ทำ", suffix: "ก็" },
-              { sentence: "ต้องทำก็", transcription: "dtɔ̂ŋ tham kɔ̂ (တောင်သမ်ကော)", translation: "လုပ်ရမည်", prefix: "ต้อง", middle: "ทำ", suffix: "ก็" },
+              { sentence: "ต้องทำก็", transcription: "dtɔ̂ŋ tham kɔ̂ (ตောင်သမ်ကော)", translation: "လုပ်ရမည်", prefix: "ต้อง", middle: "ทำ", suffix: "ก็" },
               { sentence: "อยากทำก็", transcription: "jàak tham kɔ̂ (ယာတ်သမ်ကော)", translation: "လုပ်ချင်သည်", prefix: "อยาก", middle: "ทำ", suffix: "ก็" },
               { sentence: "อย่าทำ", transcription: "jàa tham (ယာသမ်)", translation: "မလုပ်နှင့်", prefix: "อย่า", middle: "ทำ", suffix: "" },
               { sentence: "ไม่ต้องทำ", transcription: "mâj dtɔ̂ŋ tham (မိုင်တောင်သမ်)", translation: "မလုပ်ရ", prefix: "ไม่ต้อง", middle: "ทำ", suffix: "" },
@@ -1090,6 +1190,21 @@ export default function App() {
   const [conversationEntryContent, setConversationEntryContent] = useState<string>('');
   const [conversationEntryPron, setConversationEntryPron] = useState<string>('');
   const [conversationEntryTrans, setConversationEntryTrans] = useState<string>('');
+
+  // Sub-paragraphs form state inside eBook conversation builder
+  const [tempParagraphs, setTempParagraphs] = useState<any[]>([]);
+  const [tempParaContent, setTempParaContent] = useState<string>('');
+  const [tempParaPron, setTempParaPron] = useState<string>('');
+  const [tempParaTrans, setTempParaTrans] = useState<string>('');
+  const [editingParaIdx, setEditingParaIdx] = useState<number | null>(null);
+
+  // Sub-variations form state inside eBook sentence builder (multiple middle words, same prefix)
+  const [tempVariations, setTempVariations] = useState<any[]>([]);
+  const [tempVarMiddle, setTempVarMiddle] = useState<string>('');
+  const [tempVarSentence, setTempVarSentence] = useState<string>('');
+  const [tempVarPron, setTempVarPron] = useState<string>('');
+  const [tempVarTrans, setTempVarTrans] = useState<string>('');
+  const [editingVarIdx, setEditingVarIdx] = useState<number | null>(null);
 
   // Sub-entries individual editing trackers
   const [editingVocabIdx, setEditingVocabIdx] = useState<number | null>(null);
@@ -3211,6 +3326,8 @@ startxref
 
   const handleTabClick = (tab: 'lessons' | 'notebook' | 'courses' | 'profile' | 'admin') => {
     setShowVocabPage(false);
+    setActiveReadingResource(null);
+    setActiveEbookId(null);
     if (tab === 'lessons') {
       if (dashboardTab === 'lessons' && activeLessonId !== null) {
         setActiveLessonId(null);
@@ -3541,7 +3658,344 @@ startxref
       {/* Main Container Workspace */}
       <main className="flex-1 overflow-y-auto max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 pb-[88px] sm:pb-32">
         
-        {activeEbookId ? (
+        {activeReadingResource ? (
+          <div className="space-y-6 animate-fade-in text-left">
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-6"
+            >
+              {/* Header card */}
+              <div className="duo-card bg-white p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-2 border-slate-100">
+                <div>
+                  <button
+                    onClick={() => setActiveReadingResource(null)}
+                    className="duo-btn duo-btn-white text-xs px-3.5 py-2.5 flex items-center mb-4 font-bold cursor-pointer"
+                    id="btn-back-ebooks"
+                  >
+                    ← Back to eBooks • စာအုပ်များသို့ပြန်သွားရန်
+                  </button>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-[10px] font-sans text-white bg-brand-purple px-2.5 py-1 rounded-full border-b-2 border-brand-purple-shadow font-black select-none uppercase tracking-wider">
+                      Interactive Companion Guide
+                    </span>
+                  </div>
+                  <h2 className="text-xl md:text-2xl font-sans font-black text-[#3c3c3c] tracking-tight mt-2 flex flex-wrap items-baseline gap-2">
+                    <span>{activeReadingResource.name}</span>
+                    {activeReadingResource.nameMm && (
+                      <span className="text-sm font-extrabold text-brand-purple italic">({activeReadingResource.nameMm})</span>
+                    )}
+                  </h2>
+                </div>
+                <div className="text-xs text-brand-muted font-bold font-sans hidden md:block text-right bg-slate-50 p-3 rounded-2xl border border-gray-100 max-w-xs">
+                  💡 Tap speaker icon to play Thai pronunciation audios.
+                </div>
+              </div>
+
+              {/* Navigation Tabs */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 border-b-2 border-gray-100 gap-2.5 py-2 select-none">
+                {(['vocab', 'sentence', 'dialogue', 'conversation'] as const).map((tab) => {
+                  const available = 
+                    (tab === 'vocab' && activeReadingResource.vocabEntries?.length > 0) ||
+                    (tab === 'sentence' && activeReadingResource.sentenceEntries?.length > 0) ||
+                    (tab === 'dialogue' && activeReadingResource.dialogueEntries?.length > 0) ||
+                    (tab === 'conversation' && activeReadingResource.conversationEntries?.length > 0);
+
+                  if (!available) return null;
+
+                  return (
+                    <button
+                      key={tab}
+                      type="button"
+                      onClick={() => {
+                        setStudentReadingTab(tab);
+                        setEBookConversationPage(1);
+                        setEBookVocabPage(1);
+                        setEBookDialoguePage(1);
+                      }}
+                      className={`px-3 py-3 rounded-2xl font-sans font-black text-xs transition-transform active:translate-y-0.5 text-center flex items-center justify-center gap-1.5 cursor-pointer ${
+                        studentReadingTab === tab
+                          ? 'bg-[#5a3194] text-white border-b-4 border-brand-purple-shadow shadow-xs'
+                          : 'bg-white border-2 border-[#e5e5e5] border-b-4 hover:bg-gray-50 text-brand-dark'
+                      }`}
+                    >
+                      {tab === 'vocab' && <Sparkles className="w-3.5 h-3.5 shrink-0" />}
+                      {tab === 'sentence' && <BookOpen className="w-3.5 h-3.5 shrink-0" />}
+                      {tab === 'dialogue' && <Users className="w-3.5 h-3.5 shrink-0" />}
+                      {tab === 'conversation' && <FileText className="w-3.5 h-3.5 shrink-0" />}
+                      
+                      <span className="truncate">
+                        {tab === 'vocab' && "Vocab • ဝေါဟာရ"}
+                        {tab === 'sentence' && "Sentence • ဝါကျ"}
+                        {tab === 'dialogue' && "Dialogue • စကားပြော"}
+                        {tab === 'conversation' && "Reading • ဖတ်ရန်"}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Content Panels */}
+              <div className="mt-4">
+                {studentReadingTab === 'vocab' && activeReadingResource.vocabEntries?.length > 0 && (
+                  (() => {
+                    const ITEMS_PER_PAGE = 12;
+                    const totalPages = Math.ceil(activeReadingResource.vocabEntries.length / ITEMS_PER_PAGE) || 1;
+                    const currentPage = Math.min(Math.max(1, eBookVocabPage), totalPages);
+                    const displayed = activeReadingResource.vocabEntries.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
+                    return (
+                      <div className="space-y-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 animate-fade-in">
+                          {displayed.map((item: any, idx: number) => (
+                            <div key={idx}>
+                              <VocabularyCard item={item} />
+                            </div>
+                          ))}
+                        </div>
+
+                        {totalPages > 1 && (
+                          <div className="flex items-center justify-between pt-4 border-t border-slate-200 select-none">
+                            <button
+                              type="button"
+                              onClick={() => setEBookVocabPage(prev => Math.max(1, prev - 1))}
+                              disabled={currentPage === 1}
+                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-sans font-black transition-all cursor-pointer ${
+                                currentPage === 1
+                                  ? 'opacity-30 cursor-not-allowed text-slate-400'
+                                  : 'text-[#5a3194] hover:bg-slate-100 hover:scale-105'
+                              }`}
+                            >
+                              <ChevronLeft className="w-4 h-4" />
+                              <span>Prev</span>
+                            </button>
+
+                            <div className="flex items-center gap-1.5">
+                              {Array.from({ length: totalPages }).map((_, i) => {
+                                const pageNum = i + 1;
+                                const isNear = Math.abs(pageNum - currentPage) <= 1;
+                                const isEdge = pageNum === 1 || pageNum === totalPages;
+                                if (!isNear && !isEdge) {
+                                  if (pageNum === 2 || pageNum === totalPages - 1) {
+                                    return <span key={pageNum} className="text-xs text-slate-450 font-sans font-black px-1">...</span>;
+                                  }
+                                  return null;
+                                }
+                                return (
+                                  <button
+                                    key={pageNum}
+                                    type="button"
+                                    onClick={() => setEBookVocabPage(pageNum)}
+                                    className={`w-7 h-7 rounded-full text-xs font-sans font-black flex items-center justify-center transition-all cursor-pointer ${
+                                      currentPage === pageNum
+                                        ? 'bg-[#5a3194] text-white shadow-md'
+                                        : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                                    }`}
+                                  >
+                                    {pageNum}
+                                  </button>
+                                );
+                              })}
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => setEBookVocabPage(prev => Math.min(totalPages, prev + 1))}
+                              disabled={currentPage === totalPages}
+                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-sans font-black transition-all cursor-pointer ${
+                                currentPage === totalPages
+                                  ? 'opacity-30 cursor-not-allowed text-slate-400'
+                                  : 'text-[#5a3194] hover:bg-slate-100 hover:scale-105'
+                              }`}
+                            >
+                              <span>Next</span>
+                              <ChevronRight className="w-4 h-4" />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()
+                )}
+
+                {studentReadingTab === 'sentence' && activeReadingResource.sentenceEntries?.length > 0 && (
+                  <div className="space-y-4 max-w-2xl mx-auto animate-fade-in">
+                    {activeReadingResource.sentenceEntries.map((item: any, idx: number) => (
+                      <div key={idx}>
+                        <SentenceCard item={item} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {studentReadingTab === 'dialogue' && activeReadingResource.dialogueEntries?.length > 0 && (() => {
+                  const ITEMS_PER_PAGE = 5;
+                  const entries = activeReadingResource.dialogueEntries || [];
+                  const totalPages = Math.ceil(entries.length / ITEMS_PER_PAGE) || 1;
+                  const currentPage = Math.min(Math.max(1, eBookDialoguePage), totalPages);
+                  const displayedEntries = entries.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
+                  return (
+                    <div className="space-y-4 max-w-2xl mx-auto bg-white p-6 rounded-2xl border border-slate-150 shadow-3xs animate-fade-in">
+                      <span className="text-[9px] text-[#5a3194] font-black uppercase tracking-widest block mb-4 border-b pb-2">
+                        🗣️ Interactive Dialogue roleplay
+                      </span>
+                      <div className="space-y-4">
+                        {displayedEntries.map((item: any, idx: number) => (
+                          <div key={idx}>
+                            <DialogueBubble item={item} />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Pagination Controls */}
+                      {totalPages > 1 && (
+                        <div className="flex items-center justify-between pt-4 border-t border-slate-200 select-none">
+                          <button
+                            type="button"
+                            onClick={() => setEBookDialoguePage(prev => Math.max(1, prev - 1))}
+                            disabled={currentPage === 1}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-sans font-black transition-all cursor-pointer ${
+                              currentPage === 1
+                                ? 'opacity-30 cursor-not-allowed text-slate-400'
+                                : 'text-[#5a3194] hover:bg-slate-100 hover:scale-105'
+                            }`}
+                          >
+                            <ChevronLeft className="w-4 h-4" />
+                            <span>Prev</span>
+                          </button>
+
+                          <div className="flex items-center gap-1.5">
+                            {Array.from({ length: totalPages }).map((_, i) => {
+                              const pageNum = i + 1;
+                              const isNear = Math.abs(pageNum - currentPage) <= 1;
+                              const isEdge = pageNum === 1 || pageNum === totalPages;
+                              if (!isNear && !isEdge) {
+                                if (pageNum === 2 || pageNum === totalPages - 1) {
+                                  return <span key={pageNum} className="text-xs text-slate-450 font-sans font-black px-1">...</span>;
+                                }
+                                return null;
+                              }
+                              return (
+                                <button
+                                  key={pageNum}
+                                  type="button"
+                                  onClick={() => setEBookDialoguePage(pageNum)}
+                                  className={`w-7 h-7 rounded-full text-xs font-sans font-black flex items-center justify-center transition-all cursor-pointer ${
+                                    currentPage === pageNum
+                                      ? 'bg-[#5a3194] text-white shadow-md'
+                                      : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                                  }`}
+                                >
+                                  {pageNum}
+                                </button>
+                              );
+                            })}
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setEBookDialoguePage(prev => Math.min(totalPages, prev + 1))}
+                            disabled={currentPage === totalPages}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-sans font-black transition-all cursor-pointer ${
+                              currentPage === totalPages
+                                ? 'opacity-30 cursor-not-allowed text-slate-400'
+                                : 'text-[#5a3194] hover:bg-slate-100 hover:scale-105'
+                            }`}
+                          >
+                            <span>Next</span>
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+
+                {studentReadingTab === 'conversation' && activeReadingResource.conversationEntries?.length > 0 && (() => {
+                  const ITEMS_PER_PAGE = 3;
+                  const entries = activeReadingResource.conversationEntries || [];
+                  const totalPages = Math.ceil(entries.length / ITEMS_PER_PAGE) || 1;
+                  const currentPage = Math.min(Math.max(1, eBookConversationPage), totalPages);
+                  const displayedEntries = entries.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
+                  return (
+                    <div className="space-y-6 max-w-2xl mx-auto animate-fade-in">
+                      <div className="space-y-6">
+                        {displayedEntries.map((item: any, idx: number) => (
+                          <div key={idx}>
+                            <ConversationBlock item={item} />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Pagination Bar */}
+                      {totalPages > 1 && (
+                        <div className="flex items-center justify-between pt-4 border-t border-slate-200 select-none px-1">
+                          <button
+                            type="button"
+                            onClick={() => setEBookConversationPage(prev => Math.max(1, prev - 1))}
+                            disabled={currentPage === 1}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-sans font-black transition-all cursor-pointer ${
+                              currentPage === 1
+                                ? 'opacity-30 cursor-not-allowed text-slate-400'
+                                : 'text-[#5a3194] hover:bg-[#5a3194]/5 hover:scale-105'
+                            }`}
+                          >
+                            <ChevronLeft className="w-4 h-4" />
+                            <span>ရှေ့သို့ (Prev)</span>
+                          </button>
+
+                          <div className="flex items-center gap-1.5">
+                            {Array.from({ length: totalPages }).map((_, i) => {
+                              const pageNum = i + 1;
+                              const isNear = Math.abs(pageNum - currentPage) <= 1;
+                              const isEdge = pageNum === 1 || pageNum === totalPages;
+                              if (!isNear && !isEdge) {
+                                if (pageNum === 2 || pageNum === totalPages - 1) {
+                                  return <span key={pageNum} className="text-xs text-slate-440 font-sans font-black px-1">...</span>;
+                                }
+                                return null;
+                              }
+                              return (
+                                <button
+                                  key={pageNum}
+                                  type="button"
+                                  onClick={() => setEBookConversationPage(pageNum)}
+                                  className={`w-7 h-7 rounded-full text-xs font-sans font-black flex items-center justify-center transition-all cursor-pointer ${
+                                    currentPage === pageNum
+                                      ? 'bg-[#5a3194] text-white shadow-md'
+                                      : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                                  }`}
+                                >
+                                  {pageNum}
+                                </button>
+                              );
+                            })}
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setEBookConversationPage(prev => Math.min(totalPages, prev + 1))}
+                            disabled={currentPage === totalPages}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-sans font-black transition-all cursor-pointer ${
+                              currentPage === totalPages
+                                ? 'opacity-30 cursor-not-allowed text-slate-400'
+                                : 'text-[#5a3194] hover:bg-[#5a3194]/5 hover:scale-105'
+                            }`}
+                          >
+                            <span>နောက်သို့ (Next)</span>
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+              </div>
+            </motion.div>
+          </div>
+        ) : activeEbookId ? (
           <TextbookReader bookId={activeEbookId} onClose={() => setActiveEbookId(null)} />
         ) : showVocabPage ? (
           <VocabPage onClose={() => setShowVocabPage(false)} />
@@ -4472,6 +4926,12 @@ startxref
         })()}
 
         {selectedCourseTab === 'resources' && (() => {
+          const hasAnyNonInteractiveResources = courses.some(course => {
+            const nonInteractiveDirectResources = (course.resources || []).filter((res: any) => !isInteractiveResource(res));
+            const courseResources = storeItems.filter(item => item.courseId === course.id);
+            return nonInteractiveDirectResources.length > 0 || courseResources.length > 0;
+          });
+
           return (
             <div className="space-y-8 animate-fade-in text-left">
               {/* Resources Page Header */}
@@ -4487,241 +4947,260 @@ startxref
                 </div>
               </div>
 
-              {/* Course specific companion groups */}
-              {courses.filter(course => ['course-basic', 'course-business'].includes(course.id)).map((course) => {
-                const courseResources = storeItems.filter(item => item.courseId === course.id);
-                const hasDirectResources = course.resources && course.resources.length > 0;
-                const hasStoreResources = courseResources.length > 0;
-                const hasAny = hasDirectResources || hasStoreResources;
-
-                // Only render courses that have eBook resources
-                if (!hasAny) return null;
-
-                return (
-                  <div key={course.id} className="space-y-4">
-                    <h4 className="font-sans font-black text-xs text-brand-dark uppercase tracking-wider flex items-center gap-2 border-b-2 border-slate-100 pb-2.5 text-left">
-                      <span className="p-1.5 rounded-lg bg-indigo-50 text-brand-purple text-xs">🎓</span>
-                      <span>{course.name} Companion Materials</span>
-                      <span className="text-[8px] bg-brand-purple/10 text-brand-purple px-2 py-0.5 rounded font-black tracking-normal uppercase">
-                        Enrolled Guides
-                      </span>
+              {!hasAnyNonInteractiveResources ? (
+                <div className="bg-gradient-to-r from-violet-50 to-indigo-50 p-6 sm:p-8 rounded-3xl border-2 border-indigo-100 flex flex-col items-center text-center gap-4 max-w-2xl mx-auto my-12 animate-fade-in shadow-sm">
+                  <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center text-4xl shadow-sm border border-indigo-100/50">
+                    📖
+                  </div>
+                  <div className="space-y-1.5">
+                    <h4 className="font-sans font-black text-brand-dark text-lg uppercase tracking-tight">
+                      Interactive Materials Moved
                     </h4>
+                    <p className="text-xs text-brand-muted font-sans font-semibold leading-relaxed">
+                      To make study tracking and workbook practice easier, all interactive companion books with dynamic quizzes, trace writing sheets, and vocabulary cards have been moved to the <b>eBooks & Interactive Guides</b> section.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCourseTab('ebooks')}
+                    className="mt-2 px-5 py-2.5 bg-gradient-to-r from-brand-purple to-indigo-600 text-white rounded-xl text-xs font-sans font-black uppercase tracking-wider hover:shadow-md cursor-pointer border-b-4 border-brand-purple-shadow flex items-center gap-1.5 transition-all transform active:translate-y-0.5"
+                  >
+                    <span>📕 Go to eBooks Tab</span>
+                  </button>
+                </div>
+              ) : (
+                /* Course specific companion groups */
+                courses.filter(course => ['course-basic', 'course-business'].includes(course.id)).map((course) => {
+                  const courseResources = storeItems.filter(item => item.courseId === course.id);
+                  const nonInteractiveDirectResources = (course.resources || []).filter((res: any) => !isInteractiveResource(res));
+                  const hasDirectResources = nonInteractiveDirectResources.length > 0;
+                  const hasStoreResources = courseResources.length > 0;
+                  const hasAny = hasDirectResources || hasStoreResources;
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Direct resource list */}
-                      {course.resources?.map((res: any) => {
-                        const isFree = res.priceAmount === 0;
-                        const itemOwned = isStoreItemUnlocked(res.id, res.priceAmount);
-                        return (
-                          <div
-                            key={res.id}
-                            className="duo-card p-6 bg-white flex flex-col justify-between hover:shadow-md transition-all duration-200 border-2 border-slate-100 text-left"
-                          >
-                            <div className="space-y-4">
-                              <div className="flex items-start justify-between">
-                                <div className="w-11 h-11 rounded-xl bg-brand-purple/5 border border-brand-purple/10 flex items-center justify-center text-2xl select-none">
-                                  📕
+                  // Only render courses that have eBook resources
+                  if (!hasAny) return null;
+
+                  return (
+                    <div key={course.id} className="space-y-4">
+                      <h4 className="font-sans font-black text-xs text-brand-dark uppercase tracking-wider flex items-center gap-2 border-b-2 border-slate-100 pb-2.5 text-left">
+                        <span className="p-1.5 rounded-lg bg-indigo-50 text-brand-purple text-xs">🎓</span>
+                        <span>{course.name} Companion Materials</span>
+                        <span className="text-[8px] bg-brand-purple/10 text-brand-purple px-2 py-0.5 rounded font-black tracking-normal uppercase">
+                          Enrolled Guides
+                        </span>
+                      </h4>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Direct resource list */}
+                        {nonInteractiveDirectResources.map((res: any) => {
+                          const isFree = res.priceAmount === 0;
+                          const itemOwned = isStoreItemUnlocked(res.id, res.priceAmount);
+                          return (
+                            <div
+                              key={res.id}
+                              className="duo-card p-6 bg-white flex flex-col justify-between hover:shadow-md transition-all duration-200 border-2 border-slate-100 text-left"
+                            >
+                              <div className="space-y-4">
+                                <div className="flex items-start justify-between">
+                                  <div className="w-11 h-11 rounded-xl bg-brand-purple/5 border border-brand-purple/10 flex items-center justify-center text-2xl select-none">
+                                    📕
+                                  </div>
+                                  <span className={`px-2.5 py-0.5 rounded-full text-[8.5px] font-black uppercase tracking-wider border select-none ${
+                                    isFree 
+                                      ? 'bg-emerald-50 text-emerald-600 border-emerald-200' 
+                                      : 'bg-amber-50 text-amber-700 border-amber-200'
+                                  }`}>
+                                    {isFree ? "FREE PDF" : "PREMIUM COMPANION"}
+                                  </span>
                                 </div>
-                                <span className={`px-2.5 py-0.5 rounded-full text-[8.5px] font-black uppercase tracking-wider border select-none ${
-                                  isFree 
-                                    ? 'bg-emerald-50 text-emerald-600 border-emerald-200' 
-                                    : 'bg-amber-50 text-amber-700 border-amber-200'
-                                }`}>
-                                  {isFree ? "FREE PDF" : "PREMIUM COMPANION"}
-                                </span>
-                              </div>
 
-                              <div className="space-y-1">
-                                <h4 className="font-sans font-black text-sm text-[#3c3c3c] leading-tight text-left">
-                                  {res.name}
-                                </h4>
-                                {res.nameMm && (
-                                  <p className="text-[11px] font-sans font-bold text-[#5a3194] text-left">
-                                    {res.nameMm}
+                                <div className="space-y-1">
+                                  <h4 className="font-sans font-black text-sm text-[#3c3c3c] leading-tight text-left">
+                                    {res.name}
+                                  </h4>
+                                  {res.nameMm && (
+                                    <p className="text-[11px] font-sans font-bold text-[#5a3194] text-left">
+                                      {res.nameMm}
+                                    </p>
+                                  )}
+                                  <p className="text-[11px] text-brand-muted font-sans font-medium leading-relaxed pt-1 text-left">
+                                    Study worksheets and practice guidelines specifically designed for the {course.name}.
                                   </p>
-                                )}
-                                <p className="text-[11px] text-brand-muted font-sans font-medium leading-relaxed pt-1 text-left">
-                                  Study worksheets and practice guidelines specifically designed for the {course.name}.
-                                </p>
-                              </div>
-                            </div>
-
-                            <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between gap-3 bg-[#fafafc] -mx-6 -mb-6 p-4 rounded-b-2xl">
-                              <div className="text-left font-sans select-none">
-                                <span className="text-[8px] text-brand-muted block font-extrabold uppercase leading-none">PRICING RATE</span>
-                                <span className="text-[11.5px] font-black text-brand-purple block mt-0.5">
-                                  {isFree ? "FREE" : `${res.priceAmount.toLocaleString()} MMK`}
-                                </span>
+                                </div>
                               </div>
 
-                              {itemOwned ? (
-                                <div className="flex gap-2 shrink-0">
-                                  {(res.vocabEntries?.length > 0 || res.sentenceEntries?.length > 0 || res.dialogueEntries?.length > 0 || res.conversationEntries?.length > 0) && (
+                              <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between gap-3 bg-[#fafafc] -mx-6 -mb-6 p-4 rounded-b-2xl">
+                                <div className="text-left font-sans select-none">
+                                  <span className="text-[8px] text-brand-muted block font-extrabold uppercase leading-none">PRICING RATE</span>
+                                  <span className="text-[11.5px] font-black text-brand-purple block mt-0.5">
+                                    {isFree ? "FREE" : `${res.priceAmount.toLocaleString()} MMK`}
+                                  </span>
+                                </div>
+
+                                {itemOwned ? (
+                                  <div className="flex gap-2 shrink-0">
                                     <button
                                       type="button"
                                       onClick={() => {
-                                        setActiveReadingResource(res);
+                                        window.open(res.downloadUrl, '_blank');
+                                        addSystemLog(currentUser || 'student', `Downloaded PDF companion resource: "${res.name}"`);
                                       }}
-                                      className="px-3 py-2 bg-[#5a3194] hover:bg-[#4a267a] text-white rounded-xl text-[10px] sm:text-xs font-sans font-black uppercase tracking-wider hover:shadow-md cursor-pointer transition-all transform active:translate-y-0.5 border-b-4 border-[#3e1c6b] flex items-center gap-1 shrink-0"
+                                      className="px-3.5 py-2 bg-gradient-to-r from-[#00875a] to-[#00a36c] text-white rounded-xl text-[10px] sm:text-xs font-sans font-black uppercase tracking-wider hover:shadow-md cursor-pointer transition-all transform active:translate-y-0.5 border-b-4 border-[#006644] flex items-center gap-1 shrink-0"
                                     >
-                                      📖 Study Interactive
+                                      📥 Open / Download
                                     </button>
-                                  )}
+                                  </div>
+                                ) : (
                                   <button
                                     type="button"
                                     onClick={() => {
-                                      window.open(res.downloadUrl, '_blank');
-                                      addSystemLog(currentUser || 'student', `Downloaded PDF companion resource: "${res.name}"`);
+                                      const checkoutProduct = {
+                                        id: res.id,
+                                        name: res.name,
+                                        nameMm: res.nameMm || '',
+                                        priceAmount: res.priceAmount,
+                                        currency: 'MMK' as const,
+                                        itemType: 'e-book',
+                                        duration: "Companion eBook Study Resource",
+                                        description: `Direct premium supplementary eBook for ${course.name}`,
+                                        descriptionMm: res.nameMm || '',
+                                        instructor: course.instructor || "Kru Jane & Sayar Thura",
+                                        includes: ["Permanent direct download URL", "Study exercises", "Vocabulary sheets"]
+                                      };
+                                      setGatewayCourse(checkoutProduct as any);
+                                      setGatewayPhone(progress.masteredWords.length > 0 ? "09-791112233" : "09-");
+                                      setGatewayEmail(currentUser ? `${currentUser.toLowerCase()}@classroom.edu` : "student@classroom.edu");
+                                      setGatewayStep(1);
+                                      setGatewayPaymentMethod('kbzpay');
+                                      setGatewayOtp('');
+                                      setGatewayTimer(180);
+                                      setIsGatewayOpen(true);
                                     }}
-                                    className="px-3.5 py-2 bg-gradient-to-r from-[#00875a] to-[#00a36c] text-white rounded-xl text-[10px] sm:text-xs font-sans font-black uppercase tracking-wider hover:shadow-md cursor-pointer transition-all transform active:translate-y-0.5 border-b-4 border-[#006644] flex items-center gap-1 shrink-0"
+                                    className="px-3.5 py-2 bg-gradient-to-r from-[#583092] to-[#7a42c4] text-white rounded-xl text-[10px] sm:text-xs font-sans font-black uppercase tracking-wider hover:shadow-md cursor-pointer transition-all transform active:translate-y-0.5 border-b-4 border-[#3c1e66] flex items-center gap-1 shrink-0"
                                   >
-                                    📥 Open / Download
+                                    🔒 Unlock eBook
                                   </button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+
+                        {/* Course linked bookstore store items list */}
+                        {courseResources.map((item) => {
+                          const itemOwned = isStoreItemUnlocked(item.id, item.price);
+                          const isFree = item.price === 0;
+                          return (
+                            <div
+                              key={item.id}
+                              className="duo-card p-6 bg-white border-2 border-slate-100 flex flex-col justify-between hover:shadow-md transition-all duration-200 animate-fade-in relative overflow-hidden text-left"
+                            >
+                              <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                  <span className={`px-2.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider border select-none ${
+                                    isFree
+                                      ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                                      : 'bg-brand-purple/10 text-[#583092] border-brand-purple/20'
+                                  }`}>
+                                    {isFree ? 'FREE PDF DOWNLOAD' : 'PREMIUM STUDY BOOK'}
+                                  </span>
+                                  <FileText className={`w-4 h-4 ${isFree ? 'text-emerald-600' : 'text-brand-purple'}`} />
                                 </div>
-                              ) : (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    const checkoutProduct = {
-                                      id: res.id,
-                                      name: res.name,
-                                      nameMm: res.nameMm || '',
-                                      priceAmount: res.priceAmount,
-                                      currency: 'MMK' as const,
-                                      itemType: 'e-book',
-                                      duration: "Companion eBook Study Resource",
-                                      description: `Direct premium supplementary eBook for ${course.name}`,
-                                      descriptionMm: res.nameMm || '',
-                                      instructor: course.instructor || "Kru Jane & Sayar Thura",
-                                      includes: ["Permanent direct download URL", "Study exercises", "Vocabulary sheets"]
-                                    };
-                                    setGatewayCourse(checkoutProduct as any);
-                                    setGatewayPhone(progress.masteredWords.length > 0 ? "09-791112233" : "09-");
-                                    setGatewayEmail(currentUser ? `${currentUser.toLowerCase()}@classroom.edu` : "student@classroom.edu");
-                                    setGatewayStep(1);
-                                    setGatewayPaymentMethod('kbzpay');
-                                    setGatewayOtp('');
-                                    setGatewayTimer(180);
-                                    setIsGatewayOpen(true);
-                                  }}
-                                  className="px-3.5 py-2 bg-gradient-to-r from-[#583092] to-[#7a42c4] text-white rounded-xl text-[10px] sm:text-xs font-sans font-black uppercase tracking-wider hover:shadow-md cursor-pointer transition-all transform active:translate-y-0.5 border-b-4 border-[#3c1e66] flex items-center gap-1 shrink-0"
-                                >
-                                  🔒 Unlock eBook
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-
-                      {/* Course linked bookstore store items list */}
-                      {courseResources.map((item) => {
-                        const itemOwned = isStoreItemUnlocked(item.id, item.price);
-                        const isFree = item.price === 0;
-                        return (
-                          <div
-                            key={item.id}
-                            className="duo-card p-6 bg-white border-2 border-slate-100 flex flex-col justify-between hover:shadow-md transition-all duration-200 animate-fade-in relative overflow-hidden text-left"
-                          >
-                            <div className="space-y-4">
-                              <div className="flex items-center justify-between">
-                                <span className={`px-2.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider border select-none ${
-                                  isFree
-                                    ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                                    : 'bg-brand-purple/10 text-[#583092] border-brand-purple/20'
-                                }`}>
-                                  {isFree ? 'FREE PDF DOWNLOAD' : 'PREMIUM STUDY BOOK'}
-                                </span>
-                                <FileText className={`w-4 h-4 ${isFree ? 'text-emerald-600' : 'text-brand-purple'}`} />
-                              </div>
-                              <div>
-                                <h4 className="font-sans font-black text-sm text-[#3c3c3c] leading-snug">
-                                  {item.name}
-                                </h4>
-                                <p className="text-[10px] sm:text-[11px] font-sans font-bold text-brand-purple mt-0.5">
-                                  {item.nameMm}
-                                </p>
-                                <p className="text-[11px] text-brand-muted font-sans font-medium mt-2 leading-relaxed">
-                                  {item.description}
-                                </p>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center justify-between gap-3 pt-4 mt-5 border-t border-slate-100 -mx-5 -mb-5 p-4 bg-[#fafafc] rounded-b-2xl">
-                              <div className="text-left font-sans select-none">
-                                <span className="text-[7.5px] text-brand-muted block font-extrabold uppercase leading-none">Price Tag</span>
-                                <span className="text-xs sm:text-sm font-black text-brand-purple block mt-0.5">
-                                  {isFree ? 'FREE' : `${item.price.toLocaleString()} ${item.currency}`}
-                                </span>
+                                <div>
+                                  <h4 className="font-sans font-black text-sm text-[#3c3c3c] leading-snug">
+                                    {item.name}
+                                  </h4>
+                                  <p className="text-[10px] sm:text-[11px] font-sans font-bold text-brand-purple mt-0.5">
+                                    {item.nameMm}
+                                  </p>
+                                  <p className="text-[11px] text-brand-muted font-sans font-medium mt-2 leading-relaxed">
+                                    {item.description}
+                                  </p>
+                                </div>
                               </div>
 
-                              {itemOwned ? (
-                                <button
-                                  onClick={() => {
-                                    if (item.pdfDownloadUrl) {
-                                      window.open(item.pdfDownloadUrl, '_blank');
-                                      addSystemLog(currentUser || 'student', `Opened dynamic download link for eBook: "${item.name}"`);
-                                    } else {
-                                      triggerPdfDownload(
-                                        item.pdfFileName || `${item.id}.pdf`,
-                                        item.name,
-                                        item.description,
-                                        [
-                                          { thai: "สวัสดี ครับ/ค่ะ", pronunciation: "sawàtdii khráp/khâ", myanmar: "မင်္ဂလာပါ (ကျား/မ)" },
-                                          { thai: "ขอบคุณ ครับ/ค่ะ", pronunciation: "khɔ̀ɔp-khun khráp/khâ", myanmar: "ကျေးဇူးတင်ပါတယ်" }
-                                        ]
-                                      );
-                                      addSystemLog(currentUser || 'student', `Completed dynamic auto-generation download: "${item.name}"`);
-                                    }
-                                  }}
-                                  className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-750 text-white rounded-xl text-[10px] sm:text-xs font-sans font-black uppercase tracking-wider hover:shadow-md cursor-pointer transition-all transform active:translate-y-0.5 border-b-4 border-emerald-805 flex items-center gap-1.5 shrink-0"
-                                >
-                                  <Download className="w-3.5 h-3.5" />
-                                  📥 Download Free Guide
-                                </button>
-                              ) : (
-                                <button
-                                  onClick={() => {
-                                    const bookProduct = {
-                                      id: item.id,
-                                      name: item.name,
-                                      nameMm: item.nameMm,
-                                      priceAmount: item.price,
-                                      currency: item.currency || 'MMK',
-                                      itemType: 'e-book',
-                                      duration: "Lifetime Study Access License",
-                                      description: item.description,
-                                      descriptionMm: item.descriptionMm,
-                                      instructor: "Kru Jane & Sayar Thura",
-                                      includes: ["Full Dynamic PDF eBook Download", "Offline Reading Support", "Grammar Revision Sheets", "Burmese Pronunciation Guide"]
-                                    };
-                                    setGatewayCourse(bookProduct as any);
-                                    setGatewayPhone(progress.masteredWords.length > 0 ? "09-791112233" : "09-");
-                                    setGatewayEmail(currentUser ? `${currentUser.toLowerCase()}@classroom.edu` : "student@classroom.edu");
-                                    setGatewayStep(1);
-                                    setGatewayPaymentMethod('kbzpay');
-                                    setGatewayOtp('');
-                                    setGatewayTimer(180);
-                                    setIsGatewayOpen(true);
-                                  }}
-                                  className="px-4 py-2 bg-gradient-to-r from-brand-purple to-brand-purple/95 text-white rounded-xl text-[10px] sm:text-xs font-sans font-black uppercase tracking-wider hover:shadow-md cursor-pointer transition-all transform active:translate-y-0.5 border-b-4 border-brand-purple-shadow flex items-center gap-1 shrink-0"
-                                >
-                                  🔒 Unlock eBook
-                                </button>
-                              )}
+                              <div className="flex items-center justify-between gap-3 pt-4 mt-5 border-t border-slate-100 -mx-5 -mb-5 p-4 bg-[#fafafc] rounded-b-2xl">
+                                <div className="text-left font-sans select-none">
+                                  <span className="text-[7.5px] text-brand-muted block font-extrabold uppercase leading-none">Price Tag</span>
+                                  <span className="text-xs sm:text-sm font-black text-brand-purple block mt-0.5">
+                                    {isFree ? 'FREE' : `${item.price.toLocaleString()} ${item.currency}`}
+                                  </span>
+                                </div>
+
+                                {itemOwned ? (
+                                  <button
+                                    onClick={() => {
+                                      if (item.pdfDownloadUrl) {
+                                        window.open(item.pdfDownloadUrl, '_blank');
+                                        addSystemLog(currentUser || 'student', `Opened dynamic download link for eBook: "${item.name}"`);
+                                      } else {
+                                        triggerPdfDownload(
+                                          item.pdfFileName || `${item.id}.pdf`,
+                                          item.name,
+                                          item.description,
+                                          [
+                                            { thai: "สวัสดี ครับ/ค่ะ", pronunciation: "sawàtdii khráp/khâ", myanmar: "မင်္ဂလာပါ (ကျား/မ)" },
+                                            { thai: "ขอบคุณ ครับ/ค่ะ", pronunciation: "khɔ̀ɔp-khun khráp/khâ", myanmar: "ကျေးဇူးတင်ပါတယ်" }
+                                          ]
+                                        );
+                                        addSystemLog(currentUser || 'student', `Completed dynamic auto-generation download: "${item.name}"`);
+                                      }
+                                    }}
+                                    className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-750 text-white rounded-xl text-[10px] sm:text-xs font-sans font-black uppercase tracking-wider hover:shadow-md cursor-pointer transition-all transform active:translate-y-0.5 border-b-4 border-emerald-805 flex items-center gap-1.5 shrink-0"
+                                  >
+                                    <Download className="w-3.5 h-3.5" />
+                                    📥 Download Free Guide
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={() => {
+                                      const bookProduct = {
+                                        id: item.id,
+                                        name: item.name,
+                                        nameMm: item.nameMm,
+                                        priceAmount: item.price,
+                                        currency: item.currency || 'MMK',
+                                        itemType: 'e-book',
+                                        duration: "Lifetime Study Access License",
+                                        description: item.description,
+                                        descriptionMm: item.descriptionMm,
+                                        instructor: "Kru Jane & Sayar Thura",
+                                        includes: ["Full Dynamic PDF eBook Download", "Offline Reading Support", "Grammar Revision Sheets", "Burmese Pronunciation Guide"]
+                                      };
+                                      setGatewayCourse(bookProduct as any);
+                                      setGatewayPhone(progress.masteredWords.length > 0 ? "09-791112233" : "09-");
+                                      setGatewayEmail(currentUser ? `${currentUser.toLowerCase()}@classroom.edu` : "student@classroom.edu");
+                                      setGatewayStep(1);
+                                      setGatewayPaymentMethod('kbzpay');
+                                      setGatewayOtp('');
+                                      setGatewayTimer(180);
+                                      setIsGatewayOpen(true);
+                                    }}
+                                    className="px-4 py-2 bg-gradient-to-r from-brand-purple to-brand-purple/95 text-white rounded-xl text-[10px] sm:text-xs font-sans font-black uppercase tracking-wider hover:shadow-md cursor-pointer transition-all transform active:translate-y-0.5 border-b-4 border-brand-purple-shadow flex items-center gap-1 shrink-0"
+                                  >
+                                    🔒 Unlock eBook
+                                  </button>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              )}
             </div>
           );
         })()}
 
         {selectedCourseTab === 'ebooks' && (() => {
+          const companionEbooks = courses.flatMap(course => 
+            (course.resources || [])
+              .filter((res: any) => isInteractiveResource(res))
+              .map((res: any) => ({ ...res, courseId: course.id, courseName: course.name }))
+          );
+
           return (
             <div className="space-y-8 animate-fade-in text-left">
               {/* eBooks Page Header */}
@@ -4737,7 +5216,169 @@ startxref
                 </div>
               </div>
 
-              {/* General Reference PDF library section */}
+              {/* SECTION 1: Interactive Course Companion eBooks */}
+              {companionEbooks.length > 0 && (
+                <div className="space-y-4 pt-2 text-left">
+                  <h4 className="font-sans font-black text-xs text-brand-dark uppercase tracking-wider flex items-center gap-2 border-b-2 border-slate-100 pb-2.5">
+                    <span className="p-1.5 rounded-lg bg-violet-50 text-brand-purple text-xs">🎓</span>
+                    <span>Interactive Course Companion eBooks</span>
+                    <span className="text-[8px] bg-brand-purple/10 text-brand-purple px-2 py-0.5 rounded font-black tracking-normal uppercase">
+                      Practice Guides
+                    </span>
+                  </h4>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {companionEbooks.map((res: any) => {
+                      const itemOwned = isStoreItemUnlocked(res.id, res.priceAmount);
+                      const isFree = res.priceAmount === 0;
+                      const bookStyle = getCompanionBookStyles(res.id, res.name);
+
+                      return (
+                        <div
+                          key={res.id}
+                          className="duo-card p-5 sm:p-6 bg-white border-2 border-slate-150 rounded-2xl flex flex-col md:flex-row gap-5 hover:shadow-md transition-all duration-200 animate-fade-in relative overflow-hidden text-left"
+                        >
+                          {/* Book cover rendering widget */}
+                          <div className={`w-[120px] sm:w-[130px] mx-auto md:mx-0 aspect-[1/1.414] bg-gradient-to-tr ${bookStyle.gradient} rounded-lg shadow-md hover:shadow-lg transition-transform transform hover:scale-[1.02] active:scale-95 shrink-0 relative flex flex-col justify-between p-4 text-white border-l-4 ${bookStyle.borderLeft} border-r border-t border-b border-white/10 select-none overflow-hidden`}>
+                            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/10 pointer-events-none" />
+                            <div className="absolute top-0 bottom-0 left-0 w-2.5 bg-black/20 shadow-inner" />
+                            
+                            <div className="space-y-1 text-center pl-1 pt-1">
+                              <span className={`block text-[6.5px] sm:text-[7.5px] font-black tracking-widest ${bookStyle.accentText} uppercase leading-none`}>
+                                {bookStyle.topLabel}
+                              </span>
+                              <div className="h-[2px] bg-yellow-400 w-1/2 mx-auto mt-1 rounded" />
+                              <h4 className={`font-sans font-black text-[9px] sm:text-[10px] leading-tight ${bookStyle.titleColor} drop-shadow mt-1 uppercase`}>
+                                {bookStyle.titleText}
+                              </h4>
+                              <p className={`text-[7px] sm:text-[7.5px] tracking-wide font-sans font-extrabold ${bookStyle.accentText} uppercase opacity-90 leading-tight`}>
+                                {bookStyle.subText}
+                              </p>
+                            </div>
+                            
+                            <div className="flex flex-col items-center justify-center pl-2 py-1.5 space-y-1">
+                              <div className="w-9 h-9 rounded-full bg-white/10 border border-white/15 flex flex-col items-center justify-center">
+                                <span className="text-sm text-white">{bookStyle.emoji}</span>
+                              </div>
+                              <span className="text-[6px] font-bold text-yellow-105 tracking-wider uppercase text-center leading-tight">
+                                {bookStyle.emojiLabel}
+                              </span>
+                            </div>
+
+                            <div className="space-y-0.5 text-center pl-1">
+                              <div className="h-[1px] bg-slate-100/20 w-3/4 mx-auto rounded" />
+                              <p className="text-[6.5px] sm:text-[7.5px] font-bold text-white/95 tracking-tight uppercase">
+                                {bookStyle.author}
+                              </p>
+                              <p className="text-[6px] text-yellow-400 font-extrabold tracking-wider uppercase leading-none">
+                                {bookStyle.status}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Detail fields */}
+                          <div className="flex-1 flex flex-col justify-between text-left font-sans">
+                            <div className="space-y-3">
+                              <div>
+                                <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                                  <span className={`px-2.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider border select-none bg-indigo-50 text-indigo-700 border-indigo-200`}>
+                                    {res.courseName}
+                                  </span>
+                                  <span className={`px-2.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider border select-none ${
+                                    isFree
+                                      ? 'bg-emerald-50 text-emerald-800 border-emerald-250'
+                                      : 'bg-amber-50 text-amber-700 border-amber-200'
+                                  }`}>
+                                    {isFree ? 'FREE STUDY BOOK' : 'PREMIUM COMPANION'}
+                                  </span>
+                                </div>
+                                <h3 className="font-sans font-black text-sm text-slate-800 leading-snug">
+                                  {res.name}
+                                </h3>
+                                {res.nameMm && (
+                                  <p className="text-xs font-extrabold text-brand-purple mt-0.5">
+                                    {res.nameMm}
+                                  </p>
+                                )}
+                              </div>
+
+                              <div className="text-xs text-brand-muted space-y-1 leading-relaxed text-left">
+                                <p className="font-semibold">Interactive Study Guide featuring audio-synchronized voice clips, flashcards, word quizzes, and writing templates.</p>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center justify-between gap-3 pt-3 mt-4 border-t border-slate-100">
+                              <div className="text-left select-none">
+                                <span className="text-[7.5px] text-brand-muted block font-extrabold uppercase leading-none">PRICING RATE</span>
+                                <span className="text-xs font-black text-brand-purple block mt-0.5">
+                                  {isFree ? 'FREE' : `${res.priceAmount.toLocaleString()} MMK`}
+                                </span>
+                              </div>
+
+                              {itemOwned ? (
+                                <div className="flex gap-2 shrink-0">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setActiveReadingResource(res);
+                                      addSystemLog(currentUser || 'student', `Opened interactive companion eBook player: "${res.name}"`);
+                                    }}
+                                    className="px-3 py-1.5 bg-gradient-to-r from-brand-purple to-[#7a42c4] text-white rounded-xl text-[10px] font-sans font-black uppercase tracking-wider hover:shadow-md cursor-pointer border-b-4 border-brand-purple-shadow flex items-center gap-1.5 shrink-0"
+                                  >
+                                    <span>📖 Study Interactive</span>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      window.open(res.downloadUrl, '_blank');
+                                      addSystemLog(currentUser || 'student', `Downloaded companion PDF eBook: "${res.name}"`);
+                                    }}
+                                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-[10px] font-sans font-black uppercase tracking-wider cursor-pointer border-b-4 border-slate-300 flex items-center gap-1.5 shrink-0 transition-all"
+                                  >
+                                    <span>📥 PDF</span>
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const checkoutProduct = {
+                                      id: res.id,
+                                      name: res.name,
+                                      nameMm: res.nameMm || '',
+                                      priceAmount: res.priceAmount,
+                                      currency: 'MMK' as const,
+                                      itemType: 'e-book',
+                                      duration: "Companion eBook Study Resource",
+                                      description: `Direct premium supplementary eBook for ${res.courseName}`,
+                                      descriptionMm: res.nameMm || '',
+                                      instructor: "Kru Jane & Sayar Thura",
+                                      includes: ["Permanent direct download URL", "Study exercises", "Vocabulary sheets"]
+                                    };
+                                    setGatewayCourse(checkoutProduct as any);
+                                    setGatewayPhone(progress.masteredWords.length > 0 ? "09-791112233" : "09-");
+                                    setGatewayEmail(currentUser ? `${currentUser.toLowerCase()}@classroom.edu` : "student@classroom.edu");
+                                    setGatewayStep(1);
+                                    setGatewayPaymentMethod('kbzpay');
+                                    setGatewayOtp('');
+                                    setGatewayTimer(180);
+                                    setIsGatewayOpen(true);
+                                  }}
+                                  className="px-3 py-1.5 bg-gradient-to-r from-[#5a3194] to-[#7a42c4] text-white rounded-xl text-[10px] font-sans font-black uppercase tracking-wider hover:shadow-md cursor-pointer border-b-4 border-brand-purple-shadow flex items-center gap-1 shrink-0"
+                                >
+                                  🔒 Unlock eBook
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* SECTION 2: General Reference PDF library section */}
               <div className="space-y-4 pt-4 text-left">
                 <h4 className="font-sans font-black text-xs text-brand-dark uppercase tracking-wider flex items-center gap-2 border-b-2 border-slate-100 pb-2.5">
                   <span className="p-1.5 rounded-lg bg-indigo-50 text-brand-purple text-xs">📖</span>
@@ -5963,560 +6604,7 @@ startxref
             )}
 
             {/* TAB CONTENT: 3.5 E-Book Audio Player */}
-            {dashboardTab === 'audio' && (() => {
-              // Internal state for E-Book Audio Player
-              const EBOOK_AUDIO_DATA = [
-                {
-                  id: "eb-alphabet",
-                  title: "Basic Thai Alphabet Workbook",
-                  titleMm: "ထိုင်းအခြေခံအက္ခရာ သင်ပုန်းကြီး လက်စွဲ",
-                  coverEmoji: "🔠",
-                  color: "from-blue-500 to-indigo-600",
-                  instructor: "Kru Jane",
-                  tracks: [
-                    {
-                      id: "tr-al-consonants",
-                      title: "Lesson 1: High, Mid, Low Consonant Classes",
-                      titleMm: "မဟာသံ၊ မဇ္ဈိမသံနှင့် သာမန်သံဗျည်းများ ခွဲခြားခြင်း",
-                      duration: "04:15",
-                      phrases: [
-                        { thai: "กอ ไก่", pronunciation: "ကော ကိုင် (Ko Kai)", translation: "ကြက်", english: "Chicken (Mid Class)" },
-                        { thai: "ขอ ไข่", pronunciation: "ခေါ ခိုင် (Kho Khai)", translation: "ဥ", english: "Egg (High Class)" },
-                        { thai: "คอ ควาย", pronunciation: "ခေါ ခွိုင် (Kho Khwai)", translation: "ကျွဲ", english: "Buffalo (Low Class)" },
-                        { thai: "งอ งู", pronunciation: "ငေါ ငူ (Ngo Ngu)", translation: "မြွေ", english: "Snake (Low Class)" }
-                      ]
-                    },
-                    {
-                      id: "tr-al-vowels",
-                      title: "Lesson 2: Short vs Long Spoken Vowels",
-                      titleMm: "သရတိုနှင့် သရရှည်များ အသံထွက်ဖတ်နည်း",
-                      duration: "03:50",
-                      phrases: [
-                        { thai: "สระ อะ", pronunciation: "သရ အာ့ (Sara A)", translation: "သရတို အသံထွက်", english: "Short vowel 'a'" },
-                        { thai: "สระ อา", pronunciation: "သရ အာ (Sara Aa)", translation: "သရရှည် အသံထွက်", english: "Long vowel 'aa'" },
-                        { thai: "สระ อิ", pronunciation: "သရ အိ့ (Sara I)", translation: "သရတို အသံထွက်", english: "Short vowel 'i'" },
-                        { thai: "สระ อี", pronunciation: "သရ အီ (Sara Ii)", translation: "သရရှည် အသံထွက်", english: "Long vowel 'ii'" }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  id: "eb-grammar",
-                  title: "Basic Thai Grammar Pocketbook",
-                  titleMm: "ထိုင်းစကားပြော အခြေခံသဒ္ဒါ အိတ်ဆောင်စာအုပ်",
-                  coverEmoji: "📖",
-                  color: "from-purple-500 to-indigo-700",
-                  instructor: "Sayar Thura",
-                  tracks: [
-                    {
-                      id: "tr-gr-future",
-                      title: "Lesson 1: Future Tense with จะ (ca / ja)",
-                      titleMm: "အနာဂတ်ကာလဖော်ပြချက် 'ကျ' (မည်)",
-                      duration: "05:20",
-                      phrases: [
-                        { thai: "จะกิน", pronunciation: "ကျ ကိန်း (ca kin)", translation: "စားမယ်", english: "Will eat" },
-                        { thai: "จะทำ", pronunciation: "ကျ ထမ်း (ca tham)", translation: "လုပ်မယ်", english: "Will do" },
-                        { thai: "จะไป", pronunciation: "ကျ ပိုင် (ca pai)", translation: "သွားမယ်", english: "Will go" },
-                        { thai: "จะมา", pronunciation: "ကျ မာ (ca ma)", translation: "လာမယ်", english: "Will come" },
-                        { thai: "จะนอน", pronunciation: "ကျ နျော်န်း (ca non)", translation: "အိပ်မယ်", english: "Will sleep" },
-                        { thai: "จะเดิน", pronunciation: "ကျ ဒန်း (ca doen)", translation: "လမ်းလျှောက်မယ်", english: "Will walk" }
-                      ]
-                    },
-                    {
-                      id: "tr-gr-polite",
-                      title: "Lesson 2: Polite Ending Particles ครับ / ค่ะ",
-                      titleMm: "ယဉ်ကျေးသော နောက်ပိတ်စကားလုံးများအသုံး",
-                      duration: "04:45",
-                      phrases: [
-                        { thai: "ขอบคุณครับ", pronunciation: "ခေါပ်ခွန်း ခရတ် (Khop-khun khráp)", translation: "ကျေးဇူးတင်ပါတယ် (ကျား)", english: "Thank you (male)" },
-                        { thai: "ขอบคุณค่ะ", pronunciation: "ခေါပ်ခွန်း ခါး (Khop-khun khâ)", translation: "ကျေးဇူးတင်ပါတယ် (မ)", english: "Thank you (female)" },
-                        { thai: "สวัสดีครับ", pronunciation: "sa-wat-dee khrap (စဝပ်ဒီ ခရတ်)", translation: "မင်္ဂလာပါ (ကျား)", english: "Hello (male)" },
-                        { thai: "สวัสดีค่ะ", pronunciation: "sa-wat-dee kha (စဝပ်ဒီ ခါး)", translation: "မင်္ဂလာပါ (မ)", english: "Hello (female)" }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  id: "eb-business",
-                  title: "Business Thai Email Templates",
-                  titleMm: "รုံးသုံးထိုင်းအီးမေးလ်ရေးသားနည်း လက်စွဲ",
-                  coverEmoji: "✉️",
-                  color: "from-amber-500 to-orange-600",
-                  instructor: "Kru Jane",
-                  tracks: [
-                    {
-                      id: "tr-biz-intro",
-                      title: "Lesson 1: Formal Inquiries & Client Communication",
-                      titleMm: "အလုပ်အကိုင်စုံစမ်းမေးမြန်းခြင်းနှင့် ဆက်သွယ်ရေး",
-                      duration: "06:10",
-                      phrases: [
-                        { thai: "ติดต่อสอบถาม", pronunciation: "တစ်တောစော့ထမ်း (Tit-to sop-tham)", translation: "ဆက်သွယ်မေးမြန်းသည်", english: "To inquire / contact for info" },
-                        { thai: "ขออภัยในความไม่สะดวก", pronunciation: "ခေါ အပိုင်း နိုင် ခွမ် မိုင် သဒွက်", translation: "အဆင်မပြေမှုအတွက် တောင်းပန်အပ်ပါသည်", english: "Apologize for the inconvenience" },
-                        { thai: "เรียนท่านผู้จัดการ", pronunciation: "ရိရန် ထန်း ဖူးကျတ်ကန်", translation: "လေးစားအပ်ပါသော မန်နေဂျာခင်ဗျာ", english: "Dear Manager" }
-                      ]
-                    }
-                  ]
-                }
-              ];
-
-              const [selectedBookId, setSelectedBookId] = useState(EBOOK_AUDIO_DATA[0].id);
-              const [selectedTrackId, setSelectedTrackId] = useState(EBOOK_AUDIO_DATA[0].tracks[0].id);
-              const [isPlaying, setIsPlaying] = useState(false);
-              const [playbackProgress, setPlaybackProgress] = useState(0); // 0 to 100
-              const [playbackSpeed, setPlaybackSpeed] = useState(1.0); // 0.8, 1.0, 1.25, 1.5
-              const [audioSearch, setAudioSearch] = useState("");
-              const [downloadingTrackId, setDownloadingTrackId] = useState<string | null>(null);
-              const [downloadProgress, setDownloadProgress] = useState(0);
-              const [downloadedTracks, setDownloadedTracks] = useState<string[]>([]);
-              const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-              const currentBook = EBOOK_AUDIO_DATA.find(b => b.id === selectedBookId) || EBOOK_AUDIO_DATA[0];
-              const currentTrack = currentBook.tracks.find(t => t.id === selectedTrackId) || currentBook.tracks[0];
-
-              // Handle automatic seek progression when playing
-              useEffect(() => {
-                let interval: any;
-                if (isPlaying) {
-                  interval = setInterval(() => {
-                    setPlaybackProgress((prev) => {
-                      if (prev >= 100) {
-                        // Finished track: move to next or stop
-                        const trackIdx = currentBook.tracks.findIndex(t => t.id === currentTrack.id);
-                        if (trackIdx < currentBook.tracks.length - 1) {
-                          setSelectedTrackId(currentBook.tracks[trackIdx + 1].id);
-                          return 0;
-                        } else {
-                          setIsPlaying(false);
-                          return 0;
-                        }
-                      }
-                      return prev + (1.5 * playbackSpeed);
-                    });
-                  }, 500);
-                }
-                return () => clearInterval(interval);
-              }, [isPlaying, playbackSpeed, selectedTrackId, selectedBookId]);
-
-              const togglePlay = () => {
-                setIsPlaying(!isPlaying);
-                if (!isPlaying) {
-                  // Speak the title
-                  speakText(currentTrack.title);
-                }
-              };
-
-              const handleSkipBack = () => {
-                const trackIdx = currentBook.tracks.findIndex(t => t.id === currentTrack.id);
-                if (trackIdx > 0) {
-                  setSelectedTrackId(currentBook.tracks[trackIdx - 1].id);
-                  setPlaybackProgress(0);
-                }
-              };
-
-              const handleSkipForward = () => {
-                const trackIdx = currentBook.tracks.findIndex(t => t.id === currentTrack.id);
-                if (trackIdx < currentBook.tracks.length - 1) {
-                  setSelectedTrackId(currentBook.tracks[trackIdx + 1].id);
-                  setPlaybackProgress(0);
-                }
-              };
-
-              const handleDownload = (trackId: string) => {
-                if (downloadedTracks.includes(trackId)) {
-                  setToastMessage("Lesson audio already downloaded to offline cache!");
-                  setTimeout(() => setToastMessage(null), 3000);
-                  return;
-                }
-                setDownloadingTrackId(trackId);
-                setDownloadProgress(10);
-                const interval = setInterval(() => {
-                  setDownloadProgress(p => {
-                    if (p >= 100) {
-                      clearInterval(interval);
-                      setDownloadedTracks(prev => [...prev, trackId]);
-                      setDownloadingTrackId(null);
-                      setToastMessage("Successfully downloaded lesson audio for offline practice!");
-                      setTimeout(() => setToastMessage(null), 3000);
-                      return 100;
-                    }
-                    return p + 20;
-                  });
-                }, 300);
-              };
-
-              const filteredPhrases = currentTrack.phrases.filter(p => 
-                p.thai.toLowerCase().includes(audioSearch.toLowerCase()) ||
-                p.translation.toLowerCase().includes(audioSearch.toLowerCase()) ||
-                p.english.toLowerCase().includes(audioSearch.toLowerCase())
-              );
-
-              return (
-                <div className="max-w-7xl mx-auto space-y-6 min-h-[500px] animate-fade-in text-left">
-                  
-                  {/* Toast notification */}
-                  <AnimatePresence>
-                    {toastMessage && (
-                      <motion.div 
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="fixed top-24 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-sans font-black py-3 px-6 rounded-full shadow-lg z-50 flex items-center gap-2 border border-slate-800"
-                      >
-                        <CheckCircle className="w-4 h-4 text-emerald-400" />
-                        <span>{toastMessage}</span>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Header info */}
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl border-2 border-gray-100 shadow-3xs">
-                    <div>
-                      <span className="text-[10px] text-brand-purple font-sans font-black uppercase tracking-wider block">PREMIUM COMPANION</span>
-                      <h3 className="font-sans font-black text-brand-dark text-base uppercase tracking-tight mt-0.5">
-                        🎧 Interactive E-Book Audiobook Player
-                      </h3>
-                      <p className="text-xs text-brand-muted font-sans font-semibold mt-0.5">
-                        Listen to premium spoken native chapters, adjust playback speeds, and follow along with synchronized text transcripts.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    {/* Left Column: E-Book Selection & Tracks (Col span 5) */}
-                    <div className="lg:col-span-5 space-y-5">
-                      
-                      {/* E-Book list */}
-                      <div className="bg-white p-5 rounded-2xl border-2 border-gray-100 shadow-3xs space-y-3.5">
-                        <span className="text-[9px] text-brand-purple font-sans font-black uppercase tracking-widest block">SELECT E-BOOK • စာအုပ်ရွေးချယ်ရန်</span>
-                        <div className="grid grid-cols-1 gap-2">
-                          {EBOOK_AUDIO_DATA.map(book => {
-                            const isSel = book.id === selectedBookId;
-                            return (
-                              <button
-                                key={book.id}
-                                onClick={() => {
-                                  setSelectedBookId(book.id);
-                                  setSelectedTrackId(book.tracks[0].id);
-                                  setPlaybackProgress(0);
-                                  setIsPlaying(false);
-                                }}
-                                className={`w-full p-4 rounded-xl text-left transition-all border-2 flex items-center gap-3.5 group cursor-pointer ${
-                                  isSel 
-                                    ? 'bg-gradient-to-r from-brand-purple/5 to-purple-50/20 border-brand-purple'
-                                    : 'bg-white hover:bg-slate-50 border-gray-100'
-                                }`}
-                              >
-                                <span className={`text-2xl p-2.5 rounded-lg bg-gradient-to-br ${book.color} text-white flex items-center justify-center shadow-sm shrink-0`}>
-                                  {book.coverEmoji}
-                                </span>
-                                <div className="min-w-0 flex-1">
-                                  <div className={`font-sans font-black text-xs leading-tight ${isSel ? 'text-brand-purple' : 'text-slate-800'}`}>
-                                    {book.title}
-                                  </div>
-                                  <div className="font-sans font-semibold text-[10px] text-brand-muted truncate mt-0.5">
-                                    {book.titleMm}
-                                  </div>
-                                  <div className="flex items-center gap-2 mt-1.5">
-                                    <span className="text-[8.5px] font-mono font-bold uppercase bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded leading-none">
-                                      {book.instructor}
-                                    </span>
-                                    <span className="text-[8.5px] font-sans font-bold text-brand-purple bg-brand-purple/5 px-1.5 py-0.5 rounded leading-none">
-                                      {book.tracks.length} Spoken Track(s)
-                                    </span>
-                                  </div>
-                                </div>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Tracks of Selected Book */}
-                      <div className="bg-white p-5 rounded-2xl border-2 border-gray-100 shadow-3xs space-y-3.5">
-                        <span className="text-[9px] text-brand-purple font-sans font-black uppercase tracking-widest block">AUDIO TRACK LIST • အသံဖိုင်သင်ခန်းစာများ</span>
-                        <div className="space-y-2">
-                          {currentBook.tracks.map((track, idx) => {
-                            const isSel = track.id === selectedTrackId;
-                            const isDownloaded = downloadedTracks.includes(track.id);
-                            return (
-                              <div
-                                key={track.id}
-                                className={`p-3.5 rounded-xl border-2 transition-all flex items-center justify-between gap-3 ${
-                                  isSel 
-                                    ? 'bg-indigo-50/20 border-indigo-200'
-                                    : 'bg-white hover:bg-slate-50 border-gray-50'
-                                }`}
-                              >
-                                <button
-                                  onClick={() => {
-                                    setSelectedTrackId(track.id);
-                                    setPlaybackProgress(0);
-                                    setIsPlaying(false);
-                                  }}
-                                  className="flex-1 text-left min-w-0 cursor-pointer"
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <span className={`text-[9.5px] font-mono font-black ${isSel ? 'text-brand-purple' : 'text-brand-muted'}`}>
-                                      {String(idx + 1).padStart(2, '0')}
-                                    </span>
-                                    <span className={`font-sans font-black text-xs truncate ${isSel ? 'text-brand-purple' : 'text-slate-700'}`}>
-                                      {track.title.split(":")[1] || track.title}
-                                    </span>
-                                  </div>
-                                  <div className="font-sans font-semibold text-[10px] text-brand-muted truncate ml-5 mt-0.5">
-                                    {track.titleMm}
-                                  </div>
-                                </button>
-                                
-                                <div className="flex items-center gap-2 shrink-0">
-                                  <span className="text-[9px] font-mono font-extrabold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded">
-                                    {track.duration}
-                                  </span>
-                                  <button
-                                    onClick={() => handleDownload(track.id)}
-                                    disabled={downloadingTrackId !== null}
-                                    className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
-                                      isDownloaded 
-                                        ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
-                                        : 'bg-white text-slate-400 hover:text-brand-purple hover:bg-slate-50 border-gray-100'
-                                    }`}
-                                    title={isDownloaded ? "Downloaded" : "Download lesson audio"}
-                                  >
-                                    <Download className="w-3.5 h-3.5" />
-                                  </button>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                    </div>
-
-                    {/* Right Column: Audio Player & Synced Transcript Viewer (Col span 7) */}
-                    <div className="lg:col-span-7 space-y-6">
-                      
-                      {/* Interactive Premium Audio Player Card */}
-                      <div className="bg-gradient-to-b from-slate-900 to-slate-950 p-6 rounded-3xl text-white shadow-md relative overflow-hidden">
-                        
-                        {/* Background light glow decoration */}
-                        <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-                        <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-
-                        {/* Top Metadata */}
-                        <div className="flex items-center justify-between mb-6">
-                          <span className="text-[9px] font-mono font-black tracking-widest text-brand-purple uppercase bg-purple-950/40 border border-purple-900/30 px-2.5 py-1 rounded-full select-none">
-                            🎧 HIGH-QUALITY NATIVE PLAYER
-                          </span>
-                          <span className="text-[10px] font-sans font-black text-slate-400 flex items-center gap-1.5 select-none">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                            Offline Ready
-                          </span>
-                        </div>
-
-                        {/* Middle cover art + title */}
-                        <div className="flex flex-col sm:flex-row items-center gap-5 my-3">
-                          {/* Pulsing Cover Disc Artwork */}
-                          <div className="relative shrink-0">
-                            <div className={`w-24 h-24 rounded-2xl bg-gradient-to-tr ${currentBook.color} text-white flex items-center justify-center text-4xl shadow-lg relative z-10 ${isPlaying ? 'animate-spin-slow' : ''}`}>
-                              {currentBook.coverEmoji}
-                            </div>
-                            {isPlaying && (
-                              <div className="absolute inset-0 bg-brand-purple/20 rounded-2xl animate-ping scale-110 pointer-events-none" />
-                            )}
-                          </div>
-
-                          <div className="min-w-0 text-center sm:text-left">
-                            <span className="text-[9px] font-mono font-bold text-brand-purple uppercase tracking-wider block">
-                              Book Track #{currentBook.tracks.findIndex(t => t.id === currentTrack.id) + 1}
-                            </span>
-                            <h4 className="font-sans font-black text-sm text-white leading-tight uppercase tracking-tight mt-0.5 line-clamp-1">
-                              {currentTrack.title}
-                            </h4>
-                            <p className="font-sans font-semibold text-xs text-slate-400 mt-1 line-clamp-1">
-                              {currentTrack.titleMm}
-                            </p>
-                            <span className="inline-block mt-2 text-[10px] font-mono bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded">
-                              Narrator: {currentBook.instructor}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Progress slider bar */}
-                        <div className="mt-8 space-y-1.5">
-                          <div className="relative w-full h-1.5 bg-slate-800 rounded-full overflow-hidden cursor-pointer">
-                            <div 
-                              className="absolute top-0 left-0 h-full bg-gradient-to-r from-brand-purple to-purple-400 transition-all duration-300 rounded-full"
-                              style={{ width: `${playbackProgress}%` }}
-                            />
-                          </div>
-                          <div className="flex justify-between items-center text-[10px] font-mono text-slate-400">
-                            <span>{isPlaying ? `00:${String(Math.floor(playbackProgress * 0.25)).padStart(2, '0')}` : "00:00"}</span>
-                            <span>{currentTrack.duration}</span>
-                          </div>
-                        </div>
-
-                        {/* Player Buttons Control */}
-                        <div className="flex items-center justify-center gap-6 mt-4">
-                          {/* Skip backward */}
-                          <button
-                            onClick={handleSkipBack}
-                            disabled={currentBook.tracks.findIndex(t => t.id === currentTrack.id) === 0}
-                            className="p-2.5 bg-slate-900/60 hover:bg-slate-800 border border-slate-800 rounded-xl hover:text-white transition-all text-slate-400 disabled:opacity-20 cursor-pointer"
-                            title="Previous lesson"
-                          >
-                            <SkipBack className="w-5 h-5" />
-                          </button>
-
-                          {/* Play / Pause Toggle */}
-                          <button
-                            onClick={togglePlay}
-                            className="w-14 h-14 bg-white text-slate-950 hover:bg-slate-50 flex items-center justify-center rounded-2xl shadow-md transition-all active:scale-95 cursor-pointer"
-                            title={isPlaying ? "Pause" : "Play native voice"}
-                          >
-                            {isPlaying ? (
-                              <Pause className="w-6 h-6 fill-slate-950 text-slate-950 stroke-[2.5px]" />
-                            ) : (
-                              <Play className="w-6 h-6 fill-slate-950 text-slate-950 translate-x-0.5 stroke-[2.5px]" />
-                            )}
-                          </button>
-
-                          {/* Skip forward */}
-                          <button
-                            onClick={handleSkipForward}
-                            disabled={currentBook.tracks.findIndex(t => t.id === currentTrack.id) === currentBook.tracks.length - 1}
-                            className="p-2.5 bg-slate-900/60 hover:bg-slate-800 border border-slate-800 rounded-xl hover:text-white transition-all text-slate-400 disabled:opacity-20 cursor-pointer"
-                            title="Next lesson"
-                          >
-                            <SkipForward className="w-5 h-5" />
-                          </button>
-                        </div>
-
-                        {/* Speed controller & download display below player */}
-                        <div className="flex items-center justify-between border-t border-slate-900 mt-6 pt-5">
-                          {/* Playback speed switcher */}
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[9px] font-mono font-bold text-slate-400 uppercase tracking-wider">Speed:</span>
-                            <div className="flex bg-slate-900 border border-slate-800 p-0.5 rounded-lg text-[9.5px] font-mono">
-                              {[0.8, 1.0, 1.25, 1.5].map(sp => (
-                                <button
-                                  key={sp}
-                                  onClick={() => setPlaybackSpeed(sp)}
-                                  className={`px-2 py-1 rounded cursor-pointer transition-colors ${
-                                    playbackSpeed === sp 
-                                      ? 'bg-brand-purple text-white font-bold' 
-                                      : 'text-slate-400 hover:text-white'
-                                  }`}
-                                >
-                                  {sp}x
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Download visual progress bar */}
-                          {downloadingTrackId === currentTrack.id && (
-                            <div className="w-28 text-right space-y-1">
-                              <div className="text-[9px] font-mono text-purple-400 font-bold uppercase animate-pulse">Downloading: {downloadProgress}%</div>
-                              <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
-                                <div className="h-full bg-brand-purple" style={{ width: `${downloadProgress}%` }} />
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                      </div>
-
-                      {/* Transcripts and Sync Phrases List */}
-                      <div className="bg-white p-5 rounded-2xl border-2 border-gray-100 shadow-3xs space-y-4">
-                        
-                        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-gray-100 pb-3">
-                          <div>
-                            <span className="text-[9px] text-brand-purple font-sans font-black uppercase tracking-widest block">SYNCHRONIZED TRANSCRIPT • စကားပြောစာသားများ</span>
-                            <h4 className="font-sans font-black text-slate-800 text-xs uppercase tracking-tight mt-0.5">
-                              📖 Interactive Lesson Phrases ({filteredPhrases.length})
-                            </h4>
-                          </div>
-                          
-                          {/* Search transcript */}
-                          <div className="relative max-w-xs w-full sm:w-48">
-                            <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                            <input
-                              type="text"
-                              value={audioSearch}
-                              onChange={(e) => setAudioSearch(e.target.value)}
-                              placeholder="Search phrases..."
-                              className="w-full bg-slate-50 border border-gray-200 focus:border-brand-purple focus:bg-white text-[11px] rounded-lg pl-8 pr-3 py-1.5 outline-none font-sans"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Phrase listings */}
-                        <div className="space-y-3.5 max-h-[380px] overflow-y-auto pr-1">
-                          {filteredPhrases.length === 0 ? (
-                            <div className="text-center py-10 space-y-2">
-                              <span className="text-2xl block">🔍</span>
-                              <p className="text-xs text-brand-muted font-sans font-bold">No matching phrases found in this track.</p>
-                            </div>
-                          ) : (
-                            filteredPhrases.map((phrase, pIdx) => {
-                              // Simulate active phrasing based on progress percentage
-                              const isPhraseActive = isPlaying && 
-                                playbackProgress >= (pIdx * (100 / currentTrack.phrases.length)) && 
-                                playbackProgress < ((pIdx + 1) * (100 / currentTrack.phrases.length));
-
-                              return (
-                                <div
-                                  key={phrase.thai}
-                                  className={`p-3.5 rounded-xl border-2 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
-                                    isPhraseActive 
-                                      ? 'bg-brand-purple/5 border-brand-purple shadow-3xs'
-                                      : 'bg-white hover:bg-slate-50 border-slate-100'
-                                  }`}
-                                >
-                                  <div className="space-y-1">
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-sm font-sans font-extrabold text-brand-dark leading-normal">
-                                        {phrase.thai}
-                                      </span>
-                                      {isPhraseActive && (
-                                        <span className="w-1.5 h-1.5 rounded-full bg-brand-purple animate-ping shrink-0" />
-                                      )}
-                                    </div>
-                                    <div className="text-[10px] font-sans text-brand-purple font-extrabold flex items-center gap-1 leading-normal">
-                                      <span>🔊</span>
-                                      <span>{phrase.pronunciation}</span>
-                                    </div>
-                                    <div className="text-[11px] font-sans text-brand-muted font-semibold leading-normal">
-                                      {phrase.translation}
-                                    </div>
-                                    <div className="text-[9.5px] font-sans text-slate-400 font-semibold italic leading-none pt-0.5">
-                                      {phrase.english}
-                                    </div>
-                                  </div>
-
-                                  <button
-                                    onClick={() => speakText(phrase.thai)}
-                                    className="p-2 bg-brand-purple/5 text-brand-purple hover:bg-brand-purple hover:text-white rounded-lg transition-colors border border-brand-purple/10 cursor-pointer self-end sm:self-center shrink-0 flex items-center gap-1 text-[10px] font-sans font-black"
-                                    title="Speak Native Voice"
-                                  >
-                                    <Volume2 className="w-3.5 h-3.5" />
-                                    <span>SPEAK</span>
-                                  </button>
-                                </div>
-                              );
-                            })
-                          )}
-                        </div>
-
-                      </div>
-
-                    </div>
-                  </div>
-
-                </div>
-              );
-            })()}
+            {dashboardTab === 'audio' && <EBookAudioPlayer speakText={speakText} />}
 
             {/* TAB CONTENT: 4. Notebook & Custom Vocabulary (Add Word Panel) */}
             {dashboardTab === 'notebook' && (
@@ -9372,151 +9460,342 @@ startxref
                                               </div>
                                             </div>
 
-                                            <div className="flex gap-2">
-                                              <button
-                                                type="button"
-                                                onClick={() => {
-                                                  const mainText = sentenceEntryText.trim();
-                                                  const pfx = sentenceEntryPrefix.trim();
-                                                  const mid = sentenceEntryMiddle.trim();
-                                                  const sfx = sentenceEntrySuffix.trim();
-                                                  const pron = sentenceEntryPron.trim();
-                                                  const trans = sentenceEntryTrans.trim();
+                                            {/* Dynamic Middle Word Variations Manager */}
+                                            {sentenceEntryPrefix.trim() && (
+                                              <div className="bg-pink-50/40 border border-pink-100 rounded-xl p-3 space-y-3">
+                                                <div className="flex items-center justify-between border-b border-pink-100/60 pb-1.5">
+                                                  <span className="text-[9px] font-black text-pink-700 uppercase tracking-wider flex items-center gap-1.5">
+                                                    🌿 Multiple Middle Word Variations (အလယ်စကားလုံးကွဲပြားမှုများ)
+                                                  </span>
+                                                  <span className="text-[8px] bg-pink-100 text-pink-800 font-extrabold px-2 py-0.5 rounded-md font-sans">
+                                                    Prefix: "{sentenceEntryPrefix.trim()}"
+                                                  </span>
+                                                </div>
 
-                                                  let finalSentence = mainText;
-                                                  if (!finalSentence && (pfx || mid || sfx)) {
-                                                    finalSentence = `${pfx}${mid}${sfx}`;
-                                                  }
-
-                                                  if (!finalSentence) {
-                                                    alert("Please fill either the Thai Sentence or the Segmented fields (Prefix / Middle / Suffix).");
-                                                    return;
-                                                  }
-                                                  if (!trans) {
-                                                    alert("Please fill Translation field");
-                                                    return;
-                                                  }
-
-                                                  const newEntry: EBookSentenceEntry = {
-                                                    sentence: finalSentence,
-                                                    prefix: pfx || undefined,
-                                                    middle: mid || undefined,
-                                                    suffix: sfx || undefined,
-                                                    transcription: pron,
-                                                    translation: trans
-                                                  };
-
-                                                  if (editingSentenceIdx !== null) {
-                                                    const updated = [...resourceSentenceEntries];
-                                                    updated[editingSentenceIdx] = newEntry;
-                                                    setResourceSentenceEntries(updated);
-                                                    setEditingSentenceIdx(null);
-                                                  } else {
-                                                    setResourceSentenceEntries([...resourceSentenceEntries, newEntry]);
-                                                  }
-
-                                                  setSentenceEntryText('');
-                                                  setSentenceEntryPrefix('');
-                                                  setSentenceEntryMiddle('');
-                                                  setSentenceEntrySuffix('');
-                                                  setSentenceEntryPron('');
-                                                  setSentenceEntryTrans('');
-                                                }}
-                                                className="flex-grow py-1.5 bg-brand-purple hover:bg-brand-purple/90 text-white text-[8.5px] font-black uppercase tracking-wider rounded transition-colors border-none cursor-pointer"
-                                              >
-                                                {editingSentenceIdx !== null ? '💾 Update Sentence Entry' : '➕ Add Sentence Entry'}
-                                              </button>
-                                              {editingSentenceIdx !== null && (
-                                                <button
-                                                  type="button"
-                                                  onClick={() => {
-                                                    setEditingSentenceIdx(null);
-                                                    setSentenceEntryText('');
-                                                    setSentenceEntryPrefix('');
-                                                    setSentenceEntryMiddle('');
-                                                    setSentenceEntrySuffix('');
-                                                    setSentenceEntryPron('');
-                                                    setSentenceEntryTrans('');
-                                                  }}
-                                                  className="px-3 py-1.5 bg-gray-150 hover:bg-gray-200 text-slate-700 text-[8.5px] font-black uppercase tracking-wider rounded transition-colors border-none cursor-pointer"
-                                                >
-                                                  Cancel
-                                                </button>
-                                              )}
-                                            </div>
-
-                                            {/* Live Preview of Prefix/Suffix Diagram */}
-                                            {(sentenceEntryPrefix.trim() || sentenceEntrySuffix.trim()) && (
-                                              <div className="border border-violet-100 rounded-xl p-2 bg-white/60 space-y-1 shadow-3xs animate-fade-in text-left">
-                                                <span className="text-[8px] font-sans font-black text-violet-700 uppercase tracking-wider block px-1">
-                                                  👁️ Live Diagram Arrow Design Preview
-                                                </span>
-                                                <AffixDiagram 
-                                                  prefix={sentenceEntryPrefix} 
-                                                  suffix={sentenceEntrySuffix} 
-                                                  middle={sentenceEntryMiddle} 
-                                                />
-                                              </div>
-                                            )}
-
-                                            {/* List current sentence entries in state */}
-                                            {resourceSentenceEntries.length > 0 && (
-                                              <div className="max-h-[140px] overflow-y-auto border border-gray-150 rounded-lg divide-y bg-white text-[9px]">
-                                                {resourceSentenceEntries.map((item, idx) => (
-                                                  <div key={idx} className={`p-2 flex items-center justify-between gap-2 ${editingSentenceIdx === idx ? 'bg-amber-50/60' : ''}`}>
-                                                    <div>
-                                                      {item.prefix || item.middle || item.suffix ? (
-                                                        <span className="font-sans font-bold text-[#3c3c3c]">
-                                                          {item.prefix && <span className="text-slate-400 font-normal mr-0.5">{item.prefix}</span>}
-                                                          {item.middle && <span className="text-pink-600 bg-pink-50 border border-pink-100 px-1.5 py-0.5 rounded font-black">{item.middle}</span>}
-                                                          {item.suffix && <span className="text-slate-400 font-normal ml-0.5">{item.suffix}</span>}
-                                                        </span>
-                                                      ) : (
-                                                        <span className="font-bold text-[#3c3c3c]">{item.sentence}</span>
-                                                      )}{' '}
-                                                      <span className="text-slate-400">({item.transcription})</span>{' '}
-                                                      <span className="text-brand-purple font-bold">→ {item.translation}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1.5 shrink-0">
-                                                      <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                          setEditingSentenceIdx(idx);
-                                                          setSentenceEntryText(item.sentence);
-                                                          setSentenceEntryPrefix(item.prefix || '');
-                                                          setSentenceEntryMiddle(item.middle || '');
-                                                          setSentenceEntrySuffix(item.suffix || '');
-                                                          setSentenceEntryPron(item.transcription || '');
-                                                          setSentenceEntryTrans(item.translation);
-                                                        }}
-                                                        className="text-indigo-500 hover:text-indigo-700 bg-none border-none p-1 cursor-pointer font-extrabold text-[10px]"
-                                                        title="Edit this sentence"
-                                                      >
-                                                        ✏️
-                                                      </button>
-                                                      <button
-                                                        type="button"
-                                                        onClick={() => {
-                                                          setResourceSentenceEntries(resourceSentenceEntries.filter((_, i) => i !== idx));
-                                                          if (editingSentenceIdx === idx) {
-                                                            setEditingSentenceIdx(null);
-                                                            setSentenceEntryText('');
-                                                            setSentenceEntryPrefix('');
-                                                            setSentenceEntryMiddle('');
-                                                            setSentenceEntrySuffix('');
-                                                            setSentenceEntryPron('');
-                                                            setSentenceEntryTrans('');
+                                                <div className="bg-white/60 p-3 rounded-xl border border-pink-100/50 space-y-2.5">
+                                                  <span className="text-[8px] font-sans font-black text-slate-500 uppercase tracking-wider block">
+                                                    {editingVarIdx !== null ? '✏️ Edit Variation' : '➕ Add Variation'}
+                                                  </span>
+                                                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 border-none">
+                                                    <div className="space-y-0.5">
+                                                      <label className="text-[8px] font-sans font-black text-pink-600 uppercase">Middle Word (အလယ်စကားလုံး)</label>
+                                                      <input
+                                                        type="text"
+                                                        placeholder="e.g. กิน"
+                                                        value={tempVarMiddle}
+                                                        onChange={(e) => {
+                                                          const val = e.target.value;
+                                                          setTempVarMiddle(val);
+                                                          if (val.trim()) {
+                                                            setTempVarSentence(`${sentenceEntryPrefix.trim()}${val.trim()}${sentenceEntrySuffix.trim()}`);
                                                           }
                                                         }}
-                                                        className="text-red-500 hover:text-red-700 bg-none border-none p-1 cursor-pointer font-bold"
-                                                      >
-                                                        ✕
-                                                      </button>
+                                                        className="w-full px-2 py-1 bg-white border border-pink-100 rounded text-[10px] font-bold text-pink-700"
+                                                      />
+                                                    </div>
+                                                    <div className="space-y-0.5">
+                                                      <label className="text-[8px] font-sans font-black text-slate-600 uppercase">Combined Sentence (ဝါကျအပြည့်)</label>
+                                                      <input
+                                                        type="text"
+                                                        placeholder="e.g. ฉันกินข้าว"
+                                                        value={tempVarSentence}
+                                                        onChange={(e) => setTempVarSentence(e.target.value)}
+                                                        className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[10px] font-bold"
+                                                      />
+                                                    </div>
+                                                    <div className="space-y-0.5">
+                                                      <label className="text-[8px] font-sans font-black text-slate-600 uppercase">Transcription (အသံထွက်)</label>
+                                                      <input
+                                                        type="text"
+                                                        placeholder="e.g. chan gin"
+                                                        value={tempVarPron}
+                                                        onChange={(e) => setTempVarPron(e.target.value)}
+                                                        className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[10px] font-medium"
+                                                      />
+                                                    </div>
+                                                    <div className="space-y-0.5">
+                                                      <label className="text-[8px] font-sans font-black text-slate-600 uppercase">Translation (ဘာသာပြန်)</label>
+                                                      <input
+                                                        type="text"
+                                                        placeholder="e.g. စားသည်"
+                                                        value={tempVarTrans}
+                                                        onChange={(e) => setTempVarTrans(e.target.value)}
+                                                        className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[10px] font-bold text-[#5a3194]"
+                                                      />
                                                     </div>
                                                   </div>
-                                                ))}
+
+                                                  <div className="flex justify-end gap-1.5 pt-1">
+                                                    <button
+                                                      type="button"
+                                                      onClick={() => {
+                                                        const m = tempVarMiddle.trim();
+                                                        const s = tempVarSentence.trim();
+                                                        const p = tempVarPron.trim();
+                                                        const t = tempVarTrans.trim();
+
+                                                        if (!m || !s || !t) {
+                                                          alert("Please fill in Middle Word, Combined Sentence, and Translation for this variation.");
+                                                          return;
+                                                        }
+
+                                                        const newVar = { middle: m, sentence: s, transcription: p, translation: t };
+                                                        if (editingVarIdx !== null) {
+                                                          const updated = [...tempVariations];
+                                                          updated[editingVarIdx] = newVar;
+                                                          setTempVariations(updated);
+                                                          setEditingVarIdx(null);
+                                                        } else {
+                                                          setTempVariations([...tempVariations, newVar]);
+                                                        }
+
+                                                        // Reset temp inputs
+                                                        setTempVarMiddle('');
+                                                        setTempVarSentence('');
+                                                        setTempVarPron('');
+                                                        setTempVarTrans('');
+                                                      }}
+                                                      className="px-3 py-1 bg-pink-600 hover:bg-pink-700 text-white text-[8px] font-black uppercase tracking-wider rounded border-none cursor-pointer"
+                                                    >
+                                                      {editingVarIdx !== null ? '💾 Update Variation' : '➕ Add Variation'}
+                                                    </button>
+                                                    {editingVarIdx !== null && (
+                                                      <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                          setEditingVarIdx(null);
+                                                          setTempVarMiddle('');
+                                                          setTempVarSentence('');
+                                                          setTempVarPron('');
+                                                          setTempVarTrans('');
+                                                        }}
+                                                        className="px-2 py-1 bg-gray-150 hover:bg-gray-200 text-slate-700 text-[8px] font-black uppercase tracking-wider rounded border-none cursor-pointer"
+                                                      >
+                                                        Cancel
+                                                      </button>
+                                                    )}
+                                                  </div>
+                                                </div>
+
+                                                {/* List of custom variations in current builder */}
+                                                {tempVariations.length > 0 && (
+                                                  <div className="border border-pink-100 rounded-xl divide-y divide-pink-50 bg-white max-h-[120px] overflow-y-auto text-[8.5px] text-left shadow-3xs">
+                                                    {tempVariations.map((v, vIdx) => (
+                                                      <div key={vIdx} className="p-2 flex items-center justify-between gap-2 hover:bg-pink-50/10">
+                                                        <div>
+                                                          <span className="font-extrabold text-pink-700 bg-pink-50 px-1.5 py-0.5 rounded border border-pink-100">
+                                                            {v.middle}
+                                                          </span>{' '}
+                                                          <span className="font-bold text-slate-800">"{v.sentence}"</span>{' '}
+                                                          {v.transcription && <span className="text-slate-400 font-mono">({v.transcription})</span>}{' '}
+                                                          <span className="text-brand-purple font-black">→ {v.translation}</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-1.5">
+                                                          <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                              setEditingVarIdx(vIdx);
+                                                              setTempVarMiddle(v.middle);
+                                                              setTempVarSentence(v.sentence);
+                                                              setTempVarPron(v.transcription || '');
+                                                              setTempVarTrans(v.translation);
+                                                            }}
+                                                            className="text-indigo-500 hover:text-indigo-700 bg-none border-none p-1 cursor-pointer font-bold"
+                                                            title="Edit"
+                                                          >
+                                                            ✏️
+                                                          </button>
+                                                          <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                              setTempVariations(tempVariations.filter((_, i) => i !== vIdx));
+                                                              if (editingVarIdx === vIdx) {
+                                                                setEditingVarIdx(null);
+                                                                setTempVarMiddle('');
+                                                                setTempVarSentence('');
+                                                                setTempVarPron('');
+                                                                setTempVarTrans('');
+                                                              }
+                                                            }}
+                                                            className="text-red-500 hover:text-red-700 bg-none border-none p-1 cursor-pointer font-bold"
+                                                            title="Delete"
+                                                          >
+                                                            ✕
+                                                          </button>
+                                                        </div>
+                                                      </div>
+                                                    ))}
+                                                  </div>
+                                                )}
                                               </div>
                                             )}
+
+                                            <div className="flex gap-2">
+                                               <button
+                                                 type="button"
+                                                 onClick={() => {
+                                                   const mainText = sentenceEntryText.trim();
+                                                   const pfx = sentenceEntryPrefix.trim();
+                                                   const mid = sentenceEntryMiddle.trim();
+                                                   const sfx = sentenceEntrySuffix.trim();
+                                                   const pron = sentenceEntryPron.trim();
+                                                   const trans = sentenceEntryTrans.trim();
+
+                                                   let finalSentence = mainText;
+                                                   if (!finalSentence && (pfx || mid || sfx)) {
+                                                     finalSentence = `${pfx}${mid}${sfx}`;
+                                                   }
+
+                                                   if (!finalSentence) {
+                                                     alert("Please fill either the Thai Sentence or the Segmented fields (Prefix / Middle / Suffix).");
+                                                     return;
+                                                   }
+                                                   if (!trans) {
+                                                     alert("Please fill Translation field");
+                                                     return;
+                                                   }
+
+                                                   const newEntry: EBookSentenceEntry = {
+                                                     sentence: finalSentence,
+                                                     prefix: pfx || undefined,
+                                                     middle: mid || undefined,
+                                                     suffix: sfx || undefined,
+                                                     transcription: pron,
+                                                     translation: trans,
+                                                     variations: tempVariations.length > 0 ? tempVariations : undefined
+                                                   };
+
+                                                   if (editingSentenceIdx !== null) {
+                                                     const updated = [...resourceSentenceEntries];
+                                                     updated[editingSentenceIdx] = newEntry;
+                                                     setResourceSentenceEntries(updated);
+                                                     setEditingSentenceIdx(null);
+                                                   } else {
+                                                     setResourceSentenceEntries([...resourceSentenceEntries, newEntry]);
+                                                   }
+
+                                                   setSentenceEntryText('');
+                                                   setSentenceEntryPrefix('');
+                                                   setSentenceEntryMiddle('');
+                                                   setSentenceEntrySuffix('');
+                                                   setSentenceEntryPron('');
+                                                   setSentenceEntryTrans('');
+                                                   setTempVariations([]);
+                                                   setTempVarMiddle('');
+                                                   setTempVarSentence('');
+                                                   setTempVarPron('');
+                                                   setTempVarTrans('');
+                                                   setEditingVarIdx(null);
+                                                 }}
+                                                 className="flex-grow py-1.5 bg-brand-purple hover:bg-brand-purple/90 text-white text-[8.5px] font-black uppercase tracking-wider rounded transition-colors border-none cursor-pointer"
+                                               >
+                                                 {editingSentenceIdx !== null ? '💾 Update Sentence Entry' : '➕ Add Sentence Entry'}
+                                               </button>
+                                               {editingSentenceIdx !== null && (
+                                                 <button
+                                                   type="button"
+                                                   onClick={() => {
+                                                     setEditingSentenceIdx(null);
+                                                     setSentenceEntryText('');
+                                                     setSentenceEntryPrefix('');
+                                                     setSentenceEntryMiddle('');
+                                                     setSentenceEntrySuffix('');
+                                                     setSentenceEntryPron('');
+                                                     setSentenceEntryTrans('');
+                                                     setTempVariations([]);
+                                                     setTempVarMiddle('');
+                                                     setTempVarSentence('');
+                                                     setTempVarPron('');
+                                                     setTempVarTrans('');
+                                                     setEditingVarIdx(null);
+                                                   }}
+                                                   className="px-3 py-1.5 bg-gray-150 hover:bg-gray-200 text-slate-700 text-[8.5px] font-black uppercase tracking-wider rounded transition-colors border-none cursor-pointer"
+                                                 >
+                                                   Cancel
+                                                 </button>
+                                               )}
+                                             </div>
+
+                                             {/* Live Preview of Prefix/Suffix Diagram */}
+                                             {(sentenceEntryPrefix.trim() || sentenceEntrySuffix.trim()) && (
+                                               <div className="border border-violet-100 rounded-xl p-2 bg-white/60 space-y-1 shadow-3xs animate-fade-in text-left">
+                                                 <span className="text-[8px] font-sans font-black text-violet-700 uppercase tracking-wider block px-1">
+                                                   👁️ Live Diagram Arrow Design Preview
+                                                 </span>
+                                                 <AffixDiagram 
+                                                   prefix={sentenceEntryPrefix} 
+                                                   suffix={sentenceEntrySuffix} 
+                                                   middle={sentenceEntryMiddle} 
+                                                   customVariations={tempVariations}
+                                                 />
+                                               </div>
+                                             )}
+
+                                             {/* List current sentence entries in state */}
+                                             {resourceSentenceEntries.length > 0 && (
+                                               <div className="max-h-[140px] overflow-y-auto border border-gray-150 rounded-lg divide-y bg-white text-[9px]">
+                                                 {resourceSentenceEntries.map((item, idx) => (
+                                                   <div key={idx} className={`p-2 flex items-center justify-between gap-2 ${editingSentenceIdx === idx ? 'bg-amber-50/60' : ''}`}>
+                                                     <div>
+                                                       {item.prefix || item.middle || item.suffix ? (
+                                                         <span className="font-sans font-bold text-[#3c3c3c]">
+                                                           {item.prefix && <span className="text-slate-400 font-normal mr-0.5">{item.prefix}</span>}
+                                                           {item.middle && <span className="text-pink-600 bg-pink-50 border border-pink-100 px-1.5 py-0.5 rounded font-black">{item.middle}</span>}
+                                                           {item.suffix && <span className="text-slate-400 font-normal ml-0.5">{item.suffix}</span>}
+                                                         </span>
+                                                       ) : (
+                                                         <span className="font-bold text-[#3c3c3c]">{item.sentence}</span>
+                                                       )}{' '}
+                                                       {item.variations && item.variations.length > 0 && (
+                                                         <span className="text-[7.5px] bg-pink-100 text-pink-700 font-extrabold px-1 py-0.2 rounded shrink-0 font-sans uppercase">
+                                                           {item.variations.length} vars
+                                                         </span>
+                                                       )}{' '}
+                                                       <span className="text-slate-400">({item.transcription})</span>{' '}
+                                                       <span className="text-brand-purple font-bold">→ {item.translation}</span>
+                                                     </div>
+                                                     <div className="flex items-center gap-1.5 shrink-0">
+                                                       <button
+                                                         type="button"
+                                                         onClick={() => {
+                                                           setEditingSentenceIdx(idx);
+                                                           setSentenceEntryText(item.sentence);
+                                                           setSentenceEntryPrefix(item.prefix || '');
+                                                           setSentenceEntryMiddle(item.middle || '');
+                                                           setSentenceEntrySuffix(item.suffix || '');
+                                                           setSentenceEntryPron(item.transcription || '');
+                                                           setSentenceEntryTrans(item.translation);
+                                                           setTempVariations(item.variations || []);
+                                                         }}
+                                                         className="text-indigo-500 hover:text-indigo-700 bg-none border-none p-1 cursor-pointer font-extrabold text-[10px]"
+                                                         title="Edit this sentence"
+                                                       >
+                                                         ✏️
+                                                       </button>
+                                                       <button
+                                                         type="button"
+                                                         onClick={() => {
+                                                           setResourceSentenceEntries(resourceSentenceEntries.filter((_, i) => i !== idx));
+                                                           if (editingSentenceIdx === idx) {
+                                                             setEditingSentenceIdx(null);
+                                                             setSentenceEntryText('');
+                                                             setSentenceEntryPrefix('');
+                                                             setSentenceEntryMiddle('');
+                                                             setSentenceEntrySuffix('');
+                                                             setSentenceEntryPron('');
+                                                             setSentenceEntryTrans('');
+                                                             setTempVariations([]);
+                                                           }
+                                                         }}
+                                                         className="text-red-500 hover:text-red-700 bg-none border-none p-1 cursor-pointer font-bold"
+                                                       >
+                                                         ✕
+                                                       </button>
+                                                     </div>
+                                                   </div>
+                                                 ))}
+                                               </div>
+                                             )}
                                           </div>
                                         )}
 
@@ -9675,41 +9954,215 @@ startxref
                                                   className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-[10px] font-bold"
                                                 />
                                               </div>
-                                              <div className="space-y-0.5">
-                                                <label className="text-[8px] font-sans font-black text-slate-600 uppercase">Thai Paragraph Content (ထိုင်းစာသား)</label>
-                                                <textarea
-                                                  rows={2}
-                                                  placeholder="e.g. วันนี้ยินดีที่ได้รู้จักครับ..."
-                                                  value={conversationEntryContent}
-                                                  onChange={(e) => setConversationEntryContent(e.target.value)}
-                                                  className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[10px] font-bold font-sans resize-none"
-                                                />
+
+                                              {/* Multi-Paragraph Manager */}
+                                              <div className="border border-indigo-100 bg-indigo-50/25 p-3 rounded-xl space-y-2.5 col-span-1 sm:col-span-2">
+                                                <span className="text-[8.5px] font-sans font-black text-[#583092] uppercase tracking-wider block border-b border-indigo-100 pb-1">
+                                                  📋 Paragraphs inside this Lesson Topic (ဤခေါင်းစဉ်အောက်ရှိ စာပိုဒ်များ)
+                                                </span>
+
+                                                {tempParagraphs.length > 0 ? (
+                                                  <div className="space-y-1.5 max-h-[160px] overflow-y-auto pr-1">
+                                                    {tempParagraphs.map((p, pIdx) => (
+                                                      <div key={pIdx} className="bg-white border border-slate-150 p-2 rounded-lg flex items-start justify-between gap-2 text-[9px] hover:border-indigo-250 transition-colors">
+                                                        <div className="space-y-1">
+                                                          <span className="text-[7.5px] font-black text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded uppercase">Paragraph {pIdx + 1}</span>
+                                                          <p className="font-bold text-slate-800 line-clamp-2 font-sans">{p.content}</p>
+                                                          {p.transcription && <p className="text-sky-700 font-mono text-[8px] font-bold">Pronunciation: {p.transcription}</p>}
+                                                          <p className="text-slate-500 font-semibold">Translation: {p.translation}</p>
+                                                        </div>
+                                                        <div className="flex gap-1 shrink-0">
+                                                          <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                              setTempParaContent(p.content);
+                                                              setTempParaPron(p.transcription || '');
+                                                              setTempParaTrans(p.translation);
+                                                              setEditingParaIdx(pIdx);
+                                                            }}
+                                                            className="text-indigo-600 hover:text-indigo-800 font-bold px-1.5 py-0.5 bg-indigo-50 rounded"
+                                                          >
+                                                            ✏️
+                                                          </button>
+                                                          <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                              setTempParagraphs(tempParagraphs.filter((_, i) => i !== pIdx));
+                                                              if (editingParaIdx === pIdx) {
+                                                                setEditingParaIdx(null);
+                                                                setTempParaContent('');
+                                                                setTempParaPron('');
+                                                                setTempParaTrans('');
+                                                              }
+                                                            }}
+                                                            className="text-red-500 hover:text-red-700 font-bold px-1.5 py-0.5 bg-red-50 rounded"
+                                                          >
+                                                            ✕
+                                                          </button>
+                                                        </div>
+                                                      </div>
+                                                    ))}
+                                                  </div>
+                                                ) : (
+                                                  <p className="text-[8.5px] font-semibold text-slate-400 italic">No paragraphs added yet. Fill the inputs below to add paragraphs to this topic.</p>
+                                                )}
+
+                                                <div className="bg-white border border-slate-150 p-2.5 rounded-lg space-y-2 mt-2">
+                                                  <span className="text-[8px] font-sans font-black text-slate-600 uppercase block">
+                                                    {editingParaIdx !== null ? `✍️ Edit Paragraph ${editingParaIdx + 1}` : '➕ Add Paragraph to Topic'}
+                                                  </span>
+
+                                                  <div className="space-y-2">
+                                                    <div className="space-y-0.5">
+                                                      <label className="text-[7.5px] font-sans font-black text-slate-500 uppercase">Thai Paragraph Content (ထိုင်းစာသား)</label>
+                                                      <textarea
+                                                        rows={2}
+                                                        placeholder="e.g. วันนี้ยินดีที่ได้รู้จักครับ..."
+                                                        value={tempParaContent}
+                                                        onChange={(e) => setTempParaContent(e.target.value)}
+                                                        className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[9px] font-bold font-sans resize-none"
+                                                      />
+                                                    </div>
+
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                      <div className="space-y-0.5">
+                                                        <label className="text-[7.5px] font-sans font-black text-slate-500 uppercase">Pronunciation / Transcription (အသံထွက်)</label>
+                                                        <input
+                                                          type="text"
+                                                          placeholder="e.g. ဝမ်နီး ယင်ဒီး ထီးဒိုက် ရူးจัก ခရတ်"
+                                                          value={tempParaPron}
+                                                          onChange={(e) => setTempParaPron(e.target.value)}
+                                                          className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[9px] font-bold"
+                                                        />
+                                                      </div>
+                                                      <div className="space-y-0.5">
+                                                        <label className="text-[7.5px] font-sans font-black text-slate-500 uppercase">Translation (ဘာသာပြန်)</label>
+                                                        <input
+                                                          type="text"
+                                                          placeholder="e.g. ဒီနေ့ တွေ့ရတာ ဝမ်းသာပါတယ်ခင်ဗျာ။"
+                                                          value={tempParaTrans}
+                                                          onChange={(e) => setTempParaTrans(e.target.value)}
+                                                          className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[9px] font-bold text-[#5a3194]"
+                                                        />
+                                                      </div>
+                                                    </div>
+
+                                                    <div className="flex justify-end gap-1.5 pt-1">
+                                                      {editingParaIdx !== null && (
+                                                        <button
+                                                          type="button"
+                                                          onClick={() => {
+                                                            setEditingParaIdx(null);
+                                                            setTempParaContent('');
+                                                            setTempParaPron('');
+                                                            setTempParaTrans('');
+                                                          }}
+                                                          className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-black uppercase text-[8px] rounded border-none cursor-pointer"
+                                                        >
+                                                          Cancel
+                                                        </button>
+                                                      )}
+                                                      <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                          if (!tempParaContent.trim() || !tempParaTrans.trim()) {
+                                                            alert("Please fill Thai Paragraph Content and Translation");
+                                                            return;
+                                                          }
+                                                          const pObj = {
+                                                            content: tempParaContent.trim(),
+                                                            transcription: tempParaPron.trim() || undefined,
+                                                            translation: tempParaTrans.trim()
+                                                          };
+                                                          if (editingParaIdx !== null) {
+                                                            const updated = [...tempParagraphs];
+                                                            updated[editingParaIdx] = pObj;
+                                                            setTempParagraphs(updated);
+                                                            setEditingParaIdx(null);
+                                                          } else {
+                                                            setTempParagraphs([...tempParagraphs, pObj]);
+                                                          }
+                                                          setTempParaContent('');
+                                                          setTempParaPron('');
+                                                          setTempParaTrans('');
+                                                        }}
+                                                        className="px-2.5 py-1 bg-[#583092] hover:bg-[#4d2980] text-white font-black uppercase text-[8px] rounded border-none cursor-pointer"
+                                                      >
+                                                        {editingParaIdx !== null ? 'Save Paragraph' : '➕ Add Paragraph'}
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                                                </div>
                                               </div>
-                                              <div className="space-y-0.5">
-                                                <label className="text-[8px] font-sans font-black text-slate-600 uppercase">Transcription / Translation (အသံထွက် / ဘာသာပြန်)</label>
-                                                <textarea
-                                                  rows={2}
-                                                  placeholder="e.g. တဖက်ကပြန်လည်မိတ်ဆက်ပြီး မင်္ဂလာရှိသော..."
-                                                  value={conversationEntryTrans}
-                                                  onChange={(e) => setConversationEntryTrans(e.target.value)}
-                                                  className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[10px] font-bold font-sans resize-none text-[#5a3194]"
-                                                />
-                                              </div>
+
+                                              {/* Simple fallback inputs (only visible if tempParagraphs is empty, for simpler fast inputs) */}
+                                              {tempParagraphs.length === 0 && (
+                                                <>
+                                                  <div className="space-y-0.5">
+                                                    <label className="text-[8px] font-sans font-black text-slate-600 uppercase">Thai Paragraph Content (ထိုင်းစာသား) <span className="text-slate-400 italic font-medium">(Fast Single Input)</span></label>
+                                                    <textarea
+                                                      rows={2}
+                                                      placeholder="e.g. วันนี้ยินดีที่ได้รู้จักครับ..."
+                                                      value={conversationEntryContent}
+                                                      onChange={(e) => setConversationEntryContent(e.target.value)}
+                                                      className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[10px] font-bold font-sans resize-none"
+                                                    />
+                                                  </div>
+                                                  <div className="space-y-0.5">
+                                                    <label className="text-[8px] font-sans font-black text-slate-600 uppercase">Transcription / Translation (အသံထွက် / ဘာသာပြန်) <span className="text-slate-400 italic font-medium">(Fast Single Input)</span></label>
+                                                    <textarea
+                                                      rows={2}
+                                                      placeholder="e.g. တဖက်ကပြန်လည်မိတ်ဆက်ပြီး မင်္ဂလာရှိသော..."
+                                                      value={conversationEntryTrans}
+                                                      onChange={(e) => setConversationEntryTrans(e.target.value)}
+                                                      className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[10px] font-bold font-sans resize-none text-[#5a3194]"
+                                                    />
+                                                  </div>
+                                                </>
+                                              )}
                                             </div>
+
                                             <div className="flex gap-2">
                                               <button
                                                 type="button"
                                                 onClick={() => {
-                                                  if (!conversationEntryTitle.trim() || !conversationEntryContent.trim() || !conversationEntryTrans.trim()) {
-                                                    alert("Please fill Title, Thai content, and Translation");
+                                                  if (!conversationEntryTitle.trim()) {
+                                                    alert("Please fill Conversation Title / Topic");
                                                     return;
                                                   }
+
+                                                  let finalParagraphs = [...tempParagraphs];
+
+                                                  // Auto-add unsaved active paragraph input
+                                                  if (tempParaContent.trim() && tempParaTrans.trim()) {
+                                                    finalParagraphs.push({
+                                                      content: tempParaContent.trim(),
+                                                      transcription: tempParaPron.trim() || undefined,
+                                                      translation: tempParaTrans.trim()
+                                                    });
+                                                  }
+
+                                                  // Fall back to main fast inputs
+                                                  if (finalParagraphs.length === 0) {
+                                                    if (!conversationEntryContent.trim() || !conversationEntryTrans.trim()) {
+                                                      alert("Please add at least one paragraph above, or fill the fast single inputs.");
+                                                      return;
+                                                    }
+                                                    finalParagraphs.push({
+                                                      content: conversationEntryContent.trim(),
+                                                      transcription: conversationEntryPron.trim() || undefined,
+                                                      translation: conversationEntryTrans.trim()
+                                                    });
+                                                  }
+
                                                   const newEntry = {
                                                     title: conversationEntryTitle.trim(),
-                                                    content: conversationEntryContent.trim(),
-                                                    transcription: conversationEntryPron.trim() || undefined,
-                                                    translation: conversationEntryTrans.trim()
+                                                    content: finalParagraphs[0].content,
+                                                    transcription: finalParagraphs[0].transcription,
+                                                    translation: finalParagraphs[0].translation,
+                                                    paragraphs: finalParagraphs
                                                   };
+
                                                   if (editingConversationIdx !== null) {
                                                     const updated = [...resourceConversationEntries];
                                                     updated[editingConversationIdx] = newEntry;
@@ -9718,12 +10171,19 @@ startxref
                                                   } else {
                                                     setResourceConversationEntries([...resourceConversationEntries, newEntry]);
                                                   }
+
+                                                  // Reset state
                                                   setConversationEntryTitle('');
                                                   setConversationEntryContent('');
                                                   setConversationEntryPron('');
                                                   setConversationEntryTrans('');
+                                                  setTempParagraphs([]);
+                                                  setTempParaContent('');
+                                                  setTempParaPron('');
+                                                  setTempParaTrans('');
+                                                  setEditingParaIdx(null);
                                                 }}
-                                                className="flex-grow py-1.5 bg-brand-purple hover:bg-brand-purple/90 text-white text-[8.5px] font-black uppercase tracking-wider rounded transition-colors border-none cursor-pointer"
+                                                className="flex-grow py-1.5 bg-[#5a3194] hover:bg-[#5a3194]/90 text-white text-[8.5px] font-black uppercase tracking-wider rounded transition-colors border-none cursor-pointer"
                                               >
                                                 {editingConversationIdx !== null ? '💾 Update Conversation Block' : '➕ Add Conversation Block'}
                                               </button>
@@ -9736,6 +10196,11 @@ startxref
                                                     setConversationEntryContent('');
                                                     setConversationEntryPron('');
                                                     setConversationEntryTrans('');
+                                                    setTempParagraphs([]);
+                                                    setTempParaContent('');
+                                                    setTempParaPron('');
+                                                    setTempParaTrans('');
+                                                    setEditingParaIdx(null);
                                                   }}
                                                   className="px-3 py-1.5 bg-gray-150 hover:bg-gray-200 text-slate-700 text-[8.5px] font-black uppercase tracking-wider rounded transition-colors border-none cursor-pointer"
                                                 >
@@ -9750,7 +10215,7 @@ startxref
                                                 {resourceConversationEntries.map((item, idx) => (
                                                   <div key={idx} className={`p-2 flex flex-col gap-1 ${editingConversationIdx === idx ? 'bg-amber-50/60' : ''}`}>
                                                     <div className="flex items-center justify-between">
-                                                      <span className="font-extrabold text-brand-purple uppercase text-[8px]">Title: {item.title}</span>
+                                                      <span className="font-extrabold text-brand-purple uppercase text-[8px]">Title: {item.title} ({item.paragraphs?.length || 1} paras)</span>
                                                       <div className="flex items-center gap-1.5 shrink-0">
                                                         <button
                                                           type="button"
@@ -9760,6 +10225,7 @@ startxref
                                                             setConversationEntryContent(item.content);
                                                             setConversationEntryPron(item.transcription || '');
                                                             setConversationEntryTrans(item.translation);
+                                                            setTempParagraphs(item.paragraphs || [{ content: item.content, transcription: item.transcription, translation: item.translation }]);
                                                           }}
                                                           className="text-indigo-500 hover:text-indigo-700 bg-none border-none p-0.5 cursor-pointer font-extrabold text-[10px]"
                                                           title="Edit this conversation block"
@@ -9776,6 +10242,11 @@ startxref
                                                               setConversationEntryContent('');
                                                               setConversationEntryPron('');
                                                               setConversationEntryTrans('');
+                                                              setTempParagraphs([]);
+                                                              setTempParaContent('');
+                                                              setTempParaPron('');
+                                                              setTempParaTrans('');
+                                                              setEditingParaIdx(null);
                                                             }
                                                           }}
                                                           className="text-red-500 hover:text-red-700 bg-none border-none p-0.5 cursor-pointer font-bold"
@@ -9981,6 +10452,7 @@ startxref
                                                                 setSentenceEntrySuffix('');
                                                                 setSentenceEntryPron(item.transcription || '');
                                                                 setSentenceEntryTrans(item.translation);
+                                                                setTempVariations(item.variations || []);
                                                                 document.getElementById("admin-resource-form-section")?.scrollIntoView({ behavior: 'smooth' });
                                                               }}
                                                               className="px-1.5 py-0.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded text-[8px] font-black uppercase cursor-pointer border-none"
@@ -10082,6 +10554,7 @@ startxref
                                                                 setSentenceEntrySuffix(item.suffix || '');
                                                                 setSentenceEntryPron(item.transcription || '');
                                                                 setSentenceEntryTrans(item.translation);
+                                                                setTempVariations(item.variations || []);
                                                                 document.getElementById("admin-resource-form-section")?.scrollIntoView({ behavior: 'smooth' });
                                                               }}
                                                               className="px-1.5 py-0.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded text-[8px] font-black uppercase cursor-pointer border-none"
@@ -10260,6 +10733,7 @@ startxref
                                                                   setConversationEntryContent(item.content);
                                                                   setConversationEntryPron(item.transcription || '');
                                                                   setConversationEntryTrans(item.translation);
+                                                                  setTempParagraphs(item.paragraphs || [{ content: item.content, transcription: item.transcription, translation: item.translation }]);
                                                                   document.getElementById("admin-resource-form-section")?.scrollIntoView({ behavior: 'smooth' });
                                                                 }}
                                                                 className="px-1.5 py-0.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded text-[8px] font-black uppercase cursor-pointer border-none"
@@ -10276,6 +10750,11 @@ startxref
                                                                     setConversationEntryContent('');
                                                                     setConversationEntryPron('');
                                                                     setConversationEntryTrans('');
+                                                                    setTempParagraphs([]);
+                                                                    setTempParaContent('');
+                                                                    setTempParaPron('');
+                                                                    setTempParaTrans('');
+                                                                    setEditingParaIdx(null);
                                                                   }
                                                                 }}
                                                                 className="px-1.5 py-0.5 bg-red-50 hover:bg-red-100 text-red-500 rounded text-[8px] font-black uppercase cursor-pointer border-none"
@@ -14536,343 +15015,7 @@ startxref
           />
         )}
 
-        {activeReadingResource && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 z-[9999] overflow-hidden">
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              className="bg-white rounded-3xl border border-slate-150 shadow-2xl w-full max-w-4xl h-[90vh] flex flex-col overflow-hidden text-left"
-            >
-              {/* Header */}
-              <div className="p-5 border-b border-gray-100 flex items-start justify-between bg-slate-50">
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">📖</span>
-                    <span className="text-[10px] font-sans font-black bg-brand-purple/10 text-brand-purple px-2 py-0.5 rounded-full uppercase tracking-wider">
-                      Interactive eBook Companion
-                    </span>
-                  </div>
-                  <h3 className="font-sans font-black text-slate-800 text-lg uppercase tracking-tight">
-                    {activeReadingResource.name}
-                  </h3>
-                  {activeReadingResource.nameMm && (
-                    <p className="text-xs text-brand-purple font-sans font-bold italic">
-                      {activeReadingResource.nameMm}
-                    </p>
-                  )}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setActiveReadingResource(null)}
-                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800 rounded-xl border-none cursor-pointer text-[10px] font-sans font-black uppercase tracking-wider"
-                >
-                  ✕ CLOSE
-                </button>
-              </div>
 
-              {/* Navigation Tabs */}
-              <div className="px-5 py-3 border-b border-gray-100 bg-white flex flex-wrap gap-2 items-center justify-between">
-                <div className="flex gap-1.5 flex-wrap">
-                  {(['vocab', 'sentence', 'dialogue', 'conversation'] as const).map((tab) => {
-                    const available = 
-                      (tab === 'vocab' && activeReadingResource.vocabEntries?.length > 0) ||
-                      (tab === 'sentence' && activeReadingResource.sentenceEntries?.length > 0) ||
-                      (tab === 'dialogue' && activeReadingResource.dialogueEntries?.length > 0) ||
-                      (tab === 'conversation' && activeReadingResource.conversationEntries?.length > 0);
-
-                    if (!available) return null;
-
-                    return (
-                      <button
-                        key={tab}
-                        type="button"
-                        onClick={() => {
-                          setStudentReadingTab(tab);
-                          setEBookConversationPage(1);
-                          setEBookVocabPage(1);
-                          setEBookDialoguePage(1);
-                        }}
-                        className={`px-3 py-1.5 rounded-xl text-[10.5px] font-sans font-black uppercase tracking-wider transition-all border-none cursor-pointer ${
-                          studentReadingTab === tab
-                            ? 'bg-[#5a3194] text-white shadow-md'
-                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800'
-                        }`}
-                      >
-                        {tab === 'vocab' && `📝 Vocab Flashcards (${activeReadingResource.vocabEntries?.length})`}
-                        {tab === 'sentence' && `💬 Practice Sentences (${activeReadingResource.sentenceEntries?.length})`}
-                        {tab === 'dialogue' && `🗣️ Dialogues (${activeReadingResource.dialogueEntries?.length})`}
-                        {tab === 'conversation' && `📖 Reading Topics (${activeReadingResource.conversationEntries?.length})`}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <div className="text-[9px] text-slate-400 font-bold font-sans hidden sm:block">
-                  💡 Tap speaker icon to play Thai pronunciation audios.
-                </div>
-              </div>
-
-              {/* Content Panels */}
-              <div className="flex-1 overflow-y-auto p-5 bg-slate-50/50">
-                {studentReadingTab === 'vocab' && activeReadingResource.vocabEntries?.length > 0 && (
-                  (() => {
-                    const ITEMS_PER_PAGE = 12;
-                    const totalPages = Math.ceil(activeReadingResource.vocabEntries.length / ITEMS_PER_PAGE) || 1;
-                    const currentPage = Math.min(Math.max(1, eBookVocabPage), totalPages);
-                    const displayed = activeReadingResource.vocabEntries.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
-
-                    return (
-                      <div className="space-y-6">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 animate-fade-in">
-                          {displayed.map((item: any, idx: number) => (
-                            <div key={idx}>
-                              <VocabularyCard item={item} />
-                            </div>
-                          ))}
-                        </div>
-
-                        {totalPages > 1 && (
-                          <div className="flex items-center justify-between pt-4 border-t border-slate-200 select-none">
-                            <button
-                              type="button"
-                              onClick={() => setEBookVocabPage(prev => Math.max(1, prev - 1))}
-                              disabled={currentPage === 1}
-                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-sans font-black transition-all cursor-pointer ${
-                                currentPage === 1
-                                  ? 'opacity-30 cursor-not-allowed text-slate-400'
-                                  : 'text-[#5a3194] hover:bg-slate-100 hover:scale-105'
-                              }`}
-                            >
-                              <ChevronLeft className="w-4 h-4" />
-                              <span>Prev</span>
-                            </button>
-
-                            <div className="flex items-center gap-1.5">
-                              {Array.from({ length: totalPages }).map((_, i) => {
-                                const pageNum = i + 1;
-                                const isNear = Math.abs(pageNum - currentPage) <= 1;
-                                const isEdge = pageNum === 1 || pageNum === totalPages;
-                                if (!isNear && !isEdge) {
-                                  if (pageNum === 2 || pageNum === totalPages - 1) {
-                                    return <span key={pageNum} className="text-xs text-slate-450 font-sans font-black px-1">...</span>;
-                                  }
-                                  return null;
-                                }
-                                return (
-                                  <button
-                                    key={pageNum}
-                                    type="button"
-                                    onClick={() => setEBookVocabPage(pageNum)}
-                                    className={`w-7 h-7 rounded-full text-xs font-sans font-black flex items-center justify-center transition-all cursor-pointer ${
-                                      currentPage === pageNum
-                                        ? 'bg-[#5a3194] text-white shadow-md'
-                                        : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
-                                    }`}
-                                  >
-                                    {pageNum}
-                                  </button>
-                                );
-                              })}
-                            </div>
-
-                            <button
-                              type="button"
-                              onClick={() => setEBookVocabPage(prev => Math.min(totalPages, prev + 1))}
-                              disabled={currentPage === totalPages}
-                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-sans font-black transition-all cursor-pointer ${
-                                currentPage === totalPages
-                                  ? 'opacity-30 cursor-not-allowed text-slate-400'
-                                  : 'text-[#5a3194] hover:bg-slate-100 hover:scale-105'
-                              }`}
-                            >
-                              <span>Next</span>
-                              <ChevronRight className="w-4 h-4" />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })()
-                )}
-
-                {studentReadingTab === 'sentence' && activeReadingResource.sentenceEntries?.length > 0 && (
-                  <div className="space-y-4 max-w-2xl mx-auto animate-fade-in">
-                    {activeReadingResource.sentenceEntries.map((item: any, idx: number) => (
-                      <div key={idx}>
-                        <SentenceCard item={item} />
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {studentReadingTab === 'dialogue' && activeReadingResource.dialogueEntries?.length > 0 && (() => {
-                  const ITEMS_PER_PAGE = 5;
-                  const entries = activeReadingResource.dialogueEntries || [];
-                  const totalPages = Math.ceil(entries.length / ITEMS_PER_PAGE) || 1;
-                  const currentPage = Math.min(Math.max(1, eBookDialoguePage), totalPages);
-                  const displayedEntries = entries.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
-
-                  return (
-                    <div className="space-y-4 max-w-2xl mx-auto bg-white p-6 rounded-2xl border border-slate-150 shadow-3xs animate-fade-in">
-                      <span className="text-[9px] text-[#5a3194] font-black uppercase tracking-widest block mb-4 border-b pb-2">
-                        🗣️ Interactive Dialogue roleplay
-                      </span>
-                      <div className="space-y-4">
-                        {displayedEntries.map((item: any, idx: number) => (
-                          <div key={idx}>
-                            <DialogueBubble item={item} />
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Pagination Controls */}
-                      {totalPages > 1 && (
-                        <div className="flex items-center justify-between pt-4 border-t border-slate-200 select-none">
-                          <button
-                            type="button"
-                            onClick={() => setEBookDialoguePage(prev => Math.max(1, prev - 1))}
-                            disabled={currentPage === 1}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-sans font-black transition-all cursor-pointer ${
-                              currentPage === 1
-                                ? 'opacity-30 cursor-not-allowed text-slate-400'
-                                : 'text-[#5a3194] hover:bg-slate-100 hover:scale-105'
-                            }`}
-                          >
-                            <ChevronLeft className="w-4 h-4" />
-                            <span>Prev</span>
-                          </button>
-
-                          <div className="flex items-center gap-1.5">
-                            {Array.from({ length: totalPages }).map((_, i) => {
-                              const pageNum = i + 1;
-                              const isNear = Math.abs(pageNum - currentPage) <= 1;
-                              const isEdge = pageNum === 1 || pageNum === totalPages;
-                              if (!isNear && !isEdge) {
-                                if (pageNum === 2 || pageNum === totalPages - 1) {
-                                  return <span key={pageNum} className="text-xs text-slate-450 font-sans font-black px-1">...</span>;
-                                }
-                                return null;
-                              }
-                              return (
-                                <button
-                                  key={pageNum}
-                                  type="button"
-                                  onClick={() => setEBookDialoguePage(pageNum)}
-                                  className={`w-7 h-7 rounded-full text-xs font-sans font-black flex items-center justify-center transition-all cursor-pointer ${
-                                    currentPage === pageNum
-                                      ? 'bg-[#5a3194] text-white shadow-md'
-                                      : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
-                                  }`}
-                                >
-                                  {pageNum}
-                                </button>
-                              );
-                            })}
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={() => setEBookDialoguePage(prev => Math.min(totalPages, prev + 1))}
-                            disabled={currentPage === totalPages}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-sans font-black transition-all cursor-pointer ${
-                              currentPage === totalPages
-                                ? 'opacity-30 cursor-not-allowed text-slate-400'
-                                : 'text-[#5a3194] hover:bg-slate-100 hover:scale-105'
-                            }`}
-                          >
-                            <span>Next</span>
-                            <ChevronRight className="w-4 h-4" />
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })()}
-
-                {studentReadingTab === 'conversation' && activeReadingResource.conversationEntries?.length > 0 && (() => {
-                  const ITEMS_PER_PAGE = 3;
-                  const entries = activeReadingResource.conversationEntries || [];
-                  const totalPages = Math.ceil(entries.length / ITEMS_PER_PAGE) || 1;
-                  const currentPage = Math.min(Math.max(1, eBookConversationPage), totalPages);
-                  const displayedEntries = entries.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
-
-                  return (
-                    <div className="space-y-6 max-w-2xl mx-auto animate-fade-in">
-                      <div className="space-y-6">
-                        {displayedEntries.map((item: any, idx: number) => (
-                          <div key={idx}>
-                            <ConversationBlock item={item} />
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Pagination Bar */}
-                      {totalPages > 1 && (
-                        <div className="flex items-center justify-between pt-4 border-t border-slate-200 select-none px-1">
-                          <button
-                            type="button"
-                            onClick={() => setEBookConversationPage(prev => Math.max(1, prev - 1))}
-                            disabled={currentPage === 1}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-sans font-black transition-all cursor-pointer ${
-                              currentPage === 1
-                                ? 'opacity-30 cursor-not-allowed text-slate-400'
-                                : 'text-[#5a3194] hover:bg-[#5a3194]/5 hover:scale-105'
-                            }`}
-                          >
-                            <ChevronLeft className="w-4 h-4" />
-                            <span>ရှေ့သို့ (Prev)</span>
-                          </button>
-
-                          <div className="flex items-center gap-1.5">
-                            {Array.from({ length: totalPages }).map((_, i) => {
-                              const pageNum = i + 1;
-                              const isNear = Math.abs(pageNum - currentPage) <= 1;
-                              const isEdge = pageNum === 1 || pageNum === totalPages;
-                              if (!isNear && !isEdge) {
-                                if (pageNum === 2 || pageNum === totalPages - 1) {
-                                  return <span key={pageNum} className="text-xs text-slate-400 font-sans font-black px-1">...</span>;
-                                }
-                                return null;
-                              }
-                              return (
-                                <button
-                                  key={pageNum}
-                                  type="button"
-                                  onClick={() => setEBookConversationPage(pageNum)}
-                                  className={`w-7 h-7 rounded-full text-xs font-sans font-black flex items-center justify-center transition-all cursor-pointer ${
-                                    currentPage === pageNum
-                                      ? 'bg-[#5a3194] text-white shadow-md'
-                                      : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
-                                  }`}
-                                >
-                                  {pageNum}
-                                </button>
-                              );
-                            })}
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={() => setEBookConversationPage(prev => Math.min(totalPages, prev + 1))}
-                            disabled={currentPage === totalPages}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-sans font-black transition-all cursor-pointer ${
-                              currentPage === totalPages
-                                ? 'opacity-30 cursor-not-allowed text-slate-400'
-                                : 'text-[#5a3194] hover:bg-[#5a3194]/5 hover:scale-105'
-                            }`}
-                          >
-                            <span>နောက်သို့ (Next)</span>
-                            <ChevronRight className="w-4 h-4" />
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })()}
-              </div>
-            </motion.div>
-          </div>
-        )}
 
 
 
@@ -15847,14 +15990,32 @@ function getSuffixExamples(suffix: string, middle?: string) {
   return examples;
 }
 
-export function AffixDiagram({ prefix, suffix, middle }: { prefix?: string; suffix?: string; middle?: string }) {
+export function AffixDiagram({ prefix, suffix, middle, customVariations }: { prefix?: string; suffix?: string; middle?: string; customVariations?: any[] }) {
   const hasPrefix = prefix && prefix.trim().length > 0;
   const hasSuffix = suffix && suffix.trim().length > 0;
 
   if (!hasPrefix && !hasSuffix) return null;
 
   if (hasPrefix) {
-    const examples = getPrefixExamples(prefix, middle);
+    let examples: { root: string; combined: string; meaning?: string }[] = [];
+    if (customVariations && customVariations.length > 0) {
+      customVariations.forEach((v: any) => {
+        examples.push({
+          root: v.middle || '',
+          combined: v.sentence || '',
+          meaning: v.translation || ''
+        });
+      });
+      if (examples.length < 3) {
+        const defaultExamples = getPrefixExamples(prefix, middle);
+        for (let i = examples.length; i < 3; i++) {
+          examples.push(defaultExamples[i]);
+        }
+      }
+      examples = examples.slice(0, 3);
+    } else {
+      examples = getPrefixExamples(prefix, middle);
+    }
     const displayPrefix = prefix.trim().endsWith('-') ? prefix.trim() : `${prefix.trim()}-`;
     return (
       <div className="bg-slate-50/90 border border-violet-100 rounded-xl p-3.5 space-y-3 shadow-3xs text-center font-sans">
@@ -15927,7 +16088,25 @@ export function AffixDiagram({ prefix, suffix, middle }: { prefix?: string; suff
   }
 
   if (hasSuffix) {
-    const examples = getSuffixExamples(suffix, middle);
+    let examples: { root: string; combined: string; meaning?: string }[] = [];
+    if (customVariations && customVariations.length > 0) {
+      customVariations.forEach((v: any) => {
+        examples.push({
+          root: v.middle || '',
+          combined: v.sentence || '',
+          meaning: v.translation || ''
+        });
+      });
+      if (examples.length < 3) {
+        const defaultExamples = getSuffixExamples(suffix, middle);
+        for (let i = examples.length; i < 3; i++) {
+          examples.push(defaultExamples[i]);
+        }
+      }
+      examples = examples.slice(0, 3);
+    } else {
+      examples = getSuffixExamples(suffix, middle);
+    }
     const displaySuffix = suffix.trim().startsWith('-') ? suffix.trim() : `-${suffix.trim()}`;
     return (
       <div className="bg-slate-50/90 border border-sky-100 rounded-xl p-3.5 space-y-3 shadow-3xs text-center font-sans">
@@ -16014,34 +16193,55 @@ export function AffixDiagram({ prefix, suffix, middle }: { prefix?: string; suff
 }
 
 function SentenceCard({ item }: { item: any }) {
+  const [activeVarIdx, setActiveVarIdx] = React.useState<number>(0);
+
+  const variations = item.variations && item.variations.length > 0 ? item.variations : [];
+  const hasVariations = variations.length > 0;
+
+  const currentMiddle = hasVariations ? (variations[activeVarIdx]?.middle || '') : (item.middle || '');
+  const currentSentence = hasVariations ? (variations[activeVarIdx]?.sentence || '') : (item.sentence || '');
+  const currentTranscription = hasVariations ? (variations[activeVarIdx]?.transcription || '') : (item.transcription || '');
+  const currentTranslation = hasVariations ? (variations[activeVarIdx]?.translation || '') : (item.translation || '');
+
   const speak = () => {
     if ('speechSynthesis' in window) {
-      const u = new SpeechSynthesisUtterance(item.sentence);
+      const u = new SpeechSynthesisUtterance(currentSentence);
       u.lang = 'th-TH';
       window.speechSynthesis.speak(u);
     }
   };
 
-  const hasSegmented = !!(item.prefix || item.middle || item.suffix);
+  const hasSegmented = !!(item.prefix || currentMiddle || item.suffix);
 
   return (
-    <div className="bg-white border border-slate-200/80 p-4.5 rounded-2xl shadow-3xs hover:shadow-xs transition-all flex items-start gap-4">
-      <button
-        type="button"
-        onClick={speak}
-        className="p-2.5 bg-brand-purple/5 hover:bg-brand-purple/10 text-brand-purple rounded-xl transition-all border-none cursor-pointer shrink-0 text-sm"
-        title="Play Audio"
-      >
-        🔊
-      </button>
-      <div className="space-y-1.5 flex-1 text-left">
+    <div className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-3xs hover:shadow-xs transition-all flex flex-col sm:flex-row items-start gap-4">
+      <div className="flex sm:flex-col gap-2 shrink-0 w-full sm:w-auto justify-between sm:justify-start">
+        <button
+          type="button"
+          onClick={speak}
+          className="p-3 bg-[#583092]/5 hover:bg-[#583092]/10 text-[#583092] rounded-xl transition-all border-none cursor-pointer shrink-0 text-base flex items-center justify-center gap-1.5 font-bold"
+          title="Play Audio"
+        >
+          🔊 <span className="text-[10px] sm:hidden uppercase font-sans font-black">Listen</span>
+        </button>
+        {hasVariations && (
+          <span className="text-[7.5px] bg-pink-100 text-pink-700 font-extrabold px-1.5 py-1 rounded text-center uppercase tracking-wider block shrink-0">
+            {variations.length} Variations
+          </span>
+        )}
+      </div>
+
+      <div className="space-y-3.5 flex-1 text-left w-full">
         {hasSegmented ? (
-          <div className="space-y-2">
+          <div className="space-y-3">
             {/* Full text of sentence for reference */}
-            <h5 className="font-sans font-bold text-sm text-slate-800 leading-snug">{item.sentence}</h5>
+            <div className="space-y-1">
+              <span className="text-[8px] font-sans font-black text-slate-400 uppercase tracking-widest block">Active Sentence (ထိုင်းဝါကျ)</span>
+              <h5 className="font-sans font-black text-base text-slate-800 leading-snug">{currentSentence}</h5>
+            </div>
             
             {/* Split visualization */}
-            <div className="flex flex-wrap items-center gap-1.5 p-2 bg-slate-50/50 rounded-xl border border-slate-100/70 text-xs font-sans font-medium">
+            <div className="flex flex-wrap items-center gap-2 p-2.5 bg-slate-50/50 rounded-xl border border-slate-100/70 text-xs font-sans font-medium">
               <span className="text-slate-400 uppercase tracking-widest text-[8px] font-black mr-1 block sm:inline">Segments:</span>
               {item.prefix && (
                 <div className="flex flex-col items-center">
@@ -16049,10 +16249,10 @@ function SentenceCard({ item }: { item: any }) {
                   <span className="text-[7.5px] text-slate-400 font-bold uppercase mt-0.5">Prefix</span>
                 </div>
               )}
-              {item.middle && (
+              {currentMiddle && (
                 <div className="flex flex-col items-center">
-                  <span className="text-pink-700 bg-pink-50 px-2 py-0.5 rounded font-black border border-pink-100">{item.middle}</span>
-                  <span className="text-[7.5px] text-pink-500 font-bold uppercase mt-0.5">Middle</span>
+                  <span className="text-pink-700 bg-pink-50 px-2 py-0.5 rounded font-black border border-pink-100 animate-pulse">{currentMiddle}</span>
+                  <span className="text-[7.5px] text-pink-500 font-bold uppercase mt-0.5">Middle (Root)</span>
                 </div>
               )}
               {item.suffix && (
@@ -16063,25 +16263,60 @@ function SentenceCard({ item }: { item: any }) {
               )}
             </div>
 
+            {/* Interactive Selector Chips */}
+            {hasVariations && (
+              <div className="bg-slate-50/40 border border-slate-100 p-2.5 rounded-xl space-y-2">
+                <span className="text-[8px] font-sans font-black text-pink-500 uppercase tracking-wider block">
+                  👉 Click to change Middle Root Word (ပြောင်းလဲရန် နှိပ်ပါ)
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {variations.map((v: any, vIdx: number) => (
+                    <button
+                      key={vIdx}
+                      type="button"
+                      onClick={() => setActiveVarIdx(vIdx)}
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all border cursor-pointer ${
+                        activeVarIdx === vIdx
+                          ? 'bg-pink-600 border-pink-600 text-white font-extrabold shadow-sm'
+                          : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      {v.middle}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Dynamic Prefix/Suffix Structural Diagram */}
             {(item.prefix || item.suffix) && (
               <div className="mt-2.5">
-                <AffixDiagram prefix={item.prefix} suffix={item.suffix} middle={item.middle} />
+                <AffixDiagram 
+                  prefix={item.prefix} 
+                  suffix={item.suffix} 
+                  middle={currentMiddle} 
+                  customVariations={variations}
+                />
               </div>
             )}
           </div>
         ) : (
-          <h5 className="font-sans font-bold text-sm text-slate-800 leading-snug">{item.sentence}</h5>
+          <div className="space-y-1">
+            <span className="text-[8px] font-sans font-black text-slate-400 uppercase tracking-widest block">Thai Sentence (ထိုင်းဝါကျ)</span>
+            <h5 className="font-sans font-bold text-sm text-slate-800 leading-snug">{currentSentence}</h5>
+          </div>
         )}
         
-        {/* Phonetics in deep blue color */}
-        <p className="text-xs font-mono font-bold text-sky-700">
-          Pronunciation: {item.transcription}
-        </p>
-        
-        <p className="text-xs font-sans font-semibold text-slate-600 pt-1 border-t border-gray-100">
-          Translation: <b className="text-slate-800">{item.translation}</b>
-        </p>
+        {/* Phonetics & Translation */}
+        <div className="pt-2 border-t border-slate-100 space-y-1">
+          <span className="text-[8px] font-sans font-black text-slate-400 uppercase tracking-widest block">Pronunciation & Translation (အသံထွက်နှင့် ဘာသာပြန်)</span>
+          <p className="text-xs font-mono font-bold text-sky-700">
+            Pronunciation: {currentTranscription}
+          </p>
+          <p className="text-xs font-sans font-semibold text-slate-600">
+            Translation: <b className="text-slate-800">{currentTranslation}</b>
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -16128,45 +16363,93 @@ function DialogueBubble({ item }: { item: any }) {
 }
 
 function ConversationBlock({ item }: { item: any }) {
-  const speak = () => {
+  const paragraphs = item.paragraphs && item.paragraphs.length > 0 
+    ? item.paragraphs 
+    : [{ content: item.content, transcription: item.transcription, translation: item.translation }];
+
+  const speakText = (text: string) => {
     if ('speechSynthesis' in window) {
-      const u = new SpeechSynthesisUtterance(item.content);
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'th-TH';
+      window.speechSynthesis.speak(u);
+    }
+  };
+
+  const speakAll = () => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const fullText = paragraphs.map((p: any) => p.content).join(' ');
+      const u = new SpeechSynthesisUtterance(fullText);
       u.lang = 'th-TH';
       window.speechSynthesis.speak(u);
     }
   };
 
   return (
-    <div className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-3xs hover:shadow-xs transition-all space-y-3.5 text-left">
-      <div className="flex justify-between items-center border-b pb-2">
-        <h4 className="font-sans font-black text-sm text-[#583092] uppercase tracking-tight">
+    <div className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-3xs hover:shadow-xs transition-all space-y-4 text-left">
+      <div className="flex justify-between items-center border-b pb-2.5">
+        <h4 className="font-sans font-black text-sm text-[#583092] uppercase tracking-tight flex items-center gap-1.5">
           📖 {item.title}
         </h4>
-        <button
-          type="button"
-          onClick={speak}
-          className="px-2.5 py-1 bg-brand-purple/5 hover:bg-brand-purple/10 text-brand-purple text-[10px] font-sans font-black uppercase rounded-lg border-none cursor-pointer flex items-center gap-1"
-        >
-          🔊 Listen Full Paragraph
-        </button>
-      </div>
-      <div className="space-y-2">
-        <p className="font-sans font-bold text-slate-800 text-sm leading-relaxed tracking-wide bg-slate-50 p-3 rounded-xl border border-slate-100">
-          {item.content}
-        </p>
-        
-        {item.transcription && (
-          <p className="text-xs font-mono font-bold text-sky-700">
-            {item.transcription}
-          </p>
+        {paragraphs.length > 1 && (
+          <button
+            type="button"
+            onClick={speakAll}
+            className="px-2.5 py-1 bg-brand-purple/5 hover:bg-brand-purple/10 text-brand-purple text-[10px] font-sans font-black uppercase rounded-lg border-none cursor-pointer flex items-center gap-1"
+          >
+            🔊 Listen All ({paragraphs.length})
+          </button>
         )}
-        
-        <div className="pt-2 border-t border-gray-100">
-          <span className="text-[8px] font-sans font-black text-slate-400 uppercase tracking-widest block mb-1">Translation (ဘာသာပြန်)</span>
-          <p className="text-xs font-sans font-semibold text-slate-700 leading-relaxed">
-            {item.translation}
-          </p>
-        </div>
+      </div>
+
+      <div className="space-y-4 divide-y divide-slate-100">
+        {paragraphs.map((p: any, pIdx: number) => (
+          <div key={pIdx} className={`space-y-2.5 ${pIdx > 0 ? 'pt-4' : ''}`}>
+            {paragraphs.length > 1 && (
+              <div className="flex items-center justify-between">
+                <span className="text-[8px] font-sans font-black text-slate-400 bg-slate-100 px-2 py-0.5 rounded uppercase tracking-wider">
+                  Paragraph {pIdx + 1}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => speakText(p.content)}
+                  className="px-2 py-0.5 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-brand-purple text-[8px] font-sans font-black uppercase rounded border border-slate-200 cursor-pointer flex items-center gap-1"
+                >
+                  🔊 Listen
+                </button>
+              </div>
+            )}
+
+            <div className="relative">
+              {paragraphs.length === 1 && (
+                <button
+                  type="button"
+                  onClick={() => speakText(p.content)}
+                  className="absolute right-2 top-2 px-2 py-1 bg-brand-purple/5 hover:bg-brand-purple/10 text-brand-purple text-[9px] font-sans font-black uppercase rounded-lg border-none cursor-pointer flex items-center gap-1"
+                >
+                  🔊 Listen
+                </button>
+              )}
+              <p className="font-sans font-bold text-slate-800 text-sm leading-relaxed tracking-wide bg-slate-50 p-3 rounded-xl border border-slate-100">
+                {p.content}
+              </p>
+            </div>
+
+            {p.transcription && (
+              <p className="text-xs font-mono font-bold text-sky-700">
+                {p.transcription}
+              </p>
+            )}
+
+            <div className="pt-1.5">
+              <span className="text-[8px] font-sans font-black text-slate-400 uppercase tracking-widest block mb-0.5">Translation (ဘာသာပြန်)</span>
+              <p className="text-xs font-sans font-semibold text-slate-700 leading-relaxed">
+                {p.translation}
+              </p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

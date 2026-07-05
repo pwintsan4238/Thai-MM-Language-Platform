@@ -102,6 +102,13 @@ export interface EBookVocabEntry {
   meaning: string;
 }
 
+export interface EBookSentenceVariation {
+  middle: string;
+  sentence: string;
+  transcription: string;
+  translation: string;
+}
+
 export interface EBookSentenceEntry {
   sentence: string;
   transcription: string;
@@ -109,6 +116,7 @@ export interface EBookSentenceEntry {
   prefix?: string;
   middle?: string;
   suffix?: string;
+  variations?: EBookSentenceVariation[];
 }
 
 export interface EBookDialogueEntry {
@@ -118,11 +126,18 @@ export interface EBookDialogueEntry {
   translation: string;
 }
 
+export interface EBookConversationParagraph {
+  content: string;
+  transcription?: string;
+  translation: string;
+}
+
 export interface EBookConversationEntry {
   title: string;
   content: string;
   transcription?: string;
   translation: string;
+  paragraphs?: EBookConversationParagraph[];
 }
 
 export interface CourseResource {

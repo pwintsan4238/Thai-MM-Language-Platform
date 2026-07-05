@@ -501,6 +501,40 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
     return null;
   };
 
+  const getDynamicPage13Items = () => {
+    const customRes = getCustomResourceData();
+    if (customRes && customRes.sentenceEntries && customRes.sentenceEntries.length > 0) {
+      const matched = customRes.sentenceEntries.filter((s: any) => s.prefix === "จะ" && s.middle && s.middle !== "ทำ");
+      if (matched.length > 0) {
+        return matched.map((s: any, idx: number) => ({
+          ID: idx + 1,
+          THAI: s.middle,
+          phonetic: s.transcription.includes('(') ? s.transcription.split('(')[1].replace(')', '').trim() : s.transcription,
+          meaning: s.translation
+        }));
+      }
+    }
+    return PAGE_13_GRAMMAR_ITEMS;
+  };
+
+  const getDynamicPage13Part2Items = () => {
+    const customRes = getCustomResourceData();
+    if (customRes && customRes.sentenceEntries && customRes.sentenceEntries.length > 0) {
+      const matched = customRes.sentenceEntries.filter((s: any) => s.middle === "ทำ" && s.prefix);
+      if (matched.length > 0) {
+        return matched.map((s: any, idx: number) => ({
+          ID: idx + 1,
+          MODIFIER: s.prefix,
+          THAI_CLEAN: s.sentence,
+          PHONETIC: s.transcription,
+          MYANMAR: s.translation,
+          TITLE: s.prefix + " " + s.middle + (s.suffix ? ` (${s.suffix})` : "")
+        }));
+      }
+    }
+    return PAGE_13_PART2_GRAMMAR_ITEMS;
+  };
+
   const triggerPremiumTTS = (text: string) => {
     triggerTTS(text);
     setActiveSpeechWord(text);
@@ -982,7 +1016,7 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white rounded-[40px] border border-slate-100 shadow-xl overflow-hidden font-sans flex flex-col justify-between min-h-[720px] select-none">
+    <div className="w-full max-w-5xl mx-auto bg-white rounded-3xl border border-gray-150 shadow-sm overflow-hidden font-sans flex flex-col justify-between min-h-[720px] select-none">
       
       {/* ================= VIEW A: DIRECTORY / CHAPTER SELECTOR PAGE ================= */}
       {viewingChapterId === null ? (
@@ -1022,7 +1056,7 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
           </div>
 
           {/* Book Navigation Tabs for Sayar Son Jai and premium-book */}
-          {(bookId === 'sayar-son-jai-blue-book' || bookId === 'premium-book') && (
+          {(bookId === 'sayar-son-jai-blue-book' || bookId === 'premium-book' || bookId === 'res-somchai-grammar-book') && (
             <div className="flex bg-slate-100/70 p-1 rounded-2xl mb-4 border border-slate-200/20 select-none gap-0.5">
               <button 
                 onClick={() => {
@@ -1036,7 +1070,7 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
                 }`}
               >
                 <List className="w-3 h-3 text-emerald-500 shrink-0" />
-                <span className="truncate">{bookId === 'premium-book' ? "คำศัพท์ (Vocab)" : "Vocab"}</span>
+                <span className="truncate">{(bookId === 'premium-book' || bookId === 'res-somchai-grammar-book') ? "คำศัพท์ (Vocab)" : "Vocab"}</span>
               </button>
               <button 
                 onClick={() => setActiveTab('page13')}
@@ -1047,7 +1081,7 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
                 }`}
               >
                 <Sparkles className="w-3 h-3 text-yellow-300 fill-yellow-300 shrink-0" />
-                <span className="truncate">{bookId === 'premium-book' ? "โครงสร้าง (Sentence)" : "จะ + Verb"}</span>
+                <span className="truncate">{(bookId === 'premium-book' || bookId === 'res-somchai-grammar-book') ? "โครงสร้าง (Sentence)" : "จะ + Verb"}</span>
               </button>
               <button 
                 onClick={() => {
@@ -1061,7 +1095,7 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
                 }`}
               >
                 <HelpCircle className="w-3 h-3 text-orange-500 shrink-0" />
-                <span className="truncate">{bookId === 'premium-book' ? "ถาม-ตอบ (Q&A)" : "Q&A"}</span>
+                <span className="truncate">{(bookId === 'premium-book' || bookId === 'res-somchai-grammar-book') ? "ถาม-ตอบ (Q&A)" : "Q&A"}</span>
               </button>
               <button 
                 onClick={() => {
@@ -1075,13 +1109,13 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
                 }`}
               >
                 <MessageSquare className="w-3 h-3 text-cyan-500 shrink-0" />
-                <span className="truncate">{bookId === 'premium-book' ? "สนทนา (Conv)" : "Conversation"}</span>
+                <span className="truncate">{(bookId === 'premium-book' || bookId === 'res-somchai-grammar-book') ? "สนทนา (Conv)" : "Conversation"}</span>
               </button>
             </div>
           )}
 
           {activeTab === 'page13' ? (
-            bookId === 'sayar-son-jai-blue-book' ? (
+            (bookId === 'sayar-son-jai-blue-book' || bookId === 'res-somchai-grammar-book') ? (
               /* ================= PAGE 13 INTERACTIVE GRAMMAR MINDMAP ================= */
               <div className="flex-1 flex flex-col justify-between animate-fade-in">
                 <div className="w-full relative bg-[#FDFCF7] border border-stone-200/80 rounded-[35px] p-4 font-sans select-none overflow-x-auto scrollbar-none shadow-inner text-stone-800 min-h-[440px]">
@@ -1126,7 +1160,7 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
 
                         {/* SVG CONNECTING PATHS */}
                         <svg className="absolute top-0 left-0 w-full h-[495px] pointer-events-none z-10 overflow-visible">
-                          {PAGE_13_GRAMMAR_ITEMS.map((item, idx) => {
+                          {getDynamicPage13Items().map((item, idx) => {
                             const xStart = 87;
                             const yStart = 247;
                             const xEnd = 153;
@@ -1145,7 +1179,7 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
                             );
                           })}
 
-                          {PAGE_13_GRAMMAR_ITEMS.map((item, idx) => {
+                          {getDynamicPage13Items().map((item, idx) => {
                             const xStart = 297;
                             const yStart = idx * 32.5 + 13;
                             const xEnd = 353;
@@ -1169,7 +1203,7 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
 
                         {/* MIDDLE: 15 VERBS COLUMN */}
                         <div className="absolute left-[153px] top-0 w-[144px] h-[495px] flex flex-col justify-between z-20">
-                          {PAGE_13_GRAMMAR_ITEMS.map((item, idx) => {
+                          {getDynamicPage13Items().map((item, idx) => {
                             return (
                               <div
                                 key={`v-${item.ID}`}
@@ -1186,7 +1220,7 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
 
                         {/* RIGHT: 15 TRANSLATIONS COLUMN */}
                         <div className="absolute left-[353px] top-0 w-[142px] h-[495px] flex flex-col justify-between z-20">
-                          {PAGE_13_GRAMMAR_ITEMS.map((item, idx) => {
+                          {getDynamicPage13Items().map((item, idx) => {
                             return (
                               <div
                                 key={`m-${item.ID}`}
@@ -1218,7 +1252,7 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
 
                         {/* SVG CONNECTING PATHS FOR PAGE 2 */}
                         <svg className="absolute top-0 left-0 w-full h-[495px] pointer-events-none z-10 overflow-visible">
-                          {PAGE_13_PART2_GRAMMAR_ITEMS.map((item, idx) => {
+                          {getDynamicPage13Part2Items().map((item, idx) => {
                             const xStart = 304;
                             const yStart = idx * 46.7 + 14;
                             const xEnd = 325;
@@ -1237,7 +1271,7 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
                             );
                           })}
 
-                          {PAGE_13_PART2_GRAMMAR_ITEMS.map((item, idx) => {
+                          {getDynamicPage13Part2Items().map((item, idx) => {
                             const xStart = 150;
                             const yStart = idx * 46.7 + 14;
                             const xEnd = 162;
@@ -1261,7 +1295,7 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
 
                         {/* LEFT: 11 MODIFIERS COLUMN */}
                         <div className="absolute left-1.5 top-0 w-[144px] h-[495px] flex flex-col justify-between z-20">
-                          {PAGE_13_PART2_GRAMMAR_ITEMS.map((item, idx) => {
+                          {getDynamicPage13Part2Items().map((item, idx) => {
                             const isSelected = activePage2Idx === idx;
                             return (
                               <div
@@ -1286,7 +1320,7 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
 
                         {/* MIDDLE: 11 TRANSLATIONS COLUMN */}
                         <div className="absolute left-[162px] top-0 w-[142px] h-[495px] flex flex-col justify-between z-20">
-                          {PAGE_13_PART2_GRAMMAR_ITEMS.map((item, idx) => {
+                          {getDynamicPage13Part2Items().map((item, idx) => {
                             const isSelected = activePage2Idx === idx;
                             return (
                               <div
@@ -1584,7 +1618,6 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
                   <Search className="w-4 h-4 text-slate-450" />
                 </span>
                 <input
-                  type="text"
                   placeholder="စကားလုံး ရှာဖွေရန်... (Search Thai or Myanmar)"
                   value={vocabSearchQuery}
                   onChange={(e) => {
@@ -2019,36 +2052,92 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
                           ကိုက်ညီသော စကားပြော မရှိပါ။
                         </div>
                       ) : (
-                        displayedConv.map((item) => {
-                          const isSpeaking = activeSpeechWord === item.thai;
+                        displayedConv.map((item: any, itemIdx: number) => {
+                          const itemTitle = item.title;
+                          const paragraphs = item.paragraphs && item.paragraphs.length > 0 
+                            ? item.paragraphs 
+                            : [{ 
+                                content: item.thai || item.content || '', 
+                                transcription: item.phonetic || item.transcription || '', 
+                                translation: item.myanmar || item.translation || '' 
+                              }];
+
                           return (
                             <div 
-                              key={item.id} 
-                              onClick={() => triggerPremiumTTS(item.thai)}
-                              className={`bg-white border rounded-2xl p-4 shadow-3xs hover:border-violet-200/50 active:bg-violet-50/20 cursor-pointer transition-all ${
-                                isSpeaking ? 'border-brand-purple bg-violet-50/20 shadow-xs' : 'border-slate-150'
-                              }`}
+                              key={item.id || itemIdx} 
+                              className="bg-white border border-slate-150 rounded-2xl p-4 shadow-3xs space-y-3 text-left"
                             >
-                              {/* 1. Myanmar Translation First */}
-                              <div className="text-[12px] font-black text-slate-850 leading-relaxed mb-1.5">
-                                {item.myanmar}
-                              </div>
+                              {/* Common Topic Header if title exists */}
+                              {itemTitle && (
+                                <div className="border-b border-slate-100 pb-2 flex items-center justify-between">
+                                  <span className="text-[11px] font-sans font-black text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-lg uppercase tracking-wider">
+                                    💬 Topic: {itemTitle}
+                                  </span>
+                                  {paragraphs.length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const fullText = paragraphs.map((p: any) => p.content).join(' ');
+                                        triggerPremiumTTS(fullText);
+                                      }}
+                                      className="px-2 py-0.5 bg-brand-purple/5 hover:bg-brand-purple/10 text-brand-purple text-[8px] font-black uppercase rounded-md cursor-pointer flex items-center gap-1 border-none"
+                                    >
+                                      🔊 Play All ({paragraphs.length})
+                                    </button>
+                                  )}
+                                </div>
+                              )}
 
-                              {/* 2. Myanmar Phonetics Second */}
-                              <div className="text-[10.5px] font-bold text-slate-500 font-mono tracking-wide leading-normal mb-3">
-                                {item.phonetic}
-                              </div>
+                              {/* Paragraphs List */}
+                              <div className="space-y-3.5 divide-y divide-slate-100">
+                                {paragraphs.map((p: any, pIdx: number) => {
+                                  const isSpeaking = activeSpeechWord === p.content;
+                                  return (
+                                    <div 
+                                      key={pIdx} 
+                                      className={`text-left space-y-1.5 ${pIdx > 0 ? 'pt-3.5' : ''}`}
+                                    >
+                                      {paragraphs.length > 1 && (
+                                        <div className="flex items-center justify-between select-none">
+                                          <span className="text-[8px] font-black text-slate-400 uppercase font-sans">
+                                            Paragraph {pIdx + 1}
+                                          </span>
+                                        </div>
+                                      )}
 
-                              {/* 3. Thai Characters Last */}
-                              <div className="flex items-center justify-between bg-slate-50/60 p-2.5 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors">
-                                <span className={`text-[13px] font-sans font-black tracking-wide ${
-                                  isSpeaking ? 'text-brand-purple font-extrabold scale-101' : 'text-slate-900'
-                                }`}>
-                                  {item.thai}
-                                </span>
-                                <Volume2 className={`w-3.5 h-3.5 transition-colors shrink-0 ${
-                                  isSpeaking ? 'text-brand-purple animate-bounce' : 'text-slate-350'
-                                }`} />
+                                      {/* 1. Myanmar Translation First */}
+                                      <div className="text-[12px] font-black text-slate-850 leading-relaxed">
+                                        {p.translation || p.myanmar}
+                                      </div>
+
+                                      {/* 2. Myanmar Phonetics Second */}
+                                      {(p.transcription || p.phonetic) && (
+                                        <div className="text-[10.5px] font-bold text-slate-500 font-mono tracking-wide leading-normal">
+                                          {p.transcription || p.phonetic}
+                                        </div>
+                                      )}
+
+                                      {/* 3. Thai Characters Last (Clickable box to trigger TTS) */}
+                                      <div 
+                                        onClick={() => triggerPremiumTTS(p.content)}
+                                        className={`flex items-center justify-between p-2.5 rounded-xl border cursor-pointer transition-all ${
+                                          isSpeaking 
+                                            ? 'border-brand-purple bg-violet-50/20 shadow-2xs' 
+                                            : 'border-slate-150 bg-slate-50/60 hover:bg-slate-50'
+                                        }`}
+                                      >
+                                        <span className={`text-[13px] font-sans font-black tracking-wide ${
+                                          isSpeaking ? 'text-brand-purple font-extrabold scale-101' : 'text-slate-900'
+                                        }`}>
+                                          {p.content}
+                                        </span>
+                                        <Volume2 className={`w-3.5 h-3.5 transition-colors shrink-0 ${
+                                          isSpeaking ? 'text-brand-purple animate-bounce' : 'text-slate-350'
+                                        }`} />
+                                      </div>
+                                    </div>
+                                  );
+                                })}
                               </div>
                             </div>
                           );
@@ -2156,7 +2245,7 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
               )}
 
               {/* Main Lessons/Chapters Cards lists */}
-              <div className="flex-1 overflow-y-auto space-y-3.5 max-h-[460px] pr-1 select-none">
+              <div className="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-3.5 max-h-[480px] pr-1 select-none space-y-0 pb-2">
                 {filteredChapters.length === 0 ? (
                   <div className="text-center py-16 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-155">
                     <span className="text-3xl">🧩</span>
@@ -2366,7 +2455,7 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
                 <p className="text-[11px] text-slate-400 mt-1">Please try searching with standard Burmese, Thai, or phonetics.</p>
               </div>
             ) : (
-              <div className="space-y-5 max-w-xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 max-w-4xl mx-auto space-y-0">
                 {filteredPhrases.map((item) => {
                   const speechTarget = item.thai.split('(')[0].trim();
                   return (
