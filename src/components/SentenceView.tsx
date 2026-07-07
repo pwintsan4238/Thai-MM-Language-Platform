@@ -327,9 +327,16 @@ export default function SentenceView({
                 }`}
               >
                 <CheckCircle className={`w-4 h-4 ${masteredWords.includes(selectedWord.thai) ? 'fill-current text-white' : 'text-brand-muted'}`} />
-                {masteredWords.includes(selectedWord.thai)
-                  ? 'Mastered! • နှုတ်တိုက်ရပြီးဖြစ်သည်'
-                  : 'Mark as Mastered • မှတ်သားရန်'}
+                <span className="hidden sm:inline">
+                  {masteredWords.includes(selectedWord.thai)
+                    ? 'Mastered! • နှုတ်တိုက်ရပြီးဖြစ်သည်'
+                    : 'Mark as Mastered • မှတ်သားရန်'}
+                </span>
+                <span className="sm:hidden">
+                  {masteredWords.includes(selectedWord.thai)
+                    ? 'Mastered! 🎉'
+                    : 'Master Word'}
+                </span>
               </button>
             </motion.div>
           ) : (
@@ -447,9 +454,16 @@ export default function SentenceView({
                   }`}
                 >
                   <CheckCircle className={`w-4 h-4 ${masteredWords.includes(selectedWord.thai) ? 'fill-current text-white' : 'text-brand-muted'}`} />
-                  {masteredWords.includes(selectedWord.thai)
-                    ? 'Mastered! • နှုတ်တိုက်ရပြီးဖြစ်သည်'
-                    : 'Mark as Mastered • \}မှတ်သားရန်'}
+                  <span className="hidden sm:inline">
+                    {masteredWords.includes(selectedWord.thai)
+                      ? 'Mastered! • နှုတ်တိုက်ရပြီးဖြစ်သည်'
+                      : 'Mark as Mastered • မှတ်သားရန်'}
+                  </span>
+                  <span className="sm:hidden">
+                    {masteredWords.includes(selectedWord.thai)
+                      ? 'Mastered! 🎉'
+                      : 'Master Word'}
+                  </span>
                 </button>
               </div>
             </motion.div>

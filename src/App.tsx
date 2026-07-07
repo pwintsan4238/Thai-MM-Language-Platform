@@ -293,7 +293,7 @@ const INITIAL_PROGRESS: ProgressState = {
 
 export default function App() {
   const [lessons, setLessons] = useState<Lesson[]>(() => {
-    const saved = localStorage.getItem('thai_lessons_curriculum_list');
+    const saved = localStorage.getItem('thai_lessons_curriculum');
     const defaultLessons: Lesson[] = lessonsData.map(b => {
       let courseId = "course-basic";
       if (b.id >= 11 && b.id <= 20) {
@@ -1187,6 +1187,23 @@ export default function App() {
   const [resourceDialogueEntries, setResourceDialogueEntries] = useState<EBookDialogueEntry[]>([]);
   const [resourceConversationEntries, setResourceConversationEntries] = useState<EBookConversationEntry[]>([]);
   const [activeReadingResource, setActiveReadingResource] = useState<any | null>(null);
+
+  // Helper to pre-populate new resources with the framework structure of Sayar Som Chai's basic course eBook
+  const loadSomchaiStructure = () => {
+    const somchaiCourse = courses.find(c => c.id === 'course-somchai-grammar');
+    const somchaiResource = somchaiCourse?.resources?.find(r => r.id === 'res-somchai-grammar-book');
+    if (somchaiResource) {
+      setResourceVocabEntries(somchaiResource.vocabEntries ? JSON.parse(JSON.stringify(somchaiResource.vocabEntries)) : []);
+      setResourceSentenceEntries(somchaiResource.sentenceEntries ? JSON.parse(JSON.stringify(somchaiResource.sentenceEntries)) : []);
+      setResourceDialogueEntries(somchaiResource.dialogueEntries ? JSON.parse(JSON.stringify(somchaiResource.dialogueEntries)) : []);
+      setResourceConversationEntries(somchaiResource.conversationEntries ? JSON.parse(JSON.stringify(somchaiResource.conversationEntries)) : []);
+    } else {
+      setResourceVocabEntries([]);
+      setResourceSentenceEntries([]);
+      setResourceDialogueEntries([]);
+      setResourceConversationEntries([]);
+    }
+  };
   const [studentReadingTab, setStudentReadingTab] = useState<'vocab' | 'sentence' | 'dialogue' | 'conversation'>('vocab');
   const [eBookConversationPage, setEBookConversationPage] = useState<number>(1);
   const [eBookVocabPage, setEBookVocabPage] = useState<number>(1);
@@ -2108,6 +2125,19 @@ export default function App() {
       setStoreFormCourseId(activeItem.courseId || '');
       setStoreFormPdfFileName(activeItem.pdfFileName || '');
       setStoreFormPdfDownloadUrl(activeItem.pdfDownloadUrl || '');
+      
+      if (activeItem.type === 'e-book') {
+        setEditingResourceId(activeItem.id);
+        setResourceFormName(activeItem.name);
+        setResourceFormNameMm(activeItem.nameMm || '');
+        setResourceFormUrl(activeItem.pdfDownloadUrl || '');
+        setResourceFormPrice(activeItem.price);
+        setResourceFormType(activeItem.price > 0 ? 'premium' : 'free');
+        setResourceVocabEntries(activeItem.vocabEntries || []);
+        setResourceSentenceEntries(activeItem.sentenceEntries || []);
+        setResourceDialogueEntries(activeItem.dialogueEntries || []);
+        setResourceConversationEntries(activeItem.conversationEntries || []);
+      }
     }
   }, [adminSelectedStoreId, storeItems, storeIsNew]);
 
@@ -5253,168 +5283,6 @@ startxref
                 </div>
               </div>
 
-              {/* SECTION 1: Interactive Course Companion eBooks */}
-              {companionEbooks.length > 0 && (
-                <div className="space-y-4 pt-2 text-left">
-                  <h4 className="font-sans font-black text-xs text-brand-dark uppercase tracking-wider flex items-center gap-2 border-b-2 border-slate-100 pb-2.5">
-                    <span className="p-1.5 rounded-lg bg-violet-50 text-brand-purple text-xs">🎓</span>
-                    <span>Interactive Course Companion eBooks</span>
-                    <span className="text-[8px] bg-brand-purple/10 text-brand-purple px-2 py-0.5 rounded font-black tracking-normal uppercase">
-                      Practice Guides
-                    </span>
-                  </h4>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {companionEbooks.map((res: any) => {
-                      const itemOwned = isStoreItemUnlocked(res.id, res.priceAmount);
-                      const isFree = res.priceAmount === 0;
-                      const bookStyle = getCompanionBookStyles(res.id, res.name);
-
-                      return (
-                        <div
-                          key={res.id}
-                          className="duo-card p-5 sm:p-6 bg-white border-2 border-slate-150 rounded-2xl flex flex-col md:flex-row gap-5 hover:shadow-md transition-all duration-200 animate-fade-in relative overflow-hidden text-left"
-                        >
-                          {/* Book cover rendering widget */}
-                          <div className={`w-[120px] sm:w-[130px] mx-auto md:mx-0 aspect-[1/1.414] bg-gradient-to-tr ${bookStyle.gradient} rounded-lg shadow-md hover:shadow-lg transition-transform transform hover:scale-[1.02] active:scale-95 shrink-0 relative flex flex-col justify-between p-4 text-white border-l-4 ${bookStyle.borderLeft} border-r border-t border-b border-white/10 select-none overflow-hidden`}>
-                            <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/5 to-white/10 pointer-events-none" />
-                            <div className="absolute top-0 bottom-0 left-0 w-2.5 bg-black/20 shadow-inner" />
-                            
-                            <div className="space-y-1 text-center pl-1 pt-1">
-                              <span className={`block text-[6.5px] sm:text-[7.5px] font-black tracking-widest ${bookStyle.accentText} uppercase leading-none`}>
-                                {bookStyle.topLabel}
-                              </span>
-                              <div className="h-[2px] bg-yellow-400 w-1/2 mx-auto mt-1 rounded" />
-                              <h4 className={`font-sans font-black text-[9px] sm:text-[10px] leading-tight ${bookStyle.titleColor} drop-shadow mt-1 uppercase`}>
-                                {bookStyle.titleText}
-                              </h4>
-                              <p className={`text-[7px] sm:text-[7.5px] tracking-wide font-sans font-extrabold ${bookStyle.accentText} uppercase opacity-90 leading-tight`}>
-                                {bookStyle.subText}
-                              </p>
-                            </div>
-                            
-                            <div className="flex flex-col items-center justify-center pl-2 py-1.5 space-y-1">
-                              <div className="w-9 h-9 rounded-full bg-white/10 border border-white/15 flex flex-col items-center justify-center">
-                                <span className="text-sm text-white">{bookStyle.emoji}</span>
-                              </div>
-                              <span className="text-[6px] font-bold text-yellow-105 tracking-wider uppercase text-center leading-tight">
-                                {bookStyle.emojiLabel}
-                              </span>
-                            </div>
-
-                            <div className="space-y-0.5 text-center pl-1">
-                              <div className="h-[1px] bg-slate-100/20 w-3/4 mx-auto rounded" />
-                              <p className="text-[6.5px] sm:text-[7.5px] font-bold text-white/95 tracking-tight uppercase">
-                                {bookStyle.author}
-                              </p>
-                              <p className="text-[6px] text-yellow-400 font-extrabold tracking-wider uppercase leading-none">
-                                {bookStyle.status}
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* Detail fields */}
-                          <div className="flex-1 flex flex-col justify-between text-left font-sans">
-                            <div className="space-y-3">
-                              <div>
-                                <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                                  <span className={`px-2.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider border select-none bg-indigo-50 text-indigo-700 border-indigo-200`}>
-                                    {res.courseName}
-                                  </span>
-                                  <span className={`px-2.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider border select-none ${
-                                    isFree
-                                      ? 'bg-emerald-50 text-emerald-800 border-emerald-250'
-                                      : 'bg-amber-50 text-amber-700 border-amber-200'
-                                  }`}>
-                                    {isFree ? 'FREE STUDY BOOK' : 'PREMIUM COMPANION'}
-                                  </span>
-                                </div>
-                                <h3 className="font-sans font-black text-sm text-slate-800 leading-snug">
-                                  {res.name}
-                                </h3>
-                                {res.nameMm && (
-                                  <p className="text-xs font-extrabold text-brand-purple mt-0.5">
-                                    {res.nameMm}
-                                  </p>
-                                )}
-                              </div>
-
-                              <div className="text-xs text-brand-muted space-y-1 leading-relaxed text-left">
-                                <p className="font-semibold">Interactive Study Guide featuring audio-synchronized voice clips, flashcards, word quizzes, and writing templates.</p>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center justify-between gap-3 pt-3 mt-4 border-t border-slate-100">
-                              <div className="text-left select-none">
-                                <span className="text-[7.5px] text-brand-muted block font-extrabold uppercase leading-none">PRICING RATE</span>
-                                <span className="text-xs font-black text-brand-purple block mt-0.5">
-                                  {isFree ? 'FREE' : `${res.priceAmount.toLocaleString()} MMK`}
-                                </span>
-                              </div>
-
-                              {itemOwned ? (
-                                <div className="flex gap-2 shrink-0">
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setActiveReadingResource(res);
-                                      addSystemLog(currentUser || 'student', `Opened interactive companion eBook player: "${res.name}"`);
-                                    }}
-                                    className="px-3 py-1.5 bg-gradient-to-r from-brand-purple to-[#7a42c4] text-white rounded-xl text-[10px] font-sans font-black uppercase tracking-wider hover:shadow-md cursor-pointer border-b-4 border-brand-purple-shadow flex items-center gap-1.5 shrink-0"
-                                  >
-                                    <span>📖 Study Interactive</span>
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      window.open(res.downloadUrl, '_blank');
-                                      addSystemLog(currentUser || 'student', `Downloaded companion PDF eBook: "${res.name}"`);
-                                    }}
-                                    className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-[10px] font-sans font-black uppercase tracking-wider cursor-pointer border-b-4 border-slate-300 flex items-center gap-1.5 shrink-0 transition-all"
-                                  >
-                                    <span>📥 PDF</span>
-                                  </button>
-                                </div>
-                              ) : (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    const checkoutProduct = {
-                                      id: res.id,
-                                      name: res.name,
-                                      nameMm: res.nameMm || '',
-                                      priceAmount: res.priceAmount,
-                                      currency: 'MMK' as const,
-                                      itemType: 'e-book',
-                                      duration: "Companion eBook Study Resource",
-                                      description: `Direct premium supplementary eBook for ${res.courseName}`,
-                                      descriptionMm: res.nameMm || '',
-                                      instructor: "Kru Jane & Sayar Thura",
-                                      includes: ["Permanent direct download URL", "Study exercises", "Vocabulary sheets"]
-                                    };
-                                    setGatewayCourse(checkoutProduct as any);
-                                    setGatewayPhone(progress.masteredWords.length > 0 ? "09-791112233" : "09-");
-                                    setGatewayEmail(currentUser ? `${currentUser.toLowerCase()}@classroom.edu` : "student@classroom.edu");
-                                    setGatewayStep(1);
-                                    setGatewayPaymentMethod('kbzpay');
-                                    setGatewayOtp('');
-                                    setGatewayTimer(180);
-                                    setIsGatewayOpen(true);
-                                  }}
-                                  className="px-3 py-1.5 bg-gradient-to-r from-[#5a3194] to-[#7a42c4] text-white rounded-xl text-[10px] font-sans font-black uppercase tracking-wider hover:shadow-md cursor-pointer border-b-4 border-brand-purple-shadow flex items-center gap-1 shrink-0"
-                                >
-                                  🔒 Unlock eBook
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
               {/* SECTION 2: General Reference PDF library section */}
               <div className="space-y-4 pt-4 text-left">
                 <h4 className="font-sans font-black text-xs text-brand-dark uppercase tracking-wider flex items-center gap-2 border-b-2 border-slate-100 pb-2.5">
@@ -7935,7 +7803,7 @@ startxref
                             }`}
                           >
                             <ShoppingBag className="w-3.5 h-3.5" />
-                            Purchase Orders ({orders.length})
+                            Orders ({orders.length})
                           </button>
                           <button
                             type="button"
@@ -7947,7 +7815,7 @@ startxref
                             }`}
                           >
                             <Users className="w-3.5 h-3.5" />
-                            Student Directory ({registeredUsers.length})
+                            Students ({registeredUsers.length})
                           </button>
                         </>
                       ) : (
@@ -7962,7 +7830,7 @@ startxref
                             }`}
                           >
                             <BookOpen className="w-3.5 h-3.5" />
-                            Course Manager ({courses.length})
+                            Courses ({courses.length})
                           </button>
                           <button
                             type="button"
@@ -7974,7 +7842,7 @@ startxref
                             }`}
                           >
                             <ShoppingBag className="w-3.5 h-3.5" />
-                            Study Store ({storeItems.length})
+                            Store ({storeItems.length})
                           </button>
                           <button
                             type="button"
@@ -7986,7 +7854,7 @@ startxref
                             }`}
                           >
                             <FileText className="w-3.5 h-3.5" />
-                            Orientation Articles ({orientationData.length})
+                            Orientation ({orientationData.length})
                           </button>
                           <button
                             type="button"
@@ -7998,7 +7866,7 @@ startxref
                             }`}
                           >
                             <BookOpen className="w-3.5 h-3.5" />
-                            Grammar Handbook ({grammarChapters.length})
+                            Grammar ({grammarChapters.length})
                           </button>
                           <button
                             type="button"
@@ -8010,7 +7878,7 @@ startxref
                             }`}
                           >
                             <Palette className="w-3.5 h-3.5" />
-                            Brand & Theme
+                            Brand
                           </button>
                         </>
                       )}
@@ -8410,10 +8278,7 @@ startxref
                                   setResourceFormUrl('');
                                   setResourceFormPrice(0);
                                   setResourceFormType('free');
-                                  setResourceVocabEntries([]);
-                                  setResourceSentenceEntries([]);
-                                  setResourceDialogueEntries([]);
-                                  setResourceConversationEntries([]);
+                                  loadSomchaiStructure();
                                 }
                               }}
                               className={`flex-1 sm:flex-initial px-5 py-2 rounded-xl font-sans font-black text-[10.5px] transition-all uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer min-h-[36px] ${
@@ -8723,6 +8588,29 @@ startxref
                                           });
 
                                           setCourses(updatedCourses);
+                                          
+                                          // Synchronize with storeItems if the eBook also exists as a store catalog item
+                                          const storeHasIt = storeItems.some(item => item.id === resourceId);
+                                          if (storeHasIt) {
+                                            const updatedStoreItems = storeItems.map(item => {
+                                              if (item.id === resourceId) {
+                                                return {
+                                                  ...item,
+                                                  name: updatedRes.name,
+                                                  nameMm: updatedRes.nameMm || item.nameMm || updatedRes.name,
+                                                  pdfDownloadUrl: updatedRes.downloadUrl,
+                                                  price: updatedRes.priceAmount,
+                                                  vocabEntries: updatedRes.vocabEntries,
+                                                  sentenceEntries: updatedRes.sentenceEntries,
+                                                  dialogueEntries: updatedRes.dialogueEntries,
+                                                  conversationEntries: updatedRes.conversationEntries,
+                                                };
+                                              }
+                                              return item;
+                                            });
+                                            setStoreItems(updatedStoreItems);
+                                          }
+
                                           addSystemLog('admin', `${editingResourceId ? "Updated" : "Added"} eBook resource "${updatedRes.name}" on course ID: "${adminSelectedCourseId}"`);
                                           
                                           // Reset form
@@ -9009,10 +8897,7 @@ startxref
                                             setResourceFormUrl('');
                                             setResourceFormPrice(0);
                                             setResourceFormType('free');
-                                            setResourceVocabEntries([]);
-                                            setResourceSentenceEntries([]);
-                                            setResourceDialogueEntries([]);
-                                            setResourceConversationEntries([]);
+                                            loadSomchaiStructure();
                                             setTimeout(() => {
                                               const el = document.getElementById("admin-resource-details-form");
                                               if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -10871,6 +10756,7 @@ startxref
                                   setStoreFormCourseId('');
                                   setStoreFormPdfFileName('');
                                   setStoreFormPdfDownloadUrl('');
+                                  loadSomchaiStructure();
                                 }}
                                 className="px-2.5 py-1 bg-brand-purple hover:bg-brand-purple/95 text-white text-[9px] font-black uppercase rounded-lg hover:brightness-105 active:translate-y-0.5 cursor-pointer flex items-center gap-1 shadow-3xs font-sans"
                               >
@@ -11014,7 +10900,11 @@ startxref
                                     popular: storeFormPopular,
                                     courseId: storeFormCourseId || undefined,
                                     pdfFileName: storeFormPdfFileName.trim() || undefined,
-                                    pdfDownloadUrl: storeFormPdfDownloadUrl.trim() || undefined
+                                    pdfDownloadUrl: storeFormPdfDownloadUrl.trim() || undefined,
+                                    vocabEntries: storeFormType === 'e-book' ? resourceVocabEntries : undefined,
+                                    sentenceEntries: storeFormType === 'e-book' ? resourceSentenceEntries : undefined,
+                                    dialogueEntries: storeFormType === 'e-book' ? resourceDialogueEntries : undefined,
+                                    conversationEntries: storeFormType === 'e-book' ? resourceConversationEntries : undefined
                                   };
 
                                   const updated = [...storeItems, newItem];
@@ -11040,7 +10930,11 @@ startxref
                                         popular: storeFormPopular,
                                         courseId: storeFormCourseId || undefined,
                                         pdfFileName: storeFormPdfFileName.trim() || undefined,
-                                        pdfDownloadUrl: storeFormPdfDownloadUrl.trim() || undefined
+                                        pdfDownloadUrl: storeFormPdfDownloadUrl.trim() || undefined,
+                                        vocabEntries: storeFormType === 'e-book' && item.id === editingResourceId ? resourceVocabEntries : item.vocabEntries,
+                                        sentenceEntries: storeFormType === 'e-book' && item.id === editingResourceId ? resourceSentenceEntries : item.sentenceEntries,
+                                        dialogueEntries: storeFormType === 'e-book' && item.id === editingResourceId ? resourceDialogueEntries : item.dialogueEntries,
+                                        conversationEntries: storeFormType === 'e-book' && item.id === editingResourceId ? resourceConversationEntries : item.conversationEntries
                                       };
                                     }
                                     return item;
@@ -11241,6 +11135,34 @@ startxref
                                   <CheckSquare className="w-4 h-4 shrink-0" />
                                   {storeIsNew ? "Publish Product to Store" : "Sync Product Changes"}
                                 </button>
+                                {storeFormType === 'e-book' && !storeIsNew && (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setAdminCourseSectionFocus('ebooks');
+                                      setAdminHubTab('courses');
+                                      setEditingResourceId(adminSelectedStoreId);
+                                      setResourceFormName(storeFormName);
+                                      setResourceFormNameMm(storeFormNameMm || '');
+                                      setResourceFormUrl(storeFormPdfDownloadUrl || '');
+                                      setResourceFormPrice(storeFormPrice);
+                                      setResourceFormType(storeFormPrice > 0 ? 'premium' : 'free');
+                                      const activeItem = storeItems.find(item => item.id === adminSelectedStoreId);
+                                      if (activeItem) {
+                                        setResourceVocabEntries(activeItem.vocabEntries || []);
+                                        setResourceSentenceEntries(activeItem.sentenceEntries || []);
+                                        setResourceDialogueEntries(activeItem.dialogueEntries || []);
+                                        setResourceConversationEntries(activeItem.conversationEntries || []);
+                                      }
+                                      setTimeout(() => {
+                                        document.getElementById("admin-resource-form-section")?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                      }, 200);
+                                    }}
+                                    className="py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-sans font-black tracking-wider uppercase rounded-xl cursor-pointer transition-colors flex items-center justify-center gap-1.5 shadow-3xs"
+                                  >
+                                    ✏️ Build Study Content
+                                  </button>
+                                )}
                                 {!storeIsNew && (
                                   <button
                                     type="button"
@@ -12664,7 +12586,7 @@ startxref
                   <div className="p-3 bg-brand-purple/[0.03] rounded-xl border border-brand-purple/15 flex flex-col sm:flex-row items-center gap-3">
                     <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                       <label className="text-[10px] font-sans font-black text-brand-purple uppercase tracking-wider shrink-0 flex items-center gap-1">
-                        Filter Lessons by Resources & eBooks:
+                        Filter Lessons by Course / Resource / eBook:
                       </label>
                       <select
                         value={adminCurriculumCourseFilter}
@@ -12675,26 +12597,28 @@ startxref
                         }}
                         className="bg-white border-2 border-brand-purple/20 px-3 py-1.5 rounded-lg text-xs font-black font-sans text-brand-purple focus:border-brand-purple focus:outline-none cursor-pointer"
                       >
-                        <option value="all">⚡ ALL RESOURCES & EBOOKS (အရင်းအမြစ်နှင့် အီးဘုခ်အားလုံး)</option>
-                        {courses
-                          .filter(c => c.id === 'course-workspace' || c.id === 'course-somchai-grammar')
-                          .map(c => {
-                            let displayName = c.name;
-                            if (c.id === 'course-workspace') {
-                              displayName = '📚 Resources & Workspaces (အရင်းအမြစ်များ)';
-                            } else if (c.id === 'course-somchai-grammar') {
-                              displayName = '📕 eBooks & Grammar (အီးဘုခ်များ)';
-                            }
-                            return (
-                              <option key={c.id} value={c.id}>
-                                {displayName}
-                              </option>
-                            );
-                          })}
+                        <option value="all">⚡ ALL COURSES & RESOURCES (သင်တန်းနှင့် အရင်းအမြစ်အားလုံး)</option>
+                        {courses.map(c => {
+                          let displayName = c.name;
+                          if (c.id === 'course-basic') {
+                            displayName = '🟢 Complete Thai Foundational (အခြေခံအထူးတန်း)';
+                          } else if (c.id === 'course-business') {
+                            displayName = '💼 Business Thai Course (စီးပွားရေးသုံးထိုင်းစာ)';
+                          } else if (c.id === 'course-workspace') {
+                            displayName = '📚 Resources & Workspaces (အရင်းအမြစ်များ)';
+                          } else if (c.id === 'course-somchai-grammar') {
+                            displayName = '📕 eBooks & Grammar (အီးဘုခ်များ)';
+                          }
+                          return (
+                            <option key={c.id} value={c.id}>
+                              {displayName}
+                            </option>
+                          );
+                        })}
                       </select>
                     </div>
                     <div className="text-[9.5px] font-sans font-semibold text-brand-muted sm:ml-auto">
-                      Only displays lessons matching the selected resource/eBook filter above.
+                      Only displays lessons matching the selected course/resource filter above.
                     </div>
                   </div>
 
@@ -12722,12 +12646,12 @@ startxref
                         className="bg-white border-2 border-gray-200 px-3 py-1.5 rounded-lg text-xs font-bold font-sans text-brand-dark focus:border-brand-purple focus:outline-none cursor-pointer"
                       >
                         <option value="">-- Choose a Lesson --</option>
-                        <optgroup label="📖 EBOOK & RESOURCE LESSONS (အီးဘုခ်နှင့် အရင်းအမြစ် သင်ခန်းစာများ)">
+                        <optgroup label="📖 EBOOK, COURSE & RESOURCE LESSONS (သင်ခန်းစာအားလုံး)">
                           {lessons
                             .filter(l => {
                               const lessonCourseId = l.courseId || 'course-basic';
                               if (adminCurriculumCourseFilter === 'all') {
-                                return lessonCourseId === 'course-workspace' || lessonCourseId === 'course-somchai-grammar';
+                                return true;
                               }
                               return lessonCourseId === adminCurriculumCourseFilter;
                             })
@@ -12747,6 +12671,37 @@ startxref
                       </select>
                     </div>
 
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const confirmRestore = window.confirm("Are you sure you want to restore lessons 1 to 20 to their default values? This will overwrite your custom modifications for lessons 1 to 20.");
+                        if (!confirmRestore) return;
+                        
+                        const defaultLessonsMapped = lessonsData.map(b => {
+                          let courseId = "course-basic";
+                          if (b.id >= 11 && b.id <= 20) {
+                            courseId = "course-business";
+                          } else if (b.id >= 21) {
+                            courseId = "course-workspace";
+                          }
+                          return { ...b, courseId };
+                        });
+                        
+                        const remainingLessons = lessons.filter(l => l.id < 1 || l.id > 20);
+                        const restored1to20 = defaultLessonsMapped.filter(l => l.id >= 1 && l.id <= 20);
+                        const combined = [...restored1to20, ...remainingLessons].sort((a, b) => a.id - b.id);
+                        
+                        setLessons(combined);
+                        localStorage.setItem('thai_lessons_curriculum', JSON.stringify(combined));
+                        addSystemLog('admin', 'Restored lessons 1 to 20 to default initial content');
+                        alert("Successfully restored lessons 1 to 20! They are now editable and visible in the dropdown lists.");
+                      }}
+                      className="px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg text-[10px] font-sans font-black flex items-center gap-1 sm:ml-auto cursor-pointer border border-indigo-200 animate-fade-in"
+                      title="Restore default curriculum lessons 1-20"
+                    >
+                      <span>🔄 Restore Lessons 1-20</span>
+                    </button>
+
                     {adminSelectedLessonId && (
                       <button
                         onClick={() => {
@@ -12758,10 +12713,11 @@ startxref
                             setAdminSelectedLessonId(updated[0]?.id || null);
                           }
                         }}
-                        className="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[10px] font-sans font-black flex items-center gap-1 sm:ml-auto cursor-pointer border border-red-200"
+                        className="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[10px] font-sans font-black flex items-center gap-1 cursor-pointer border border-red-200 animate-fade-in"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        DELETE LESSON [{adminSelectedLessonId}]
+                        <Trash2 className="w-3.5 h-3.5 shrink-0" />
+                        <span className="hidden sm:inline">DELETE LESSON [{adminSelectedLessonId}]</span>
+                        <span className="sm:hidden">DELETE [{adminSelectedLessonId}]</span>
                       </button>
                     )}
 
@@ -12776,10 +12732,11 @@ startxref
                             setAdminSelectedVocabCategory(updated[0]?.name || null);
                           }
                         }}
-                        className="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[10px] font-sans font-black flex items-center gap-1 sm:ml-auto cursor-pointer border border-red-200"
+                        className="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-[10px] font-sans font-black flex items-center gap-1 cursor-pointer border border-red-200 animate-fade-in"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        DELETE VOCAB LIST
+                        <Trash2 className="w-3.5 h-3.5 shrink-0" />
+                        <span className="hidden sm:inline">DELETE VOCAB LIST</span>
+                        <span className="sm:hidden">DELETE</span>
                       </button>
                     )}
                   </div>

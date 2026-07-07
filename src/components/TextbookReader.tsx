@@ -495,8 +495,27 @@ export const TextbookReader: React.FC<TextbookReaderProps> = ({ bookId, onClose 
           }
         }
       }
+      const storeSaved = localStorage.getItem('thai_store_items_list');
+      if (storeSaved) {
+        const storeItems = JSON.parse(storeSaved);
+        const storeItem = storeItems.find((item: any) => item.id === bookId && item.type === 'e-book');
+        if (storeItem) {
+          return {
+            id: storeItem.id,
+            name: storeItem.name,
+            nameMm: storeItem.nameMm,
+            downloadUrl: storeItem.pdfDownloadUrl || '',
+            priceAmount: storeItem.price,
+            currency: 'MMK',
+            vocabEntries: storeItem.vocabEntries,
+            sentenceEntries: storeItem.sentenceEntries,
+            dialogueEntries: storeItem.dialogueEntries,
+            conversationEntries: storeItem.conversationEntries,
+          };
+        }
+      }
     } catch (e) {
-      console.error("Error parsing courses for dynamic reader:", e);
+      console.error("Error parsing courses or store items for dynamic reader:", e);
     }
     return null;
   };

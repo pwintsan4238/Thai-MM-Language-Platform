@@ -354,14 +354,21 @@ export default function VocabularyView({
                       onClick={() => onWordMastered(selectedWord.thai)}
                       className={`w-full py-4 px-4 rounded-2xl font-sans font-extrabold text-xs flex items-center justify-center gap-2 transition-all border-2 border-b-4 ${
                         masteredWords.includes(selectedWord.thai)
-                          ? 'bg-[#58cc02] text-white border-[#58cc02] border-b-brand-green-shadow hover:bg-[#61df02]'
+                          ? 'bg-[#58cc02] text-white border-[#58cc02] border-b-brand-green-shadow'
                           : 'bg-white border-[#e5e5e5] border-b-[#ccc] text-brand-purple hover:bg-gray-50'
                       }`}
                     >
                       <CheckCircle className={`w-4 h-4 ${masteredWords.includes(selectedWord.thai) ? 'fill-current text-white' : 'text-brand-muted'}`} />
-                      {masteredWords.includes(selectedWord.thai)
-                        ? 'Mastered! • နှုတ်တိုက်ရပြီးဖြစ်သည်'
-                        : 'Mark as Mastered • မှတ်သားရန်'}
+                      <span className="hidden sm:inline">
+                        {masteredWords.includes(selectedWord.thai)
+                          ? 'Mastered! • နှုတ်တိုက်ရပြီးဖြစ်သည်'
+                          : 'Mark as Mastered • မှတ်သားရန်'}
+                      </span>
+                      <span className="sm:hidden">
+                        {masteredWords.includes(selectedWord.thai)
+                          ? 'Mastered! 🎉'
+                          : 'Master Word'}
+                      </span>
                     </button>
                   </motion.div>
                 ) : (
@@ -463,14 +470,16 @@ export default function VocabularyView({
                         !selectedQuizAns ? 'duo-btn-disabled' : 'duo-btn-purple'
                       }`}
                     >
-                      Verify • စစ်ဆေးမည်
+                      <span className="hidden sm:inline">Verify • စစ်ဆေးမည်</span>
+                      <span className="sm:hidden">Verify ✔</span>
                     </button>
                   ) : (
                     <button
                       onClick={handleNextQuizQuestion}
                       className="duo-btn duo-btn-purple text-xs px-6 py-2.5"
                     >
-                      Next Question • ဆက်သွားရန်
+                      <span className="hidden sm:inline">Next Question • ဆက်သွားရန်</span>
+                      <span className="sm:hidden">Next ➔</span>
                     </button>
                   )}
                 </div>
@@ -487,26 +496,28 @@ export default function VocabularyView({
                 <p className="text-xs text-brand-muted font-sans mt-1">
                   You matched {correctQuizCount} out of {quizQuestions.length} vocabulary words accurately.
                 </p>
-
+ 
                 <div className="my-6 p-4 bg-gray-50 rounded-2xl inline-block">
                   <div className="text-2xl font-sans font-black text-brand-purple">
                     {correctQuizCount === quizQuestions.length ? "Perfect Score! 🌟" : `${correctQuizCount} / ${quizQuestions.length}`}
                   </div>
                   <div className="text-[10px] font-sans font-bold text-brand-muted uppercase tracking-wider mt-1">Vocabulary mastery rate</div>
                 </div>
-
+ 
                 <div className="flex justify-center gap-3 border-t border-gray-100 pt-5">
                   <button
                     onClick={() => setStudyMode('study')}
                     className="duo-btn duo-btn-white text-xs px-5 py-2"
                   >
-                    Back to Study • စာပြန်ဖတ်မည်
+                    <span className="hidden sm:inline">Back to Study • စာပြန်ဖတ်မည်</span>
+                    <span className="sm:hidden">Study 📖</span>
                   </button>
                   <button
                     onClick={startVocabularyQuiz}
                     className="duo-btn duo-btn-purple text-xs px-5 py-2"
                   >
-                    Retry Trainer • ပြန်ကစားမည်
+                    <span className="hidden sm:inline">Retry Trainer • ပြန်ကစားမည်</span>
+                    <span className="sm:hidden">Retry 🔄</span>
                   </button>
                 </div>
               </div>

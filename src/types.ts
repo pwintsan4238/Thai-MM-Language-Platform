@@ -179,6 +179,10 @@ export interface StoreItem {
   courseId?: string; // Optional links to filter lessons by course
   pdfFileName?: string; // Optional pdf filename for download
   pdfDownloadUrl?: string; // Optional direct website or PDF download resource URL
+  vocabEntries?: EBookVocabEntry[];
+  sentenceEntries?: EBookSentenceEntry[];
+  dialogueEntries?: EBookDialogueEntry[];
+  conversationEntries?: EBookConversationEntry[];
 }
 
 
